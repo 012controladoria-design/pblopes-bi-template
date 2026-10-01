@@ -1,0 +1,33 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainerMobileState/2.7.0/schema.json",
+  "position": {
+    "x": 0,
+    "y": 60,
+    "z": 2,
+    "height": 100,
+    "width": 324
+  },
+  "objects": {
+    "general": [
+      {
+        "properties": {
+          "paragraphs": [
+            {
+              "textRuns": [
+                {
+                  "value": "KPI'S REALIZADO x ORÇADO",
+                  "textStyle": {
+                    "fontWeight": "bold",
+                    "fontSize": "20pt",
+                    "color": "#ffffff"
+                  }
+                }
+              ],
+              "horizontalTextAlignment": "center"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
