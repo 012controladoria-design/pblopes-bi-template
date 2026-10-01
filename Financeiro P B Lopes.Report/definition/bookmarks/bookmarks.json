@@ -1,0 +1,57 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmarksMetadata/1.0.0/schema.json",
+  "items": [
+    {
+      "name": "BookmarkGroup0276ed0620e2b9f8d9dc",
+      "displayName": "Pop-ups · Contas a Receber",
+      "children": [
+        "Bookmark737730bfc8ce225ee08d",
+        "Bookmark8cdd2f52d48e3c02ccc8",
+        "Bookmark7e5caa0b548b43135a23",
+        "Bookmarka85dc455af55edd44f7b",
+        "Bookmark719e231f40c7a82bf1d4"
+      ]
+    },
+    {
+      "name": "BookmarkGroupf08823b3d775f377af37",
+      "displayName": "Pop-ups · Duplicata de Contas a Receber",
+      "children": [
+        "Bookmark3e7618fea71d3d34887c",
+        "Bookmark4354b36151336632d248",
+        "Bookmarke7d3027d3f6159192db5",
+        "Bookmark47c8c8d165ba1dd91217",
+        "Bookmark567b88745bffe6579357"
+      ]
+    },
+    {
+      "name": "BookmarkGroupc0faf994d8e5cff36ada",
+      "displayName": "Pop-ups · Duplicata de Duplicata de Contas a Receber",
+      "children": [
+        "Bookmark978a5179a8f9d9f4a482",
+        "Bookmarkfa8ceba58a28c3d1eaf3",
+        "Bookmarke7f29b319884f9393f2b",
+        "Bookmark594589f957919d36c62a",
+        "Bookmarkdc73a50d803d7e3aa160"
+      ]
+    },
+    {
+      "name": "BookmarkGroup5b2591c1d31c9be96607",
+      "displayName": "Pop-ups · Contas a Pagar",
+      "children": [
+        "Bookmark1832d277bd32dc01809e",
+        "Bookmark3473331c09ec127a5eae",
+        "Bookmark479dfd84f7f38ffd3d99",
+        "Bookmark15dcecb6c2fe6a7d2fae",
+        "Bookmarkc859668ad4470a9dc8e0"
+      ]
+    },
+    {
+      "name": "BookmarkGroupc5ff4a15286ed3c40049",
+      "displayName": "Pop-ups · DRE",
+      "children": [
+        "Bookmarkc17bc917182fa43e8b6b",
+        "Bookmark4277f0312de3c0f5ae8f"
+      ]
+    }
+  ]
+}

@@ -41,7 +41,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'🔍 Ver títulos da seleção'"
+                  "Value": "'🔍 Ver títulos'"
                 }
               }
             },
@@ -177,28 +177,21 @@
             "type": {
               "expr": {
                 "Literal": {
-                  "Value": "'Drillthrough'"
+                  "Value": "'Bookmark'"
                 }
               }
             },
-            "drillthroughSection": {
+            "bookmark": {
               "expr": {
                 "Literal": {
-                  "Value": "'4d988d3683a559277b3e'"
+                  "Value": "'Bookmark1832d277bd32dc01809e'"
                 }
               }
             },
-            "disabledTooltip": {
+            "tooltip": {
               "expr": {
                 "Literal": {
-                  "Value": "'Clique antes numa barra, fatia ou célula da tabela'"
-                }
-              }
-            },
-            "enabledTooltip": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Clique para abrir o detalhe da seleção'"
+                  "Value": "'Abre os títulos (da seleção, se houver)'"
                 }
               }
             }

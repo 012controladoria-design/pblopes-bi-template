@@ -91,21 +91,21 @@
             "type": {
               "expr": {
                 "Literal": {
-                  "Value": "'PageNavigation'"
+                  "Value": "'Bookmark'"
                 }
               }
             },
-            "navigationSection": {
+            "bookmark": {
               "expr": {
                 "Literal": {
-                  "Value": "'8ad4f51f95ea20172f3d'"
+                  "Value": "'Bookmark7e5caa0b548b43135a23'"
                 }
               }
             },
             "tooltip": {
               "expr": {
                 "Literal": {
-                  "Value": "'Clique para ver os títulos'"
+                  "Value": "'Clique para abrir os títulos'"
                 }
               }
             }

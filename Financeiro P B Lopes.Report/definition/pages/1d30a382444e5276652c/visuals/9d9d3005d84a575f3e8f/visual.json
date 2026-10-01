@@ -41,7 +41,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'🔍 Ver lançamentos da seleção'"
+                  "Value": "'🔍 Ver lançamentos'"
                 }
               }
             },
@@ -177,28 +177,21 @@
             "type": {
               "expr": {
                 "Literal": {
-                  "Value": "'Drillthrough'"
+                  "Value": "'Bookmark'"
                 }
               }
             },
-            "drillthroughSection": {
+            "bookmark": {
               "expr": {
                 "Literal": {
-                  "Value": "'96baf9081047bb949f95'"
+                  "Value": "'Bookmarkc17bc917182fa43e8b6b'"
                 }
               }
             },
-            "disabledTooltip": {
+            "tooltip": {
               "expr": {
                 "Literal": {
-                  "Value": "'Clique antes numa linha ou célula da DRE'"
-                }
-              }
-            },
-            "enabledTooltip": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Clique para abrir o detalhe da seleção'"
+                  "Value": "'Clique numa linha/célula da DRE e depois aqui'"
                 }
               }
             }
