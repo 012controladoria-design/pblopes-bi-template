@@ -1,0 +1,64 @@
+table pFornecedor
+	lineageTag: a3c1c39b-1cc0-43f2-9df7-e360272c2392
+
+	column cod_fornecedor
+		dataType: int64
+		formatString: 0
+		lineageTag: 43cb7fca-cafa-4d31-86eb-eef85350fa34
+		summarizeBy: none
+		sourceColumn: cod_fornecedor
+
+		annotation SummarizationSetBy = Automatic
+
+	column fornecedor_abrev
+		dataType: string
+		lineageTag: 786919ad-03d0-409b-b707-f8d1cbc64533
+		summarizeBy: none
+		sourceColumn: fornecedor_abrev
+
+		annotation SummarizationSetBy = Automatic
+
+	column fornecedor
+		dataType: string
+		lineageTag: 3f0c7ee2-8615-4024-bf9f-669221d69bbe
+		summarizeBy: none
+		sourceColumn: fornecedor
+
+		annotation SummarizationSetBy = Automatic
+
+	column cnpj_cpf
+		dataType: string
+		lineageTag: 9acd3513-a8aa-4594-9be9-f51a3c87ef1f
+		summarizeBy: none
+		sourceColumn: cnpj_cpf
+
+		annotation SummarizationSetBy = Automatic
+
+	column cidade
+		dataType: string
+		lineageTag: 490ae03e-bca6-46b7-98b9-8f82b9ecc21f
+		summarizeBy: none
+		sourceColumn: cidade
+
+		annotation SummarizationSetBy = Automatic
+
+	column uf
+		dataType: string
+		lineageTag: 1ca64403-9213-4cd2-9964-cf026ea57475
+		summarizeBy: none
+		sourceColumn: uf
+
+		annotation SummarizationSetBy = Automatic
+
+	partition pFornecedor = m
+		mode: import
+		source =
+				let
+				    Fonte = Value.NativeQuery(PostgreSQL.Database("192.168.0.234", "pblopes_dts"), "SELECT#(lf)    e.cod_emitente   AS cod_fornecedor,#(lf)    e.nome_abrev     AS fornecedor_abrev,#(lf)    e.nome_emit      AS fornecedor,#(lf)    e.cgc            AS cnpj_cpf,#(lf)    e.cidade,#(lf)    e.estado         AS uf#(lf)FROM public.emitente e#(lf)WHERE e.cod_emitente IN (SELECT DISTINCT cdn_fornecedor FROM public.tit_ap)", null, [EnableFolding=true])
+				in
+				    Fonte
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

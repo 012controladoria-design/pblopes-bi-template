@@ -1,0 +1,257 @@
+table fTitulosPagar
+	lineageTag: 802a288d-843b-4375-bb04-3a379f2c8b05
+
+	column id_titulo
+		dataType: int64
+		formatString: 0
+		lineageTag: 6f36bd01-9dec-4763-bbd3-8eee65e2f5e4
+		summarizeBy: none
+		sourceColumn: id_titulo
+
+		annotation SummarizationSetBy = Automatic
+
+	column cod_estab
+		dataType: string
+		lineageTag: e70cab5b-326c-4753-aadc-e2dd2c556543
+		summarizeBy: none
+		sourceColumn: cod_estab
+
+		annotation SummarizationSetBy = Automatic
+
+	column especie
+		dataType: string
+		lineageTag: 978aaaf6-f000-4817-9db3-01dd3bbe5cb4
+		summarizeBy: none
+		sourceColumn: especie
+
+		annotation SummarizationSetBy = Automatic
+
+	column tipo_especie
+		dataType: string
+		lineageTag: 2645a91d-0dbc-450e-bcf0-ed9bec25b45a
+		summarizeBy: none
+		sourceColumn: tipo_especie
+
+		annotation SummarizationSetBy = Automatic
+
+	column serie
+		dataType: string
+		lineageTag: 2119fd63-03b2-4871-ba84-571ab906436e
+		summarizeBy: none
+		sourceColumn: serie
+
+		annotation SummarizationSetBy = Automatic
+
+	column titulo
+		dataType: string
+		lineageTag: 51a0a3bb-15f1-4867-a27c-f0dc7733a35d
+		summarizeBy: none
+		sourceColumn: titulo
+
+		annotation SummarizationSetBy = Automatic
+
+	column parcela
+		dataType: string
+		lineageTag: be6a9d5a-0c1e-4d9f-9f2d-deeaec7d72e1
+		summarizeBy: none
+		sourceColumn: parcela
+
+		annotation SummarizationSetBy = Automatic
+
+	column cod_fornecedor
+		dataType: int64
+		formatString: 0
+		lineageTag: 7df27c2c-0a04-4f69-bef9-2db617997f0a
+		summarizeBy: none
+		sourceColumn: cod_fornecedor
+
+		annotation SummarizationSetBy = Automatic
+
+	column cod_portador
+		dataType: string
+		lineageTag: b977c8e4-3d42-4ae8-a8d5-a12706195d19
+		summarizeBy: none
+		sourceColumn: cod_portador
+
+		annotation SummarizationSetBy = Automatic
+
+	column origem
+		dataType: string
+		lineageTag: c91b9b55-837f-4f47-82a1-adeb1bce8bb1
+		summarizeBy: none
+		sourceColumn: origem
+
+		annotation SummarizationSetBy = Automatic
+
+	column situacao
+		dataType: string
+		lineageTag: 2771a1bd-359e-4962-ae81-457e71a26f7d
+		summarizeBy: none
+		sourceColumn: situacao
+
+		annotation SummarizationSetBy = Automatic
+
+	column data_emissao
+		dataType: dateTime
+		formatString: dd/MM/yyyy
+		lineageTag: 5aad4d59-bf55-4ae3-97e4-2d0b8a205226
+		summarizeBy: none
+		sourceColumn: data_emissao
+
+		annotation SummarizationSetBy = Automatic
+
+	column data_vencimento
+		dataType: dateTime
+		formatString: dd/MM/yyyy
+		lineageTag: 41e3538a-5e4c-4765-b5dd-7e353445be6e
+		summarizeBy: none
+		sourceColumn: data_vencimento
+
+		annotation SummarizationSetBy = Automatic
+
+	column data_prev_pagamento
+		dataType: dateTime
+		formatString: dd/MM/yyyy
+		lineageTag: dcafe5f1-7984-49bc-bae7-d8156a7e26fc
+		summarizeBy: none
+		sourceColumn: data_prev_pagamento
+
+		annotation SummarizationSetBy = Automatic
+
+	column data_liquidacao
+		dataType: dateTime
+		formatString: dd/MM/yyyy
+		lineageTag: 0f85d583-0cc0-413f-9e11-6134b94f8736
+		summarizeBy: none
+		sourceColumn: data_liquidacao
+
+		annotation SummarizationSetBy = Automatic
+
+	column valor_original
+		dataType: double
+		lineageTag: ad614b3c-f716-4754-b0f8-df5b9abf7896
+		summarizeBy: sum
+		sourceColumn: valor_original
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column saldo
+		dataType: double
+		lineageTag: c1742111-2787-44c0-bdfd-53e27e8ac5c0
+		summarizeBy: sum
+		sourceColumn: saldo
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column juros
+		dataType: double
+		lineageTag: cc4e0866-7b24-4efc-8496-c5b89e793a5c
+		summarizeBy: sum
+		sourceColumn: juros
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column desconto
+		dataType: double
+		lineageTag: 5b5246cc-cae9-40a8-b3f8-0c971a21f651
+		summarizeBy: sum
+		sourceColumn: desconto
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column abatimento
+		dataType: double
+		lineageTag: 436f4308-b58c-4c91-8e8b-0cfa7ab9bf7e
+		summarizeBy: sum
+		sourceColumn: abatimento
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column pagto_bloqueado
+		dataType: int64
+		formatString: 0
+		lineageTag: 6d6a06b3-dd22-422b-8474-903261dc654c
+		summarizeBy: none
+		sourceColumn: pagto_bloqueado
+
+		annotation SummarizationSetBy = Automatic
+
+	column em_aberto
+		dataType: int64
+		formatString: 0
+		lineageTag: 11e7f3ab-7a9d-4105-ab2c-77fae9de1165
+		summarizeBy: none
+		sourceColumn: em_aberto
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Dias em Atraso' =
+			
+			IF ( fTitulosPagar[em_aberto] = 1, INT ( TODAY () - fTitulosPagar[data_vencimento] ) )
+		formatString: 0
+		lineageTag: 400174de-62a5-44f3-b210-f6ca234e53b0
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Faixa Aging' =
+			
+			VAR d = fTitulosPagar[Dias em Atraso]
+			RETURN
+			    IF ( fTitulosPagar[em_aberto] = 1,
+			        SWITCH ( TRUE (),
+			            d <= 0,   "A vencer",
+			            d <= 30,  "Vencido 1-30",
+			            d <= 60,  "Vencido 31-60",
+			            d <= 90,  "Vencido 61-90",
+			            d <= 180, "Vencido 91-180",
+			            d <= 365, "Vencido 181-365",
+			                      "Vencido +365" ) )
+		lineageTag: 0aada053-564c-49f6-8ec3-effb8c22b154
+		summarizeBy: none
+		sortByColumn: 'Faixa Aging Ordem'
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Faixa Aging Ordem' =
+			
+			VAR _d = fTitulosPagar[Dias em Atraso]
+			RETURN
+			    SWITCH ( TRUE (),
+			        _d <= 0, 0,
+			        _d <= 30, 1,
+			        _d <= 60, 2,
+			        _d <= 90, 3,
+			        _d <= 180, 4,
+			        _d <= 365, 5,
+			        6 )
+		formatString: 0
+		lineageTag: 97bf9b83-17ef-4e53-8446-f948d5a8159d
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition fTitulosPagar = m
+		mode: import
+		source =
+				let
+				    Fonte = Value.NativeQuery(PostgreSQL.Database("192.168.0.234", "pblopes_dts"), "SELECT#(lf)    t.num_id_tit_ap                         AS id_titulo,#(lf)    t.cod_estab                             AS cod_estab,#(lf)    t.cod_espec_docto                       AS especie,#(lf)    t.ind_tip_espec_docto                   AS tipo_especie,#(lf)    t.cod_ser_docto                         AS serie,#(lf)    t.cod_tit_ap                            AS titulo,#(lf)    t.cod_parcela                           AS parcela,#(lf)    t.cdn_fornecedor                        AS cod_fornecedor,#(lf)    t.cod_portador                          AS cod_portador,#(lf)    t.ind_origin_tit_ap                     AS origem,#(lf)    t.ind_sit_tit_ap                        AS situacao,#(lf)    t.dat_emis_docto                        AS data_emissao,#(lf)    t.dat_vencto_tit_ap                     AS data_vencimento,#(lf)    t.dat_prev_pagto                        AS data_prev_pagamento,#(lf)    CASE WHEN t.dat_liquidac_tit_ap >= DATE '9999-01-01' THEN NULL#(lf)         ELSE t.dat_liquidac_tit_ap END     AS data_liquidacao,#(lf)    t.val_origin_tit_ap                     AS valor_original,#(lf)    t.val_sdo_tit_ap                        AS saldo,#(lf)    t.val_juros                             AS juros,#(lf)    t.val_desc_tit_ap                       AS desconto,#(lf)    t.val_abat_tit_ap                       AS abatimento,#(lf)    CAST(t.log_pagto_bloqdo AS int)         AS pagto_bloqueado,#(lf)    CAST(t.log_sdo_tit_ap AS int)           AS em_aberto#(lf)FROM public.tit_ap t#(lf)WHERE t.num_id_tit_ap IS NOT NULL#(lf)  AND CAST(t.log_tit_ap_estordo AS int) = 0       -- tira os títulos estornados", null, [EnableFolding=true])
+				in
+				    Fonte
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

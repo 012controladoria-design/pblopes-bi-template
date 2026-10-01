@@ -162,3 +162,10 @@ relationship 7e93baf3-00fc-362c-d376-563259f5cde6
 	fromColumn: fTitulosReceber.especie
 	toColumn: dEspecieCR.especie
 
+relationship 75c8c2bc-6346-4929-8a35-2467219e8adf
+	fromColumn: fTitulosPagar.cod_estab
+	toColumn: dCasa.COD_CASA
+
+relationship 23638809-8c32-4607-a8c5-0cceb6ca4f40
+	fromColumn: fTitulosPagar.cod_fornecedor
+	toColumn: pFornecedor.cod_fornecedor

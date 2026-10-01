@@ -1948,6 +1948,87 @@ table _Medidas
 			```
 		lineageTag: 6dcf3ade-7ef7-474c-9823-b05f3a2020c6
 
+	measure 'CP Carteira' =
+			
+			CALCULATE ( SUM ( fTitulosPagar[saldo] ),
+			    fTitulosPagar[em_aberto] = 1,
+			    NOT fTitulosPagar[tipo_especie] IN { "Antecipação", "Previsão" } )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Contas a Pagar
+		lineageTag: 0416b933-dc2a-48cd-b9e6-5cd94ea209bc
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'CP Qtd Títulos' =
+			
+			CALCULATE ( COUNTROWS ( fTitulosPagar ),
+			    fTitulosPagar[em_aberto] = 1,
+			    NOT fTitulosPagar[tipo_especie] IN { "Antecipação", "Previsão" },
+			    fTitulosPagar[saldo] > 0 )
+		formatString: 0
+		displayFolder: Contas a Pagar
+		lineageTag: 489026e6-6cc4-41ac-a8b0-064c635e5a30
+
+	measure 'CP Vencido' =
+			
+			CALCULATE ( [CP Carteira], fTitulosPagar[Dias em Atraso] > 0 )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Contas a Pagar
+		lineageTag: 35a690ae-4e4f-4d4a-8292-610ab24746f7
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'CP A Vencer' =
+			
+			CALCULATE ( [CP Carteira], fTitulosPagar[Dias em Atraso] <= 0 )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Contas a Pagar
+		lineageTag: d1a2fc31-cff3-4880-9135-740d47435cdb
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'CP % Vencido' =
+			
+			DIVIDE ( [CP Vencido], [CP Carteira] )
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Contas a Pagar
+		lineageTag: 1d5a553f-35e8-4d1a-8385-ed93a52b2f84
+
+	measure 'CP Adiantamentos a Fornecedores' =
+			
+			CALCULATE ( SUM ( fTitulosPagar[saldo] ),
+			    fTitulosPagar[em_aberto] = 1,
+			    fTitulosPagar[tipo_especie] = "Antecipação" )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Contas a Pagar
+		lineageTag: 92a56eeb-0750-44e8-b094-9af6113cddc3
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'CP Vence 7 Dias' =
+			
+			CALCULATE ( [CP Carteira],
+			    fTitulosPagar[Dias em Atraso] <= 0,
+			    fTitulosPagar[Dias em Atraso] >= -7 )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Contas a Pagar
+		lineageTag: 3810d08b-4949-49e1-a24c-3e6415b471dd
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'CP % da Carteira' =
+			
+			DIVIDE ( [CP Carteira], CALCULATE ( [CP Carteira], REMOVEFILTERS ( pFornecedor ) ) )
+		formatString: 0.0%
+		displayFolder: Contas a Pagar
+		lineageTag: 11432b94-4055-4d15-be5a-a6be9921529b
+
+	measure 'CP Rótulo Top Fornecedores' =
+			
+			FORMAT ( [CP Carteira] / 1000000, "0.00" ) & " mi · " & FORMAT ( [CP % da Carteira], "0.0%" )
+		displayFolder: Contas a Pagar
+		lineageTag: 4914c2b2-9a22-4db1-872c-b37710109a5a
+
 	partition _Medidas-e0807ed9-830e-46df-b71f-9de294b53a18 = m
 		mode: import
 		queryGroup: Medidas
