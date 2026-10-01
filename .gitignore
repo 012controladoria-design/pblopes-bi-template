@@ -1,0 +1,6 @@
+# Power BI Project (PBIP): arquivos locais e cache de dados (grandes, não versionar)
+**/.pbi/localSettings.json
+**/.pbi/cache.abf
+*.pbix
+*.abf
+desktop.ini
