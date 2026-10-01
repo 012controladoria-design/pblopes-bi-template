@@ -1,50 +1,3 @@
-expression Parâmetro2 = #"Arquivo de Amostra (2)" meta [IsParameterQuery=true, BinaryIdentifier=#"Arquivo de Amostra (2)", Type="Binary", IsParameterQueryRequired=true]
-	lineageTag: 5071f9f6-840f-400a-b8e8-943bdea26234
-	queryGroup: 'Orcado\Consultas Auxiliares'
-
-	annotation PBI_ResultType = Binary
-
-	annotation PBI_NavigationStepName = Navegação
-
-expression 'Transformar o Arquivo de Exemplo (2)' =
-		let
-		    Fonte = Excel.Workbook(Parâmetro2, null, true),
-		    fOrcado_Table = Fonte{[Item="fOrcado",Kind="Table"]}[Data]
-		in
-		    fOrcado_Table
-	lineageTag: 8e1d8610-61a4-4b2e-a2f1-3692769f4716
-	queryGroup: Orcado
-
-	annotation PBI_ResultType = Table
-
-expression 'Arquivo de Amostra (2)' =
-		let
-		    Fonte = Folder.Files("\\192.168.0.8\Sys1\Home\BiPowerBI\PB Lopes\Resultado Gerencial\Orcado"),
-		    Navegação1 = Fonte{0}[Content]
-		in
-		    Navegação1
-	lineageTag: 940fec1f-3b8e-4afa-8ef9-830d0f96d8f5
-	queryGroup: 'Orcado\Consultas Auxiliares'
-
-	annotation PBI_ResultType = Binary
-
-	annotation PBI_NavigationStepName = Navegação
-
-expression 'Transformar Arquivo (2)' =
-		let
-		    Fonte = (Parâmetro2 as binary) => let
-		    Fonte = Excel.Workbook(Parâmetro2, null, true),
-		    fOrcado_Table = Fonte{[Item="fOrcado",Kind="Table"]}[Data]
-		in
-		    fOrcado_Table
-		in
-		    Fonte
-	mAttributes: [ FunctionQueryBinding = "{""exemplarFormulaName"":""Transformar o Arquivo de Exemplo (2)""}" ]
-	lineageTag: 8ed3e1a3-9780-4470-a8e4-4bf46be0803f
-	queryGroup: 'Orcado\Consultas Auxiliares'
-
-	annotation PBI_ResultType = Function
-
 expression RealizadoComCentroCusto =
 		let
 		    Fonte = Folder.Files("\\192.168.0.8\Sys1\Home\BiPowerBI\PB Lopes\Resultado Gerencial\Realizado\Realizado\ContasComCentroCusto"),
@@ -206,51 +159,6 @@ expression 'Transformar Arquivo (4)' =
 	mAttributes: [ FunctionQueryBinding = "{""exemplarFormulaName"":""Transformar o Arquivo de Exemplo (4)""}" ]
 	lineageTag: 3ee3edc6-7bb7-4c1c-bd72-189d3cd497e2
 	queryGroup: 'Realizado Sem Centro de Custo\Consultas Auxiliares'
-
-	annotation PBI_ResultType = Function
-
-expression Parâmetro5 = #"Arquivo de Amostra (5)" meta [IsParameterQuery=true, BinaryIdentifier=#"Arquivo de Amostra (5)", Type="Binary", IsParameterQueryRequired=true]
-	lineageTag: a85d744e-184f-4947-ad6b-51bf724719b2
-	queryGroup: 'Orçado Projeção\Consultas Auxiliares'
-
-	annotation PBI_ResultType = Binary
-
-expression 'Transformar o Arquivo de Exemplo (5)' =
-		let
-		    Fonte = Excel.Workbook(Parâmetro5, null, true),
-		    fOrcado_Table = Fonte{[Item="fOrcado",Kind="Table"]}[Data]
-		in
-		    fOrcado_Table
-	lineageTag: 484d9364-3a6c-4047-8c86-b3596f682d99
-	queryGroup: 'Orçado Projeção'
-
-	annotation PBI_ResultType = Table
-
-expression 'Arquivo de Amostra (5)' =
-		let
-		    Fonte = Folder.Files("\\192.168.0.8\Sys1\Home\BiPowerBI\PB Lopes\Resultado Gerencial\Orçado Projeção"),
-		    Navegação1 = Fonte{0}[Content]
-		in
-		    Navegação1
-	lineageTag: 7ee96058-f048-456d-bac1-740be24fa7b0
-	queryGroup: 'Orçado Projeção\Consultas Auxiliares'
-
-	annotation PBI_ResultType = Binary
-
-	annotation PBI_NavigationStepName = Navegação
-
-expression 'Transformar Arquivo (5)' =
-		let
-		    Fonte = (Parâmetro5 as binary) => let
-		    Fonte = Excel.Workbook(Parâmetro5, null, true),
-		    fOrcado_Table = Fonte{[Item="fOrcado",Kind="Table"]}[Data]
-		in
-		    fOrcado_Table
-		in
-		    Fonte
-	mAttributes: [ FunctionQueryBinding = "{""exemplarFormulaName"":""Transformar o Arquivo de Exemplo (5)""}" ]
-	lineageTag: 93e94673-911e-4171-a726-43c7a68dd943
-	queryGroup: 'Orçado Projeção\Consultas Auxiliares'
 
 	annotation PBI_ResultType = Function
 

@@ -2,22 +2,6 @@ relationship a173e6c3-e148-45d6-8108-ee16005c0744
 	fromColumn: dPlanoContas.GRUPO_DRE
 	toColumn: dEstDRE.GRUPO_DRE
 
-relationship 88066d06-d91b-40f8-bc31-00f88f04b69e
-	fromColumn: fOrcado.COD_CASA
-	toColumn: dCasa.COD_CASA
-
-relationship d69515a9-9d17-4b9b-abec-425462f8cfcf
-	fromColumn: fOrcado.COD_CENTRO_CUSTO
-	toColumn: dCentroCusto.COD_CENTRO_CUSTO
-
-relationship 68f7f324-b8a0-492c-ba4d-b31596c9594f
-	fromColumn: fOrcado.DATA
-	toColumn: aCalendario.Data
-
-relationship 92e3a93c-4c47-4548-b853-c1f6f3d9c9ea
-	fromColumn: fOrcado.CONTA_CONTABIL
-	toColumn: dPlanoContas.CONTA_CONTABIL
-
 relationship 3f1fddbb-3fa1-4b2a-9b89-c8ce4be60073
 	fromColumn: fAjustesGerenciais.'COD_CENTRO CUSTO'
 	toColumn: dCentroCusto.COD_CENTRO_CUSTO
@@ -62,80 +46,8 @@ relationship 4de9dbf5-0af1-476d-a4a1-4c99acd71ea3
 	fromColumn: fRlzFinDeprecAmortEstorno.COD_CASA
 	toColumn: dCasa.COD_CASA
 
-relationship be6f5fde-e6ce-47be-9066-6750d37e5ae8
-	fromColumn: fOrcFinEstorno.COD_CASA
-	toColumn: dCasa.COD_CASA
-
-relationship 8af5bfb7-1d0d-405a-9fe9-6493a12deacb
-	fromColumn: fOrcFinEstorno.COD_CENTRO_CUSTO
-	toColumn: dCentroCusto.COD_CENTRO_CUSTO
-
-relationship 877ca60e-1d84-4a47-90eb-67ab578007b0
-	fromColumn: fOrcFinEstorno.DATA
-	toColumn: aCalendario.Data
-
 relationship 8546c62c-236a-48a3-a35f-e3bc514e6e62
 	fromColumn: fAjustesGerenciais.CONTA_CONTABIL
-	toColumn: dPlanoContas.CONTA_CONTABIL
-
-relationship a3cc52ab-280d-4b4a-bc9f-f81048f13231
-	fromColumn: fOrcFinEstorno.CONTA_CONTABIL
-	toColumn: dPlanoContas.CONTA_CONTABIL
-
-relationship 2bd849ac-d928-466f-a974-851f90d33418
-	fromColumn: fOrcadoProjecao.COD_CASA
-	toColumn: dCasa.COD_CASA
-
-relationship afc40be0-1685-4b5d-a654-7d56d3d1ad02
-	fromColumn: fOrcProjecaoFinEstorno.COD_CASA
-	toColumn: dCasa.COD_CASA
-
-relationship e8bfdc17-5cf0-433f-b300-2884d1c7883a
-	fromColumn: fOrcadoProjecao.COD_CENTRO_CUSTO
-	toColumn: dCentroCusto.COD_CENTRO_CUSTO
-
-relationship b7bc2831-a305-4020-a28c-ac00916045ac
-	fromColumn: fOrcProjecaoFinEstorno.COD_CENTRO_CUSTO
-	toColumn: dCentroCusto.COD_CENTRO_CUSTO
-
-relationship c4a5fffc-cdf8-4e04-8dd4-d25c7002a113
-	fromColumn: fOrcadoProjecao.CONTA_CONTABIL
-	toColumn: dPlanoContas.CONTA_CONTABIL
-
-relationship a5a932a5-f4a6-43cb-8313-78b9c925e460
-	fromColumn: fOrcProjecaoFinEstorno.CONTA_CONTABIL
-	toColumn: dPlanoContas.CONTA_CONTABIL
-
-relationship 188aa310-daed-4bcf-9ab5-be4687fd95dd
-	fromColumn: fOrcadoProjecao.DATA
-	toColumn: aCalendario.Data
-
-relationship eb80eebb-937b-43ab-b5bb-e4470f914b8b
-	fromColumn: fOrcProjecaoFinEstorno.DATA
-	toColumn: aCalendario.Data
-
-relationship ff5f5d5f-7b62-16c3-c210-0011b5daea5c
-	fromColumn: f_Dados_BP_Rlz.DATA
-	toColumn: aCalendario.Data
-
-relationship AutoDetected_205fff71-7e96-4d11-98c6-f49c59101547
-	fromColumn: fOrcadoProjecao500.COD_CASA
-	toColumn: dCasa.COD_CASA
-
-relationship AutoDetected_5b1d11ef-e7ac-4323-bda8-70a4146b7897
-	fromColumn: fOrcadoProjecao500.CONTA_CONTABIL
-	toColumn: dPlanoContas.CONTA_CONTABIL
-
-relationship AutoDetected_2ed8b17c-b1ee-4313-ad97-d9e51e807033
-	fromColumn: fOrcProjecaoFinEstorno500.COD_CASA
-	toColumn: dCasa.COD_CASA
-
-relationship AutoDetected_f8587a25-92ab-484e-8972-5198421e55a6
-	fromColumn: fOrcProjecaoFinEstorno500.COD_CENTRO_CUSTO
-	toColumn: dCentroCusto.COD_CENTRO_CUSTO
-
-relationship AutoDetected_1a87d852-0529-4e1e-aee3-8e35567b926c
-	fromColumn: fOrcProjecaoFinEstorno500.CONTA_CONTABIL
 	toColumn: dPlanoContas.CONTA_CONTABIL
 
 relationship AutoDetected_ca934610-2cc3-4f10-af1b-a76f88c02473

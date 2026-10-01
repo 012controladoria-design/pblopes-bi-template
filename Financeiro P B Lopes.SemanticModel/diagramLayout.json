@@ -4,14 +4,14 @@
     {
       "ordinal": 0,
       "scrollPosition": {
-        "x": 5967.1485178781259,
+        "x": 5967.148517878126,
         "y": 0
       },
       "nodes": [
         {
           "location": {
             "x": 1329.703758575155,
-            "y": 551.90833038101073
+            "y": 551.9083303810107
           },
           "nodeIndex": "dCentroCusto",
           "nodeLineageTag": "eb514332-ea03-4df6-9fd5-e933d6bcf763",
@@ -24,7 +24,7 @@
         {
           "location": {
             "x": 0,
-            "y": 387.30010608605647
+            "y": 387.3001060860565
           },
           "nodeIndex": "dEstDRE",
           "size": {
@@ -60,7 +60,7 @@
         },
         {
           "location": {
-            "x": 342.38094302554032,
+            "x": 342.3809430255403,
             "y": 224.64390962671905
           },
           "nodeIndex": "fRealizado",
@@ -72,21 +72,8 @@
         },
         {
           "location": {
-            "x": 680.38505729221447,
-            "y": 210.4996859802248
-          },
-          "nodeIndex": "fOrcado",
-          "nodeLineageTag": "4638fc1c-508e-4424-bb5a-c0428b0eaa35",
-          "size": {
-            "height": 200,
-            "width": 234
-          },
-          "zIndex": 31
-        },
-        {
-          "location": {
-            "x": 343.41041257367368,
-            "y": 798.05842437444346
+            "x": 343.4104125736737,
+            "y": 798.0584243744435
           },
           "nodeIndex": "fAjustesGerenciais",
           "size": {
@@ -98,7 +85,7 @@
         {
           "location": {
             "x": 337.21198428290774,
-            "y": 507.74803536345769
+            "y": 507.7480353634577
           },
           "nodeIndex": "fRlzFinDeprecAmortEstorno",
           "size": {
@@ -109,20 +96,8 @@
         },
         {
           "location": {
-            "x": 679.23123772102167,
-            "y": 515.98379174852653
-          },
-          "nodeIndex": "fOrcFinEstorno",
-          "size": {
-            "height": 212.61296660117887,
-            "width": 234
-          },
-          "zIndex": 34
-        },
-        {
-          "location": {
             "x": 1707.6731080420593,
-            "y": 18.750000000000028
+            "y": 18.75000000000003
           },
           "nodeIndex": "_Medidas",
           "size": {
@@ -130,84 +105,6 @@
             "width": 234
           },
           "zIndex": 1
-        },
-        {
-          "location": {
-            "x": 1004.78786214042,
-            "y": 214.96158923640206
-          },
-          "nodeIndex": "fOrcadoProjecao",
-          "nodeLineageTag": "976668cf-19de-4a6d-9fa3-3378f9f33f02",
-          "size": {
-            "height": 200,
-            "width": 234
-          },
-          "zIndex": 2
-        },
-        {
-          "location": {
-            "x": 982.23048509123987,
-            "y": 521.51896628558234
-          },
-          "nodeIndex": "fOrcProjecaoFinEstorno",
-          "nodeLineageTag": "a031d265-354b-4337-84b2-945b2f9b68ea",
-          "size": {
-            "height": 200,
-            "width": 234
-          },
-          "zIndex": 3
-        },
-        {
-          "location": {
-            "x": 1659.6731080420593,
-            "y": 430.1747039905004
-          },
-          "nodeIndex": "dTipoOrçamento",
-          "nodeLineageTag": "f534b0af-609b-4ba2-9ef1-96e2a14b3c9a",
-          "size": {
-            "height": 104,
-            "width": 234
-          },
-          "zIndex": 4
-        },
-        {
-          "location": {
-            "x": 850.23048509123976,
-            "y": 801.25667120361527
-          },
-          "nodeIndex": "f_Dados_BP_Rlz",
-          "nodeLineageTag": "34b6de87-ccbb-4034-b979-4258ed98fc43",
-          "size": {
-            "height": 152,
-            "width": 234
-          },
-          "zIndex": 5
-        },
-        {
-          "location": {
-            "x": 1991.6731080420593,
-            "y": 408.40421218722173
-          },
-          "nodeIndex": "fOrcadoProjecao500",
-          "nodeLineageTag": "65b8e63a-7f95-4d77-8fab-671d6ec87d91",
-          "size": {
-            "height": 200,
-            "width": 234
-          },
-          "zIndex": 6
-        },
-        {
-          "location": {
-            "x": 2275.6731080420595,
-            "y": 408.40421218722173
-          },
-          "nodeIndex": "fOrcProjecaoFinEstorno500",
-          "nodeLineageTag": "6368b04d-60b1-4dfb-b29e-992595ed1843",
-          "size": {
-            "height": 200,
-            "width": 234
-          },
-          "zIndex": 7
         },
         {
           "location": {
@@ -343,7 +240,7 @@
         },
         {
           "location": {
-            "x": 6257.4435998453382,
+            "x": 6257.443599845338,
             "y": 0
           },
           "nodeIndex": "pPortador",
@@ -392,8 +289,8 @@
         },
         {
           "location": {
-            "x": 7149.5747473863221,
-            "y": 34.428802351156151
+            "x": 7149.574747386322,
+            "y": 34.42880235115615
           },
           "nodeIndex": "pEmitente",
           "nodeLineageTag": "f405ec99-8680-4657-9f51-99c288d5b39b",
@@ -417,7 +314,7 @@
         },
         {
           "location": {
-            "x": 7433.5747473863221,
+            "x": 7433.574747386322,
             "y": 399.02921218722173
           },
           "nodeIndex": "dCalendario",
@@ -441,7 +338,7 @@
         },
         {
           "location": {
-            "x": 7717.5747473863221,
+            "x": 7717.574747386322,
             "y": 399.02921218722173
           },
           "nodeIndex": "dEspecieCR",
