@@ -145,6 +145,11 @@
         }
       ]
     },
-    "drillFilterOtherVisuals": true
+    "drillFilterOtherVisuals": true,
+    "syncGroup": {
+      "groupName": "CASA",
+      "fieldChanges": true,
+      "filterChanges": true
+    }
   }
 }

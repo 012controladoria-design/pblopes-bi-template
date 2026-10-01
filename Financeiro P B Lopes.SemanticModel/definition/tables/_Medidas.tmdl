@@ -334,6 +334,60 @@ table _Medidas
 
 		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
 
+	measure 'CR Valor Original (vencidos)' =
+			
+			IF ( NOT ISBLANK ( [CR Vencido] ), SUM ( fTitulosReceber[valor_original] ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Contas a Receber
+		lineageTag: 070e9e40-232e-4f2e-b4dd-32bf079e5fa5
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'CR Valor Original (a vencer)' =
+			
+			IF ( NOT ISBLANK ( [CR A Vencer] ), SUM ( fTitulosReceber[valor_original] ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Contas a Receber
+		lineageTag: 463bc30b-4288-49b4-b8a6-e470a7c1ab7b
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'CR Valor Original (antecipações)' =
+			
+			IF ( NOT ISBLANK ( [CR Antecipações de Clientes] ), SUM ( fTitulosReceber[valor_original] ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Contas a Receber
+		lineageTag: 37e9afe1-ec0d-4ee9-a0b9-8c0fe6825f29
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'CP Valor Original (vencidos)' =
+			
+			IF ( NOT ISBLANK ( [CP Vencido] ), SUM ( fTitulosPagar[valor_original] ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Contas a Pagar
+		lineageTag: d50834ac-6e13-4754-a42f-165470e89560
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'CP Valor Original (a vencer)' =
+			
+			IF ( NOT ISBLANK ( [CP A Vencer] ), SUM ( fTitulosPagar[valor_original] ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Contas a Pagar
+		lineageTag: afe51c99-13fa-485a-ba9f-88ac817883d1
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'CP Valor Original (adiantamentos)' =
+			
+			IF ( NOT ISBLANK ( [CP Adiantamentos a Fornecedores] ), SUM ( fTitulosPagar[valor_original] ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Contas a Pagar
+		lineageTag: b4c2421d-310d-4235-a9aa-afac3f6044b5
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
 	partition _Medidas-e0807ed9-830e-46df-b71f-9de294b53a18 = m
 		mode: import
 		queryGroup: Medidas

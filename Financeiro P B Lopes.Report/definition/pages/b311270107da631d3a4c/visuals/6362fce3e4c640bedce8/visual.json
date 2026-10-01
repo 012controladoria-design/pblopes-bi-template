@@ -193,6 +193,11 @@
         }
       ]
     },
-    "drillFilterOtherVisuals": true
+    "drillFilterOtherVisuals": true,
+    "syncGroup": {
+      "groupName": "ESPECIE_CR",
+      "fieldChanges": true,
+      "filterChanges": true
+    }
   }
 }
