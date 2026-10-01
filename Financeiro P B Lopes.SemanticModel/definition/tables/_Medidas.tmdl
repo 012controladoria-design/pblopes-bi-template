@@ -388,6 +388,32 @@ table _Medidas
 
 		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
 
+	measure 'DRE Detalhe Título' =
+			
+			VAR _Item =
+			    COALESCE (
+			        SELECTEDVALUE ( dPlanoContas[CONTA_CONTABIL] ),
+			        SELECTEDVALUE ( dPlanoContas[SUB_GRUPO] ),
+			        SELECTEDVALUE ( dPlanoContas[GRUPO] ),
+			        SELECTEDVALUE ( dEstDRE[GRUPO_DRE] ),
+			        "Lançamentos"
+			    )
+			VAR _Mes = SELECTEDVALUE ( aCalendario[Nome do Mês] )
+			RETURN
+			    _Item & IF ( NOT ISBLANK ( _Mes ), " · " & UPPER ( _Mes ) )
+		displayFolder: Detalhe DRE
+		lineageTag: bc263b31-e0ea-4bf2-a6c0-d6ca87a717e3
+
+	measure 'DRE Detalhe Resumo' =
+			
+			VAR _Qtd = [DRE Qtd Lançamentos]
+			RETURN
+			    IF ( ISBLANK ( _Qtd ),
+			        "Nenhum lançamento encontrado no Datasul para esta linha",
+			        FORMAT ( _Qtd, "#,0" ) & " lançamento(s) · total R$ " & FORMAT ( [DRE Lançamentos], "#,0.00" ) )
+		displayFolder: Detalhe DRE
+		lineageTag: c79f617d-cb95-4bdc-b5c0-f9660c4ff5e6
+
 	partition _Medidas-e0807ed9-830e-46df-b71f-9de294b53a18 = m
 		mode: import
 		queryGroup: Medidas
