@@ -1,0 +1,91 @@
+table dPlanoContas
+	lineageTag: 5bcc5f2e-782d-4436-b6ff-bfc615f7a50e
+
+	column COD_CONTA_CONTABIL
+		dataType: string
+		lineageTag: 4c3f66a1-d136-4461-ba2e-f1e397b0f935
+		summarizeBy: none
+		sourceColumn: COD_CONTA_CONTABIL
+
+		annotation SummarizationSetBy = Automatic
+
+	column COD_ALTERNATIVA_CONTA
+		dataType: string
+		lineageTag: e9b0eba7-33c9-45b5-b953-43f0e74d3dc7
+		summarizeBy: none
+		sourceColumn: COD_ALTERNATIVA_CONTA
+
+		annotation SummarizationSetBy = Automatic
+
+	column DESCRICAO_CONTA_CONTABIL
+		dataType: string
+		lineageTag: 22da7009-28e3-484f-8ad8-10a5188b074e
+		summarizeBy: none
+		sourceColumn: DESCRICAO_CONTA_CONTABIL
+
+		annotation SummarizationSetBy = Automatic
+
+	column CONTA_CONTABIL
+		dataType: string
+		lineageTag: 5fc01877-681d-40a9-a912-42893def1b97
+		summarizeBy: none
+		sourceColumn: CONTA_CONTABIL
+
+		annotation SummarizationSetBy = Automatic
+
+	column TIPO
+		dataType: string
+		lineageTag: b8fd5bda-a5b6-46c1-ac39-2ea76204abe2
+		summarizeBy: none
+		sourceColumn: TIPO
+
+		annotation SummarizationSetBy = Automatic
+
+	column SUB_GRUPO
+		dataType: string
+		lineageTag: 1955e643-9f33-4e2b-838c-532c0e966624
+		summarizeBy: none
+		sourceColumn: SUB_GRUPO
+
+		annotation SummarizationSetBy = Automatic
+
+	column GRUPO
+		dataType: string
+		lineageTag: 28597975-7178-4c22-ab8e-7a9a008c6163
+		summarizeBy: none
+		sourceColumn: GRUPO
+
+		annotation SummarizationSetBy = Automatic
+
+	column GRUPO_DRE
+		dataType: string
+		lineageTag: 706a1dbe-4af5-4c11-8ee3-74e654af46a7
+		summarizeBy: none
+		sourceColumn: GRUPO_DRE
+
+		annotation SummarizationSetBy = Automatic
+
+	column TIPO_DRE
+		dataType: string
+		lineageTag: f8b8402a-eeb7-476b-8964-6104dcc04d5c
+		summarizeBy: none
+		sourceColumn: TIPO_DRE
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dPlanoContas-8187a12a-6671-48cd-b5a0-14b8a2820658 = m
+		mode: import
+		source =
+				let
+				    Fonte = Excel.Workbook(File.Contents("\\192.168.0.8\Sys1\Home\BiPowerBI\PB Lopes\Resultado Gerencial\Tabelas_DRE.xlsx"), null, true),
+				    dPlanoContas_Table = Fonte{[Item="dPlanoContas",Kind="Table"]}[Data],
+				    #"Tipo Alterado" = Table.TransformColumnTypes(dPlanoContas_Table,{{"COD_CONTA_CONTABIL", type text}, {"COD_ALTERNATIVA_CONTA", type text}, {"DESCRICAO_CONTA_CONTABIL", type text}, {"CONTA_CONTABIL", type text}, {"TIPO", type text}, {"SUB_GRUPO", type text}, {"GRUPO", type text}, {"GRUPO_DRE", type text}}),
+				    #"Coluna Condicional Adicionada" = Table.AddColumn(#"Tipo Alterado", "TIPO_DRE", each if [TIPO] = "+" then "RECEITA" else if [TIPO] = "-" then "DESPESA / CUSTO" else null),
+				    #"Tipo Alterado1" = Table.TransformColumnTypes(#"Coluna Condicional Adicionada",{{"TIPO_DRE", type text}})
+				in
+				    #"Tipo Alterado1"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navegação
+

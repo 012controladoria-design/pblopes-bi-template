@@ -1,0 +1,256 @@
+expression Parâmetro2 = #"Arquivo de Amostra (2)" meta [IsParameterQuery=true, BinaryIdentifier=#"Arquivo de Amostra (2)", Type="Binary", IsParameterQueryRequired=true]
+	lineageTag: 5071f9f6-840f-400a-b8e8-943bdea26234
+	queryGroup: 'Orcado\Consultas Auxiliares'
+
+	annotation PBI_ResultType = Binary
+
+	annotation PBI_NavigationStepName = Navegação
+
+expression 'Transformar o Arquivo de Exemplo (2)' =
+		let
+		    Fonte = Excel.Workbook(Parâmetro2, null, true),
+		    fOrcado_Table = Fonte{[Item="fOrcado",Kind="Table"]}[Data]
+		in
+		    fOrcado_Table
+	lineageTag: 8e1d8610-61a4-4b2e-a2f1-3692769f4716
+	queryGroup: Orcado
+
+	annotation PBI_ResultType = Table
+
+expression 'Arquivo de Amostra (2)' =
+		let
+		    Fonte = Folder.Files("\\192.168.0.8\Sys1\Home\BiPowerBI\PB Lopes\Resultado Gerencial\Orcado"),
+		    Navegação1 = Fonte{0}[Content]
+		in
+		    Navegação1
+	lineageTag: 940fec1f-3b8e-4afa-8ef9-830d0f96d8f5
+	queryGroup: 'Orcado\Consultas Auxiliares'
+
+	annotation PBI_ResultType = Binary
+
+	annotation PBI_NavigationStepName = Navegação
+
+expression 'Transformar Arquivo (2)' =
+		let
+		    Fonte = (Parâmetro2 as binary) => let
+		    Fonte = Excel.Workbook(Parâmetro2, null, true),
+		    fOrcado_Table = Fonte{[Item="fOrcado",Kind="Table"]}[Data]
+		in
+		    fOrcado_Table
+		in
+		    Fonte
+	mAttributes: [ FunctionQueryBinding = "{""exemplarFormulaName"":""Transformar o Arquivo de Exemplo (2)""}" ]
+	lineageTag: 8ed3e1a3-9780-4470-a8e4-4bf46be0803f
+	queryGroup: 'Orcado\Consultas Auxiliares'
+
+	annotation PBI_ResultType = Function
+
+expression RealizadoComCentroCusto =
+		let
+		    Fonte = Folder.Files("\\192.168.0.8\Sys1\Home\BiPowerBI\PB Lopes\Resultado Gerencial\Realizado\Realizado\ContasComCentroCusto"),
+		    #"Arquivos Ocultos Filtrados1" = Table.SelectRows(Fonte, each [Attributes]?[Hidden]? <> true),
+		    #"Invocar Função Personalizada1" = Table.AddColumn(#"Arquivos Ocultos Filtrados1", "Transformar Arquivo (3)", each #"Transformar Arquivo (3)"([Content])),
+		    #"Colunas Renomeadas1" = Table.RenameColumns(#"Invocar Função Personalizada1", {"Name", "Nome da Origem"}),
+		    #"Outras Colunas Removidas1" = Table.SelectColumns(#"Colunas Renomeadas1", {"Nome da Origem", "Transformar Arquivo (3)"}),
+		    #"Coluna de Tabela Expandida1" = Table.ExpandTableColumn(#"Outras Colunas Removidas1", "Transformar Arquivo (3)", Table.ColumnNames(#"Transformar Arquivo (3)"(#"Arquivo de Amostra (3)"))),
+		    #"Outras Colunas Removidas" = Table.SelectColumns(#"Coluna de Tabela Expandida1",{"Nome da Origem", "Column1", "Column2", "Column3", "Column4", "Column5", "Column6", "Column7", "Column8", "Column9", "Column10", "Column11", "Column12", "Column13"}),
+		    #"Linhas Filtradas2" = Table.SelectRows(#"Outras Colunas Removidas", each not Text.StartsWith([Column1], "PBL")),
+		    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(#"Linhas Filtradas2", [PromoteAllScalars=true]),
+		    #"Colunas Renomeadas" = Table.RenameColumns(#"Cabeçalhos Promovidos",{{"2021.xlsx", "ANO"}}),
+		    #"Linhas Filtradas1" = Table.SelectRows(#"Colunas Renomeadas", each ([#"CONTA_CONTABIL!"] <> "CONTA_CONTABIL!")),
+		    #"Coluna Condicional Adicionada" = Table.AddColumn(#"Linhas Filtradas1", "CONTA_CONTABIL", each if Text.StartsWith([#"CONTA_CONTABIL!"], "3.") then [#"CONTA_CONTABIL!"] else if Text.StartsWith([#"CONTA_CONTABIL!"], "4.") then [#"CONTA_CONTABIL!"] else if Text.StartsWith([#"CONTA_CONTABIL!"], "5.") then [#"CONTA_CONTABIL!"] else null),
+		    #"Coluna Condicional Adicionada1" = Table.AddColumn(#"Coluna Condicional Adicionada", "COD_CASA", each if Text.Contains([#"CONTA_CONTABIL!"], "LTDA") then [#"CONTA_CONTABIL!"] else if Text.Contains([#"CONTA_CONTABIL!"], "Ltda") then [#"CONTA_CONTABIL!"] else null),
+		    #"Personalização Adicionada" = Table.AddColumn(#"Coluna Condicional Adicionada1", "COD_CENTRO_CUSTO", each if [CONTA_CONTABIL] is null and [COD_CASA] is null then [#"CONTA_CONTABIL!"] else null),
+		    #"Preenchido Abaixo" = Table.FillDown(#"Personalização Adicionada",{"CONTA_CONTABIL", "COD_CASA"}),
+		    #"Linhas Filtradas" = Table.SelectRows(#"Preenchido Abaixo", each ([COD_CENTRO_CUSTO] <> null)),
+		    #"Colunas Não Dinâmicas" = Table.UnpivotOtherColumns(#"Linhas Filtradas", {"ANO", "CONTA_CONTABIL!", "CONTA_CONTABIL", "COD_CASA", "COD_CENTRO_CUSTO"}, "Atributo", "Valor"),
+		    #"Primeiros caracteres extraídos" = Table.TransformColumns(#"Colunas Não Dinâmicas", {{"Atributo", each Text.Start(_, 2), type text}}),
+		    #"Primeiros caracteres extraídos1" = Table.TransformColumns(#"Primeiros caracteres extraídos", {{"ANO", each Text.Start(_, 4), type text}}),
+		    #"Primeiros caracteres extraídos2" = Table.TransformColumns(#"Primeiros caracteres extraídos1", {{"COD_CASA", each Text.Start(_, 3), type text}}),
+		    #"Primeiros caracteres extraídos3" = Table.TransformColumns(#"Primeiros caracteres extraídos2", {{"COD_CENTRO_CUSTO", each Text.Start(_, 5), type text}}),
+		    #"Personalização Adicionada1" = Table.AddColumn(#"Primeiros caracteres extraídos3", "DATA", each "01/"&[Atributo]&"/"&[ANO]),
+		    #"Outras Colunas Removidas2" = Table.SelectColumns(#"Personalização Adicionada1",{"CONTA_CONTABIL", "COD_CASA", "COD_CENTRO_CUSTO", "Valor", "DATA"}),
+		    #"Colunas Renomeadas2" = Table.RenameColumns(#"Outras Colunas Removidas2",{{"Valor", "TOTAL"}}),
+		    #"Tipo Alterado" = Table.TransformColumnTypes(#"Colunas Renomeadas2",{{"CONTA_CONTABIL", type text}, {"COD_CASA", type text}, {"COD_CENTRO_CUSTO", type text}, {"TOTAL", type number}, {"DATA", type date}}),
+		    #"Colunas Reordenadas" = Table.ReorderColumns(#"Tipo Alterado",{"COD_CASA", "COD_CENTRO_CUSTO", "CONTA_CONTABIL", "DATA", "TOTAL"})
+		in
+		    #"Colunas Reordenadas"
+	lineageTag: b53d1f13-67f3-4f80-ac66-6758804a9417
+	queryGroup: 'Consultas Auxiliares'
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+
+expression RealizadoSemCentroCusto =
+		let
+		    Fonte = Folder.Files("\\192.168.0.8\Sys1\Home\BiPowerBI\PB Lopes\Resultado Gerencial\Realizado\Realizado\ContasSemCentroCusto"),
+		    #"Arquivos Ocultos Filtrados1" = Table.SelectRows(Fonte, each [Attributes]?[Hidden]? <> true),
+		    #"Invocar Função Personalizada1" = Table.AddColumn(#"Arquivos Ocultos Filtrados1", "Transformar Arquivo (4)", each #"Transformar Arquivo (4)"([Content])),
+		    #"Colunas Renomeadas1" = Table.RenameColumns(#"Invocar Função Personalizada1", {"Name", "Nome da Origem"}),
+		    #"Outras Colunas Removidas1" = Table.SelectColumns(#"Colunas Renomeadas1",{"Nome da Origem", "Transformar Arquivo (4)"}),
+		    #"Coluna de Tabela Expandida1" = Table.ExpandTableColumn(#"Outras Colunas Removidas1", "Transformar Arquivo (4)", Table.ColumnNames(#"Transformar Arquivo (4)"(#"Arquivo de Amostra (4)"))),
+		    #"Outras Colunas Removidas" = Table.SelectColumns(#"Coluna de Tabela Expandida1",{"Nome da Origem", "Column1", "Column2", "Column3", "Column4", "Column5", "Column6", "Column7", "Column8", "Column9", "Column10", "Column11", "Column12", "Column13"}),
+		    #"Linhas Filtradas2" = Table.SelectRows(#"Outras Colunas Removidas", each not Text.StartsWith([Column1], "PBL") and [Column1] <> " "),
+		    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(#"Linhas Filtradas2", [PromoteAllScalars=true]),
+		    #"Colunas Renomeadas" = Table.RenameColumns(#"Cabeçalhos Promovidos",{{"2021.xlsx", "ANO"}, {"CONTA_CONTABIL!", "COD_CASA"}}),
+		    #"Linhas Filtradas3" = Table.SelectRows(#"Colunas Renomeadas", each ([#"COD_CASA"] <> "CONTA_CONTABIL!")),
+		    #"Coluna Condicional Adicionada" = Table.AddColumn(#"Linhas Filtradas3", "CONTA_CONTABIL", each if Text.StartsWith([COD_CASA], "3.") then [COD_CASA] else if Text.StartsWith([COD_CASA], "5.") then [COD_CASA] else if Text.StartsWith([COD_CASA], "8.") then [COD_CASA] else null),
+		    #"Preenchido Abaixo" = Table.FillDown(#"Coluna Condicional Adicionada",{"CONTA_CONTABIL"}),
+		    #"Linhas Filtradas1" = Table.SelectRows(#"Preenchido Abaixo", each Text.StartsWith([COD_CASA], "101") or Text.StartsWith([COD_CASA], "102") or Text.StartsWith([COD_CASA], "103") or Text.StartsWith([COD_CASA], "104") or Text.StartsWith([COD_CASA], "105") or Text.StartsWith([COD_CASA], "106") or Text.StartsWith([COD_CASA], "107") or Text.StartsWith([COD_CASA], "108") or Text.StartsWith([COD_CASA], "109") or Text.StartsWith([COD_CASA], "110") or Text.StartsWith([COD_CASA], "111") or Text.StartsWith([COD_CASA], "112") or Text.StartsWith([COD_CASA], "113") or Text.StartsWith([COD_CASA], "114") or Text.StartsWith([COD_CASA], "115") or Text.StartsWith([COD_CASA], "116") or Text.StartsWith([COD_CASA], "117")),
+		    #"Colunas Não Dinâmicas" = Table.UnpivotOtherColumns(#"Linhas Filtradas1", {"ANO", "COD_CASA", "CONTA_CONTABIL"}, "Atributo", "Valor"),
+		    #"Primeiros caracteres extraídos" = Table.TransformColumns(#"Colunas Não Dinâmicas", {{"Atributo", each Text.Start(_, 2), type text}}),
+		    #"Primeiros caracteres extraídos1" = Table.TransformColumns(#"Primeiros caracteres extraídos", {{"ANO", each Text.Start(_, 4), type text}}),
+		    #"Primeiros caracteres extraídos2" = Table.TransformColumns(#"Primeiros caracteres extraídos1", {{"COD_CASA", each Text.Start(_, 3), type text}}),
+		    #"Personalização Adicionada" = Table.AddColumn(#"Primeiros caracteres extraídos2", "DATA", each "01/"&[Atributo]&"/"&[ANO]),
+		    #"Outras Colunas Removidas2" = Table.SelectColumns(#"Personalização Adicionada",{"COD_CASA", "CONTA_CONTABIL", "Valor", "DATA"}),
+		    #"Colunas Renomeadas2" = Table.RenameColumns(#"Outras Colunas Removidas2",{{"Valor", "TOTAL"}}),
+		    #"Personalização Adicionada1" = Table.AddColumn(#"Colunas Renomeadas2", "COD_CENTRO_CUSTO", each if Text.StartsWith([CONTA_CONTABIL], "8.0.2") then 20300 else if Text.StartsWith([CONTA_CONTABIL], "8.0.3") then 20303 else if Text.StartsWith([CONTA_CONTABIL], "8.0.5") then 20306 else 10200),
+		    #"Tipo Alterado" = Table.TransformColumnTypes(#"Personalização Adicionada1",{{"COD_CASA", type text}, {"CONTA_CONTABIL", type text}, {"TOTAL", type number}, {"DATA", type date}, {"COD_CENTRO_CUSTO", type text}}),
+		    #"Colunas Reordenadas" = Table.ReorderColumns(#"Tipo Alterado",{"COD_CASA", "COD_CENTRO_CUSTO", "CONTA_CONTABIL", "DATA", "TOTAL"})
+		in
+		    #"Colunas Reordenadas"
+	lineageTag: 967c0d7f-87f8-4692-a8f7-11f6277feabe
+	queryGroup: 'Consultas Auxiliares'
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+
+expression Parâmetro3 = #"Arquivo de Amostra (3)" meta [IsParameterQuery=true, BinaryIdentifier=#"Arquivo de Amostra (3)", Type="Binary", IsParameterQueryRequired=true]
+	lineageTag: 16c9c2d7-313b-4f8b-912a-4ccb295e8b2f
+	queryGroup: 'Realizado Com Centro de Custo\Consultas Auxiliares'
+
+	annotation PBI_ResultType = Binary
+
+expression 'Transformar o Arquivo de Exemplo (3)' =
+		let
+		    Fonte = Excel.Workbook(Parâmetro3, null, true),
+		    Planilha_Sheet = Fonte{[Item="Planilha",Kind="Sheet"]}[Data]
+		in
+		    Planilha_Sheet
+	lineageTag: 8d73f64b-7bbf-4d5b-b8a2-4909841cc7f6
+	queryGroup: 'Realizado Com Centro de Custo'
+
+	annotation PBI_ResultType = Table
+
+expression 'Arquivo de Amostra (3)' =
+		let
+		    Fonte = Folder.Files("\\192.168.0.8\Sys1\Home\BiPowerBI\PB Lopes\Resultado Gerencial\Realizado\Realizado\ContasComCentroCusto"),
+		    Navegação1 = Fonte{0}[Content]
+		in
+		    Navegação1
+	lineageTag: af5c5f2b-679d-4c57-a65c-db233d075f4d
+	queryGroup: 'Realizado Com Centro de Custo\Consultas Auxiliares'
+
+	annotation PBI_ResultType = Binary
+
+	annotation PBI_NavigationStepName = Navegação
+
+expression 'Transformar Arquivo (3)' =
+		let
+		    Fonte = (Parâmetro3 as binary) => let
+		    Fonte = Excel.Workbook(Parâmetro3, null, true),
+		    Planilha_Sheet = Fonte{[Item="Planilha",Kind="Sheet"]}[Data]
+		in
+		    Planilha_Sheet
+		in
+		    Fonte
+	mAttributes: [ FunctionQueryBinding = "{""exemplarFormulaName"":""Transformar o Arquivo de Exemplo (3)""}" ]
+	lineageTag: 5296deff-d963-4b0d-8dcf-022602ed101d
+	queryGroup: 'Realizado Com Centro de Custo\Consultas Auxiliares'
+
+	annotation PBI_ResultType = Function
+
+expression Parâmetro4 = #"Arquivo de Amostra (4)" meta [IsParameterQuery=true, BinaryIdentifier=#"Arquivo de Amostra (4)", Type="Binary", IsParameterQueryRequired=true]
+	lineageTag: 1babd64b-9412-4dcc-adba-040cc7ea93fb
+	queryGroup: 'Realizado Sem Centro de Custo\Consultas Auxiliares'
+
+	annotation PBI_ResultType = Binary
+
+expression 'Transformar o Arquivo de Exemplo (4)' =
+		let
+		    Fonte = Excel.Workbook(Parâmetro4, null, true),
+		    Planilha_Sheet = Fonte{[Item="Planilha",Kind="Sheet"]}[Data]
+		in
+		    Planilha_Sheet
+	lineageTag: 5ac138ec-3df8-4f38-bf7f-20e37dd2154e
+	queryGroup: 'Realizado Sem Centro de Custo\Consultas Auxiliares'
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navegação
+
+expression 'Arquivo de Amostra (4)' =
+		let
+		    Fonte = Folder.Files("\\192.168.0.8\Sys1\Home\BiPowerBI\\PB Lopes\Resultado Gerencial\Realizado\Realizado\ContasSemCentroCusto"),
+		    Navegação1 = Fonte{0}[Content]
+		in
+		    Navegação1
+	lineageTag: 09799c9f-5e8b-4e2a-a699-f56561b6f588
+	queryGroup: 'Realizado Sem Centro de Custo\Consultas Auxiliares'
+
+	annotation PBI_ResultType = Binary
+
+	annotation PBI_NavigationStepName = Navegação
+
+expression 'Transformar Arquivo (4)' =
+		let
+		    Fonte = (Parâmetro4 as binary) => let
+		    Fonte = Excel.Workbook(Parâmetro4, null, true),
+		    Planilha_Sheet = Fonte{[Item="Planilha",Kind="Sheet"]}[Data]
+		in
+		    Planilha_Sheet
+		in
+		    Fonte
+	mAttributes: [ FunctionQueryBinding = "{""exemplarFormulaName"":""Transformar o Arquivo de Exemplo (4)""}" ]
+	lineageTag: 3ee3edc6-7bb7-4c1c-bd72-189d3cd497e2
+	queryGroup: 'Realizado Sem Centro de Custo\Consultas Auxiliares'
+
+	annotation PBI_ResultType = Function
+
+expression Parâmetro5 = #"Arquivo de Amostra (5)" meta [IsParameterQuery=true, BinaryIdentifier=#"Arquivo de Amostra (5)", Type="Binary", IsParameterQueryRequired=true]
+	lineageTag: a85d744e-184f-4947-ad6b-51bf724719b2
+	queryGroup: 'Orçado Projeção\Consultas Auxiliares'
+
+	annotation PBI_ResultType = Binary
+
+expression 'Transformar o Arquivo de Exemplo (5)' =
+		let
+		    Fonte = Excel.Workbook(Parâmetro5, null, true),
+		    fOrcado_Table = Fonte{[Item="fOrcado",Kind="Table"]}[Data]
+		in
+		    fOrcado_Table
+	lineageTag: 484d9364-3a6c-4047-8c86-b3596f682d99
+	queryGroup: 'Orçado Projeção'
+
+	annotation PBI_ResultType = Table
+
+expression 'Arquivo de Amostra (5)' =
+		let
+		    Fonte = Folder.Files("\\192.168.0.8\Sys1\Home\BiPowerBI\PB Lopes\Resultado Gerencial\Orçado Projeção"),
+		    Navegação1 = Fonte{0}[Content]
+		in
+		    Navegação1
+	lineageTag: 7ee96058-f048-456d-bac1-740be24fa7b0
+	queryGroup: 'Orçado Projeção\Consultas Auxiliares'
+
+	annotation PBI_ResultType = Binary
+
+	annotation PBI_NavigationStepName = Navegação
+
+expression 'Transformar Arquivo (5)' =
+		let
+		    Fonte = (Parâmetro5 as binary) => let
+		    Fonte = Excel.Workbook(Parâmetro5, null, true),
+		    fOrcado_Table = Fonte{[Item="fOrcado",Kind="Table"]}[Data]
+		in
+		    fOrcado_Table
+		in
+		    Fonte
+	mAttributes: [ FunctionQueryBinding = "{""exemplarFormulaName"":""Transformar o Arquivo de Exemplo (5)""}" ]
+	lineageTag: 93e94673-911e-4171-a726-43c7a68dd943
+	queryGroup: 'Orçado Projeção\Consultas Auxiliares'
+
+	annotation PBI_ResultType = Function
+

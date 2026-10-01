@@ -1,0 +1,33 @@
+table dTipoOrçamento
+	lineageTag: f534b0af-609b-4ba2-9ef1-96e2a14b3c9a
+
+	column TIPO
+		dataType: string
+		lineageTag: 2ab8b94d-44d7-415a-96c0-7ad303bec231
+		summarizeBy: none
+		sourceColumn: TIPO
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dTipoOrçamento = m
+		mode: import
+		source = ```
+				let
+				    // Fonte = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i45W8g863O7o4q8QFOKrFKuD4AcE+Xu5Hm4/3OyvFBsLAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [TIPO = _t]),
+				    Fonte = Table.FromRows(
+				        {
+				            {"ORÇADO RTM"},
+				            {"ORÇADO PROJEÇÃO"},
+				            {"ORÇADO PROJEÇÃO 500"}
+				        },
+				        {"TIPO"}
+				    ), 
+				    #"Tipo Alterado" = Table.TransformColumnTypes(Fonte,{{"TIPO", type text}})
+				in
+				    #"Tipo Alterado"
+				```
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navegação
+

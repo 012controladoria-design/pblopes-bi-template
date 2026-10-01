@@ -1,0 +1,148 @@
+table pEstrut_fat
+	lineageTag: f7516a50-8db1-43aa-b36b-193115538bf2
+
+	column id_natureza
+		dataType: string
+		lineageTag: da47a5c5-6bb8-458e-88e4-0594d8a1befb
+		summarizeBy: none
+		sourceColumn: id_natureza
+
+		annotation SummarizationSetBy = Automatic
+
+	column natureza
+		dataType: string
+		lineageTag: 6dd869a6-107a-48fe-b91f-e9d66500b10b
+		summarizeBy: none
+		sourceColumn: natureza
+
+		annotation SummarizationSetBy = Automatic
+
+	column tipo
+		dataType: string
+		lineageTag: 2947e681-c07c-4579-be39-b1169b5dab9a
+		summarizeBy: none
+		sourceColumn: tipo
+
+		annotation SummarizationSetBy = Automatic
+
+	column id_cfop
+		dataType: string
+		lineageTag: edec0a5f-9124-4cab-9842-5990554f9e6f
+		summarizeBy: none
+		sourceColumn: id_cfop
+
+		annotation SummarizationSetBy = Automatic
+
+	column cfop
+		dataType: string
+		lineageTag: 224165c7-0eb5-4710-93d4-fc303b4dd301
+		summarizeBy: none
+		sourceColumn: cfop
+
+		annotation SummarizationSetBy = Automatic
+
+	column considera_contabil
+		dataType: string
+		lineageTag: 1023a3e6-c92d-468d-ad82-a0f467d4a1e4
+		summarizeBy: none
+		sourceColumn: considera_contabil
+
+		annotation SummarizationSetBy = Automatic
+
+	column considera_superacao
+		dataType: string
+		lineageTag: 6a5fbb2f-1252-4270-8ea6-cecd3a0621f1
+		summarizeBy: none
+		sourceColumn: considera_superacao
+
+		annotation SummarizationSetBy = Automatic
+
+	column tipo_faturamento
+		dataType: string
+		lineageTag: 194898ed-8b3f-4ba8-8c0e-36f5d236e62c
+		summarizeBy: none
+		sourceColumn: tipo_faturamento
+
+		annotation SummarizationSetBy = Automatic
+
+	column modalidade
+		dataType: string
+		lineageTag: e98ea3e5-90dd-4d61-9ab0-963972f6483e
+		summarizeBy: none
+		sourceColumn: modalidade
+
+		annotation SummarizationSetBy = Automatic
+
+	column considera_calc_hr_mo
+		dataType: string
+		lineageTag: 0d25a32e-2b5e-42a5-b06a-1c8b19cf7f11
+		summarizeBy: none
+		sourceColumn: considera_calc_hr_mo
+
+		annotation SummarizationSetBy = Automatic
+
+	column cod_conta
+		dataType: string
+		lineageTag: a119b92e-2171-49ee-bf5b-f80909684717
+		summarizeBy: none
+		sourceColumn: cod_conta
+
+		annotation SummarizationSetBy = Automatic
+
+	column conta_contabil
+		dataType: string
+		lineageTag: 97cb5d7e-2f54-445a-84f7-b257fd1a05ff
+		summarizeBy: none
+		sourceColumn: conta_contabil
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'CONSIDERA CONTABIL?'
+		dataType: string
+		lineageTag: 8ebc246e-ffc4-425a-a0c7-7ccacebe719c
+		summarizeBy: none
+		sourceColumn: CONSIDERA CONTABIL?
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'CONSIDERA SUPERACAO?'
+		dataType: string
+		lineageTag: aee896bc-33e3-47ba-ba67-2ceb382a28b7
+		summarizeBy: none
+		sourceColumn: CONSIDERA SUPERACAO?
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'CONSIDERA CALC HR MO?'
+		dataType: string
+		lineageTag: 53827a3f-76e8-41c2-a025-2b6ac9a3f5cc
+		summarizeBy: none
+		sourceColumn: CONSIDERA CALC HR MO?
+
+		annotation SummarizationSetBy = Automatic
+
+	column column13
+		dataType: string
+		lineageTag: 3223760a-bdff-4ce8-a0bf-e82e24cbf84d
+		summarizeBy: none
+		sourceColumn: column13
+
+		annotation SummarizationSetBy = Automatic
+
+	column column14
+		dataType: string
+		lineageTag: d0d1e25e-17cb-4faf-b676-86f2e2a1349d
+		summarizeBy: none
+		sourceColumn: column14
+
+		annotation SummarizationSetBy = Automatic
+
+	partition pEstrut_fat = m
+		mode: import
+		source =
+				let
+				    Fonte = PostgreSQL.Database("192.168.0.234", "pblopes_dts"),
+				    public_estrutura_faturamento = Fonte{[Schema="public",Item="estrutura_faturamento"]}[Data]
+				in
+				    public_estrutura_faturamento
+

@@ -1,0 +1,68 @@
+table fOrcadoProjecao500
+	lineageTag: 65b8e63a-7f95-4d77-8fab-671d6ec87d91
+
+	column COD_CASA
+		dataType: string
+		lineageTag: c4601f9e-3e26-4bad-95ac-5c68d7e7efb6
+		summarizeBy: none
+		sourceColumn: COD_CASA
+
+		annotation SummarizationSetBy = Automatic
+
+	column COD_CENTRO_CUSTO
+		dataType: string
+		lineageTag: 55424c83-7472-406e-81d5-b0a4c1974b76
+		summarizeBy: none
+		sourceColumn: COD_CENTRO_CUSTO
+
+		annotation SummarizationSetBy = Automatic
+
+	column CONTA_CONTABIL
+		dataType: string
+		lineageTag: dedae351-9e9a-4390-a159-d4e10f8bb02d
+		summarizeBy: none
+		sourceColumn: CONTA_CONTABIL
+
+		annotation SummarizationSetBy = Automatic
+
+	column DATA
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: d6996f4f-51e7-4ce2-84c2-2130ff5539b4
+		summarizeBy: none
+		sourceColumn: DATA
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column VALOR
+		dataType: double
+		lineageTag: b6b838ba-4421-475f-b660-5aa349ec938d
+		summarizeBy: sum
+		sourceColumn: VALOR
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition fOrcadoProjecao500 = m
+		mode: import
+		source =
+				let
+				    Fonte = Folder.Files("\\192.168.0.8\Sys1\Home\BiPowerBI\PB Lopes\Resultado Gerencial\Orçado Projeção 500 veículos"),
+				    #"Arquivos Ocultos Filtrados1" = Table.SelectRows(Fonte, each [Attributes]?[Hidden]? <> true),
+				    #"Invocar Função Personalizada1" = Table.AddColumn(#"Arquivos Ocultos Filtrados1", "Transformar Arquivo (5)", each #"Transformar Arquivo (5)"([Content])),
+				    #"Colunas Renomeadas1" = Table.RenameColumns(#"Invocar Função Personalizada1", {"Name", "Nome da Origem"}),
+				    #"Outras Colunas Removidas1" = Table.SelectColumns(#"Colunas Renomeadas1", {"Nome da Origem", "Transformar Arquivo (5)"}),
+				    #"Coluna de Tabela Expandida1" = Table.ExpandTableColumn(#"Outras Colunas Removidas1", "Transformar Arquivo (5)", Table.ColumnNames(#"Transformar Arquivo (5)"(#"Arquivo de Amostra (5)"))),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(#"Coluna de Tabela Expandida1",{{"Nome da Origem", type text}, {"COD_CASA", type text}, {"COD_CENTRO_CUSTO", type text}, {"CONTA CONTABIL", type text}, {"DATA", type date}, {"VALOR", type number}, {"GRUPO", type text}, {"GRUPO_DRE", type text}}),
+				    #"Colunas Renomeadas" = Table.RenameColumns(#"Tipo Alterado",{{"CONTA CONTABIL", "CONTA_CONTABIL"}}),
+				    #"Outras Colunas Removidas" = Table.SelectColumns(#"Colunas Renomeadas",{"COD_CASA", "COD_CENTRO_CUSTO", "CONTA_CONTABIL", "DATA", "VALOR"})
+				in
+				    #"Outras Colunas Removidas"
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

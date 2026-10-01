@@ -1,0 +1,78 @@
+table fOrcProjecaoFinEstorno
+	lineageTag: a031d265-354b-4337-84b2-945b2f9b68ea
+
+	column COD_CASA
+		dataType: string
+		lineageTag: 499f2c2e-43c9-4697-9281-46a3b80fe0fa
+		summarizeBy: none
+		sourceColumn: COD_CASA
+
+		annotation SummarizationSetBy = Automatic
+
+	column COD_CENTRO_CUSTO
+		dataType: string
+		lineageTag: f48779c8-bfff-4d99-9cdc-f48459c21ac5
+		summarizeBy: none
+		sourceColumn: COD_CENTRO_CUSTO
+
+		annotation SummarizationSetBy = Automatic
+
+	column DATA
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 9fd7245c-3049-4c7f-922a-03093f6476b3
+		summarizeBy: none
+		sourceColumn: DATA
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column TOTAL
+		dataType: double
+		lineageTag: c017ae30-9d42-4688-898d-c24712784029
+		summarizeBy: sum
+		sourceColumn: TOTAL
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column CONTA_CONTABIL
+		dataType: string
+		lineageTag: 6ccea47f-e722-4717-b214-447a4d57a49f
+		summarizeBy: none
+		sourceColumn: CONTA_CONTABIL
+
+		annotation SummarizationSetBy = Automatic
+
+	column VALOR = IF(RELATED(dPlanoContas[TIPO]) = "-", ABS(fOrcProjecaoFinEstorno[TOTAL]) * -1, ABS(fOrcProjecaoFinEstorno[TOTAL]))
+		lineageTag: 5b3fa6cb-70a6-4372-a34e-1ae51a6458ce
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition fOrcProjecaoFinEstorno = m
+		mode: import
+		source = ```
+				let
+				    Fonte = fOrcadoProjecao,
+				    #"Colunas Renomeadas" = Table.RenameColumns(Fonte,{{"CONTA_CONTABIL", "CONTA"}, {"VALOR", "TOTAL"}}),
+				    #"Personalização Adicionada" = Table.AddColumn(#"Colunas Renomeadas", "CONTA_CONTABIL", each if Text.Start([CONTA],5) = "3.1.2" then 
+				"9.9.9.9.99.02- ESTORNO RECEITAS FINANCEIRAS" else
+				if Text.Start([CONTA],5) = "5.1.3" then
+				"9.9.9.9.99.01- ESTORNO DESPESAS FINANCEIRAS" else
+				[CONTA]),
+				    #"Linhas Filtradas" = Table.SelectRows(#"Personalização Adicionada", each ([CONTA_CONTABIL] = "9.9.9.9.99.01- ESTORNO DESPESAS FINANCEIRAS" or [CONTA_CONTABIL] = "9.9.9.9.99.02- ESTORNO RECEITAS FINANCEIRAS")),
+				    #"Colunas Removidas" = Table.RemoveColumns(#"Linhas Filtradas",{"CONTA"}),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(#"Colunas Removidas",{{"CONTA_CONTABIL", type text}})
+				in
+				    #"Tipo Alterado"
+				```
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navegação
+

@@ -1,0 +1,81 @@
+table pEmitente
+	lineageTag: f405ec99-8680-4657-9f51-99c288d5b39b
+
+	column natureza
+		dataType: string
+		lineageTag: 34d73ba2-3398-49bb-a4a6-cf374ad609d4
+		summarizeBy: none
+		sourceColumn: natureza
+
+		annotation SummarizationSetBy = Automatic
+
+	column cidade
+		dataType: string
+		lineageTag: 0d32c3ea-8096-4a5e-a00b-28d587617252
+		summarizeBy: none
+		sourceColumn: cidade
+
+		annotation SummarizationSetBy = Automatic
+
+	column cod_cliente
+		dataType: int64
+		formatString: 0
+		lineageTag: 5a20b4a5-ae72-4fcb-9d4c-b576c26e669f
+		summarizeBy: none
+		sourceColumn: cod_cliente
+
+		annotation SummarizationSetBy = Automatic
+
+	column cliente_abrev
+		dataType: string
+		lineageTag: 86d5fe51-2f3b-4438-aa0e-42a9a29cf0a1
+		summarizeBy: none
+		sourceColumn: cliente_abrev
+
+		annotation SummarizationSetBy = Automatic
+
+	column cliente
+		dataType: string
+		lineageTag: ee2a580e-a8fb-49cb-9cce-a58f7426a578
+		summarizeBy: none
+		sourceColumn: cliente
+
+		annotation SummarizationSetBy = Automatic
+
+	column cnpj_cpf
+		dataType: string
+		lineageTag: 4848e10f-3fe4-4875-b3d4-aeb7ffcf9673
+		summarizeBy: none
+		sourceColumn: cnpj_cpf
+
+		annotation SummarizationSetBy = Automatic
+
+	column uf
+		dataType: string
+		lineageTag: 05c751cf-27d8-4cfe-a15f-40abd0d1e70e
+		summarizeBy: none
+		sourceColumn: uf
+
+		annotation SummarizationSetBy = Automatic
+
+	column grupo_cliente
+		dataType: int64
+		formatString: 0
+		lineageTag: 7540655a-d389-4d1b-b5ce-3f495178ddc6
+		summarizeBy: none
+		sourceColumn: grupo_cliente
+
+		annotation SummarizationSetBy = Automatic
+
+	partition pEmitente = m
+		mode: import
+		source =
+				let
+				    Fonte = Value.NativeQuery(PostgreSQL.Database("192.168.0.234", "pblopes_dts"), "SELECT#(lf)    e.cod_emitente   AS cod_cliente,#(lf)    e.nome_abrev     AS cliente_abrev,#(lf)    e.nome_emit      AS cliente,#(lf)    e.cgc            AS cnpj_cpf,#(lf)    CASE e.natureza WHEN 1 THEN 'Pessoa física'  WHEN 2 THEN 'Pessoa jurídica'#(lf)                    WHEN 3 THEN 'Estrangeiro'    WHEN 4 THEN 'Trading' END AS natureza,#(lf)    e.cidade,#(lf)    e.estado         AS uf,#(lf)    e.cod_gr_cli     AS grupo_cliente#(lf)FROM public.emitente e#(lf)WHERE e.cod_emitente IN (SELECT DISTINCT cdn_cliente FROM public.tit_acr)", null, [EnableFolding=true])
+				in
+				    Fonte
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

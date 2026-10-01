@@ -1,0 +1,284 @@
+table fTitulosReceber
+	lineageTag: ff635f60-4cc8-44b7-8dcb-87132b4b4447
+
+	column cod_estab
+		dataType: string
+		lineageTag: 9e8be734-212d-4c43-a7db-21a6da20832b
+		summarizeBy: none
+		sourceColumn: cod_estab
+
+		annotation SummarizationSetBy = Automatic
+
+	column cod_portador
+		dataType: string
+		lineageTag: 560309d5-9a41-4209-b96a-0d3af2f9d0d0
+		summarizeBy: none
+		sourceColumn: cod_portador
+
+		annotation SummarizationSetBy = Automatic
+
+	column id_titulo
+		dataType: int64
+		formatString: 0
+		lineageTag: 621e3f11-9ef6-43d0-88e1-eb181b6071ba
+		summarizeBy: sum
+		sourceColumn: id_titulo
+
+		annotation SummarizationSetBy = Automatic
+
+	column especie
+		dataType: string
+		lineageTag: 0ea35016-059b-4648-adac-4a0df8af326b
+		summarizeBy: none
+		sourceColumn: especie
+
+		annotation SummarizationSetBy = Automatic
+
+	column tipo_especie
+		dataType: string
+		lineageTag: 5bdfe112-6514-4082-822a-46a7483ae1ab
+		summarizeBy: none
+		sourceColumn: tipo_especie
+
+		annotation SummarizationSetBy = Automatic
+
+	column serie
+		dataType: string
+		lineageTag: e1c3354c-57f0-446e-8044-1e3823af7a8b
+		summarizeBy: none
+		sourceColumn: serie
+
+		annotation SummarizationSetBy = Automatic
+
+	column titulo
+		dataType: string
+		lineageTag: b66c5edb-1a62-4959-86fd-b35e2b5755ce
+		summarizeBy: none
+		sourceColumn: titulo
+
+		annotation SummarizationSetBy = Automatic
+
+	column parcela
+		dataType: string
+		lineageTag: db9f89b6-2921-4721-8996-238fbbeb8d68
+		summarizeBy: none
+		sourceColumn: parcela
+
+		annotation SummarizationSetBy = Automatic
+
+	column cod_cliente
+		dataType: int64
+		formatString: 0
+		lineageTag: 94475bb9-aa53-404a-9b1a-57bc885e81a2
+		summarizeBy: none
+		sourceColumn: cod_cliente
+
+		annotation SummarizationSetBy = Automatic
+
+	column cod_repres
+		dataType: int64
+		formatString: 0
+		lineageTag: 285fe223-4ae9-422f-a6ab-fe24e760fc71
+		summarizeBy: sum
+		sourceColumn: cod_repres
+
+		annotation SummarizationSetBy = Automatic
+
+	column carteira
+		dataType: string
+		lineageTag: 5f26dcc5-b744-4807-beb7-1142445f7710
+		summarizeBy: none
+		sourceColumn: carteira
+
+		annotation SummarizationSetBy = Automatic
+
+	column origem
+		dataType: string
+		lineageTag: f0f1fe2f-001b-4d27-bd44-c51e6acc3c5e
+		summarizeBy: none
+		sourceColumn: origem
+
+		annotation SummarizationSetBy = Automatic
+
+	column situacao_bancaria
+		dataType: string
+		lineageTag: 03e2d4d9-ea00-49b0-aacf-b8bb56e795ea
+		summarizeBy: none
+		sourceColumn: situacao_bancaria
+
+		annotation SummarizationSetBy = Automatic
+
+	column nota_fiscal
+		dataType: string
+		lineageTag: b12d42dc-a914-4af0-96e6-ca9b2363a9f1
+		summarizeBy: none
+		sourceColumn: nota_fiscal
+
+		annotation SummarizationSetBy = Automatic
+
+	column data_emissao
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: bba15532-4f3d-4332-a243-2117da0e7f1a
+		summarizeBy: none
+		sourceColumn: data_emissao
+
+		annotation SummarizationSetBy = Automatic
+
+	column data_vencimento
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 802f754b-345c-4b5b-b7d4-a273a2695aeb
+		summarizeBy: none
+		sourceColumn: data_vencimento
+
+		annotation SummarizationSetBy = Automatic
+
+	column data_vencimento_original
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 124aa861-cdd5-48c2-97e6-cf8e90b044ce
+		summarizeBy: none
+		sourceColumn: data_vencimento_original
+
+		annotation SummarizationSetBy = Automatic
+
+	column data_liquidacao
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: f4c278c0-e883-454b-92c8-75ca12d48cd4
+		summarizeBy: none
+		sourceColumn: data_liquidacao
+
+		annotation SummarizationSetBy = Automatic
+
+	column valor_original
+		dataType: double
+		lineageTag: 0667ccef-dee0-46f0-a4b0-c5d19af390db
+		summarizeBy: sum
+		sourceColumn: valor_original
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column saldo
+		dataType: double
+		lineageTag: a976e36f-0e8b-4ec4-858d-aa37109f63a9
+		summarizeBy: sum
+		sourceColumn: saldo
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column juros
+		dataType: double
+		lineageTag: 56ecab16-fe3f-4441-bc8d-0996365c88f3
+		summarizeBy: sum
+		sourceColumn: juros
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column desconto
+		dataType: double
+		lineageTag: f751b04f-28b0-4418-a3fd-d233ab691064
+		summarizeBy: sum
+		sourceColumn: desconto
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column abatimento
+		dataType: double
+		lineageTag: 56a24879-c1ba-4358-81a3-9df03f5cf53a
+		summarizeBy: sum
+		sourceColumn: abatimento
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column em_aberto
+		dataType: int64
+		formatString: 0
+		lineageTag: a186d9ac-d56d-4deb-b789-88b6ea70b73b
+		summarizeBy: sum
+		sourceColumn: em_aberto
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Dias em Atraso' =
+			
+			IF ( fTitulosReceber[em_aberto] = 1, INT ( TODAY () - fTitulosReceber[data_vencimento] ) )
+		formatString: 0
+		lineageTag: 6f2e9b33-ef96-4051-a66d-5571299d3e56
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Faixa Aging' =
+			
+			VAR d = fTitulosReceber[Dias em Atraso]
+			RETURN
+			    IF ( fTitulosReceber[em_aberto] = 1,
+			        SWITCH ( TRUE (),
+			            d <= 0,   "A vencer",
+			            d <= 30,  "Vencido 1-30",
+			            d <= 60,  "Vencido 31-60",
+			            d <= 90,  "Vencido 61-90",
+			            d <= 180, "Vencido 91-180",
+			            d <= 365, "Vencido 181-365",
+			                      "Vencido +365" ) )
+		lineageTag: bf3d5026-e4a7-4b99-9822-71b5bbe200d6
+		summarizeBy: none
+		sortByColumn: 'Faixa Aging Ordem'
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Ordem Aging' =
+			
+			SWITCH ( fTitulosReceber[Faixa Aging],
+			    "A vencer", 1, "Vencido 1-30", 2, "Vencido 31-60", 3, "Vencido 61-90", 4,
+			    "Vencido 91-180", 5, "Vencido 181-365", 6, "Vencido +365", 7 )
+		formatString: 0
+		lineageTag: 9b0ebde1-1e42-4d17-a0ca-0f7e91765c53
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Faixa Aging Ordem' =
+			
+			VAR _d = fTitulosReceber[Dias em Atraso]
+			RETURN
+			    SWITCH ( TRUE (),
+			        _d <= 0, 0,
+			        _d <= 30, 1,
+			        _d <= 60, 2,
+			        _d <= 90, 3,
+			        _d <= 180, 4,
+			        _d <= 365, 5,
+			        6 )
+		formatString: 0
+		lineageTag: 998df738-38b4-4c82-9639-f82b544d4eba
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	partition fTitulosReceber = m
+		mode: import
+		source =
+				let
+				    Fonte = Value.NativeQuery(PostgreSQL.Database("192.168.0.234", "pblopes_dts"), "SELECT#(lf)    t.num_id_tit_acr                        AS id_titulo,#(lf)    t.cod_estab                             AS cod_estab,#(lf)    t.cod_espec_docto                       AS especie,#(lf)    t.ind_tip_espec_docto                   AS tipo_especie,#(lf)    t.cod_ser_docto                         AS serie,#(lf)    t.cod_tit_acr                           AS titulo,#(lf)    t.cod_parcela                           AS parcela,#(lf)    t.cdn_cliente                           AS cod_cliente,#(lf)    t.cdn_repres                            AS cod_repres,#(lf)    t.cod_portador                          AS cod_portador,#(lf)    t.cod_cart_bcia                         AS carteira,#(lf)    t.ind_orig_tit_acr                      AS origem,#(lf)    t.ind_sit_bcia_tit_acr                  AS situacao_bancaria,#(lf)    t.cod_nota_fisc_faturam                 AS nota_fiscal,#(lf)    t.dat_emis_docto                        AS data_emissao,#(lf)    t.dat_vencto_tit_acr                    AS data_vencimento,#(lf)    t.dat_vencto_origin_tit_acr             AS data_vencimento_original,#(lf)    CASE WHEN t.dat_liquidac_tit_acr >= DATE '9999-01-01' THEN NULL#(lf)         ELSE t.dat_liquidac_tit_acr END    AS data_liquidacao,#(lf)    t.val_origin_tit_acr                    AS valor_original,#(lf)    t.val_sdo_tit_acr                       AS saldo,#(lf)    t.val_juros                             AS juros,#(lf)    t.val_desc_tit_acr                      AS desconto,#(lf)    t.val_abat_tit_acr                      AS abatimento,#(lf)    CAST(t.log_sdo_tit_acr AS int)          AS em_aberto#(lf)FROM public.tit_acr t#(lf)WHERE t.num_id_tit_acr IS NOT NULL                 -- tira as 230 linhas de resumo#(lf)  AND CAST(t.log_tit_acr_estordo AS int) = 0       -- tira os títulos estornados", null, [EnableFolding=true])
+				in
+				    Fonte
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

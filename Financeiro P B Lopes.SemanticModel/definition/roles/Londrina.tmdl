@@ -1,0 +1,7 @@
+role Londrina
+	modelPermission: read
+
+	tablePermission dCasa = [COD_CASA] == "102"
+
+	annotation PBI_Id = 28935e76cf894321879cc614f6e004f6
+

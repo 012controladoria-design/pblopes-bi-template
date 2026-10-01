@@ -1,0 +1,46 @@
+table f_Dados_BP_Rlz
+	lineageTag: 34b6de87-ccbb-4034-b979-4258ed98fc43
+
+	column GRUPO
+		dataType: string
+		lineageTag: 6bc47f8a-7d90-4753-a55f-54a86bd84507
+		summarizeBy: none
+		sourceColumn: GRUPO
+
+		annotation SummarizationSetBy = Automatic
+
+	column VALOR
+		dataType: double
+		lineageTag: 910f1a2c-8dcc-4ccc-bd54-25c5d4d35fd0
+		summarizeBy: sum
+		sourceColumn: VALOR
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column DATA
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 31b34037-037c-45ae-a60f-b6f097ccadf5
+		summarizeBy: none
+		sourceColumn: DATA
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition f_Dados_BP_Rlz = m
+		mode: import
+		source =
+				let
+				    Fonte = Excel.Workbook(File.Contents("\\192.168.0.8\Sys1\Home\BiPowerBI\PB Lopes\Resultado Gerencial\Realizado\Dados_BP.xlsx"), null, true),
+				    f_Dados_BP_Rlz_Table = Fonte{[Item="f_Dados_BP_Rlz",Kind="Table"]}[Data],
+				    #"Tipo Alterado" = Table.TransformColumnTypes(f_Dados_BP_Rlz_Table,{{"GRUPO", type text}, {"VALOR", type number}, {"DATA", type date}})
+				in
+				    #"Tipo Alterado"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navegação
+

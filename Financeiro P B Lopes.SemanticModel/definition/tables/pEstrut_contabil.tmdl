@@ -1,0 +1,172 @@
+table pEstrut_contabil
+	lineageTag: 32aedcb5-15ca-4908-b4ec-7e7c788e9d05
+
+	column cod_plano_cta_ctbl
+		dataType: string
+		lineageTag: 9e29e70b-f422-41a0-8bd2-2d6c09c4f759
+		summarizeBy: none
+		sourceColumn: cod_plano_cta_ctbl
+
+		annotation SummarizationSetBy = Automatic
+
+	column cod_cta_ctbl_pai
+		dataType: string
+		lineageTag: 6d1450d4-efc7-45f0-b17b-28f298dc2f28
+		summarizeBy: none
+		sourceColumn: cod_cta_ctbl_pai
+
+		annotation SummarizationSetBy = Automatic
+
+	column num_seq_estrut_cta_ctbl
+		dataType: int64
+		formatString: 0
+		lineageTag: bec0e0b3-d862-4627-b1ba-ca2332d48736
+		summarizeBy: sum
+		sourceColumn: num_seq_estrut_cta_ctbl
+
+		annotation SummarizationSetBy = Automatic
+
+	column cod_cta_ctbl_filho
+		dataType: string
+		lineageTag: fde70eed-d30e-4f68-9839-a3f5273e9aa8
+		summarizeBy: none
+		sourceColumn: cod_cta_ctbl_filho
+
+		annotation SummarizationSetBy = Automatic
+
+	column dat_inic_valid
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 6fa90849-1f44-4212-aa3a-52359f10323b
+		summarizeBy: none
+		sourceColumn: dat_inic_valid
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column dat_fim_valid
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 8357e08b-d6fb-4103-a419-204ff251bc17
+		summarizeBy: none
+		sourceColumn: dat_fim_valid
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column cod_livre_1
+		dataType: string
+		lineageTag: 93c3d3d0-875e-4b40-bf64-55d83ad87413
+		summarizeBy: none
+		sourceColumn: cod_livre_1
+
+		annotation SummarizationSetBy = Automatic
+
+	column log_livre_1
+		dataType: int64
+		formatString: 0
+		lineageTag: 86d7b4f6-447c-4f0f-b08e-9293c24e52b4
+		summarizeBy: sum
+		sourceColumn: log_livre_1
+
+		annotation SummarizationSetBy = Automatic
+
+	column num_livre_1
+		dataType: double
+		lineageTag: fe5dee09-c451-4a07-885b-791bb84bfc3d
+		summarizeBy: sum
+		sourceColumn: num_livre_1
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column val_livre_1
+		dataType: double
+		lineageTag: e5a8d320-51b3-4f3a-922f-82c0dd1fbe3b
+		summarizeBy: sum
+		sourceColumn: val_livre_1
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column dat_livre_1
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 728f6be1-dace-43a9-9ef7-c7ce3aa82dc6
+		summarizeBy: none
+		sourceColumn: dat_livre_1
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column cod_livre_2
+		dataType: string
+		lineageTag: c70c4d3a-1bde-40f9-9b3c-bbf7dc8872f0
+		summarizeBy: none
+		sourceColumn: cod_livre_2
+
+		annotation SummarizationSetBy = Automatic
+
+	column dat_livre_2
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 4562ab7a-3fb8-455b-9915-80343e194bfb
+		summarizeBy: none
+		sourceColumn: dat_livre_2
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column log_livre_2
+		dataType: int64
+		formatString: 0
+		lineageTag: 0b58297b-a4b3-40f6-bee3-2d7bf97caf0c
+		summarizeBy: sum
+		sourceColumn: log_livre_2
+
+		annotation SummarizationSetBy = Automatic
+
+	column num_livre_2
+		dataType: double
+		lineageTag: 21e97975-df84-436c-8e8f-20259d520b6e
+		summarizeBy: sum
+		sourceColumn: num_livre_2
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column val_livre_2
+		dataType: double
+		lineageTag: bb5111a3-75e2-47c3-bdb5-d6d143b1b24a
+		summarizeBy: sum
+		sourceColumn: val_livre_2
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column cdd_version
+		dataType: int64
+		formatString: 0
+		lineageTag: b5969e42-76de-491f-9838-7f84f79c273b
+		summarizeBy: sum
+		sourceColumn: cdd_version
+
+		annotation SummarizationSetBy = Automatic
+
+	partition pEstrut_contabil = m
+		mode: import
+		source =
+				let
+				    Fonte = PostgreSQL.Database("192.168.0.234", "pblopes_dts"),
+				    public_estrut_cta_ctbl = Fonte{[Schema="public",Item="estrut_cta_ctbl"]}[Data]
+				in
+				    public_estrut_cta_ctbl
+

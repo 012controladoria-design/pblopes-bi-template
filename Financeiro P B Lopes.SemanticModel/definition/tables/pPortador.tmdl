@@ -1,0 +1,48 @@
+table pPortador
+	lineageTag: d500d160-701d-4cc1-962d-bde682249cf0
+
+	column cod_portador
+		dataType: string
+		lineageTag: 39440a61-4a1e-408b-a9d5-56350708a768
+		summarizeBy: none
+		sourceColumn: cod_portador
+
+		annotation SummarizationSetBy = Automatic
+
+	column cod_banco
+		dataType: int64
+		formatString: 0
+		lineageTag: e0cd87fa-8f93-467f-b877-16d9f860f453
+		summarizeBy: none
+		sourceColumn: cod_banco
+
+		annotation SummarizationSetBy = Automatic
+
+	column portador
+		dataType: string
+		lineageTag: 5f2e7925-8374-4941-b185-b8c45ec1df61
+		summarizeBy: none
+		sourceColumn: portador
+
+		annotation SummarizationSetBy = Automatic
+
+	column tipo_portador
+		dataType: string
+		lineageTag: a0f592af-cfd6-4fda-a1d5-ca9c3b185aa9
+		summarizeBy: none
+		sourceColumn: tipo_portador
+
+		annotation SummarizationSetBy = Automatic
+
+	partition pPortador = m
+		mode: import
+		source =
+				let
+				    Fonte = Value.NativeQuery(PostgreSQL.Database("192.168.0.234", "pblopes_dts"), "SELECT#(lf)    u.cod_portador,#(lf)    COALESCE(p.nom_abrev,#(lf)             CASE WHEN u.cod_portador = '' THEN '(sem portador)'#(lf)                  ELSE u.cod_portador || ' (sem cadastro)' END) AS portador,#(lf)    p.ind_tip_portad AS tipo_portador,#(lf)    p.cod_banco#(lf)FROM (SELECT DISTINCT COALESCE(cod_portador, '') AS cod_portador FROM public.tit_acr WHERE num_id_tit_acr IS NOT NULL#(lf)      UNION#(lf)      SELECT DISTINCT COALESCE(cod_portador, '') FROM public.tit_ap) u#(lf)LEFT JOIN public.portador p ON p.cod_portador = u.cod_portador", null, [EnableFolding=true])
+				in
+				    Fonte
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

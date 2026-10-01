@@ -1,0 +1,7 @@
+role Maringá
+	modelPermission: read
+
+	tablePermission dCasa = [COD_CASA] == "103" || [COD_CASA] == "109" || [COD_CASA] == "114"
+
+	annotation PBI_Id = 528ffd4d389244d7ba9c6b5393f9b139
+

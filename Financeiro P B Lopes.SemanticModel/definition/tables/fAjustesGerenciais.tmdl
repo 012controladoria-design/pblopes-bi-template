@@ -1,0 +1,66 @@
+table fAjustesGerenciais
+	lineageTag: 5d4958e6-9ece-4270-b7f6-ed53c8de4d18
+
+	column CONTA_CONTABIL
+		dataType: string
+		lineageTag: eae7b54a-629f-4d6d-94bc-023bf0a154e0
+		summarizeBy: none
+		sourceColumn: CONTA_CONTABIL
+
+		annotation SummarizationSetBy = Automatic
+
+	column COD_CASA
+		dataType: string
+		lineageTag: 81bcb9e7-4009-482b-99b3-7748b9b780a3
+		summarizeBy: none
+		sourceColumn: COD_CASA
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'COD_CENTRO CUSTO'
+		dataType: string
+		lineageTag: 0d3e81e7-82a3-4f8d-9efb-7a65d74ce566
+		summarizeBy: none
+		sourceColumn: COD_CENTRO CUSTO
+
+		annotation SummarizationSetBy = Automatic
+
+	column VALOR
+		dataType: double
+		lineageTag: 80718592-c1b6-41ec-b319-14e4bc6c56ce
+		summarizeBy: sum
+		sourceColumn: VALOR
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column DATA
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 63ed0817-bfa1-4890-a447-376f5161e139
+		summarizeBy: none
+		sourceColumn: DATA
+
+		changedProperty = FormatString
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition fAjustesGerenciais-436c37d3-b773-4800-8e7c-97f29f343b3a = m
+		mode: import
+		source =
+				let
+				    Fonte = Excel.Workbook(File.Contents("\\192.168.0.8\Sys1\Home\BiPowerBI\PB Lopes\Resultado Gerencial\Realizado\Realizado\Ajustes Gerenciais\Ajustes Gerencias.xlsx"), null, true),
+				    fAjustesGerenciais_Table = Fonte{[Item="fAjustesGerenciais",Kind="Table"]}[Data],
+				    #"Tipo Alterado" = Table.TransformColumnTypes(fAjustesGerenciais_Table,{{"Data do lançamento", type date}, {"Lote sistema", Int64.Type}, {"Descrição", type text}, {"CONTA_CONTABIL", type text}, {"COD_CASA", Int64.Type}, {"COD_CENTRO CUSTO", Int64.Type}, {"VALOR", type number}, {"DATA", type date}}),
+				    #"Outras Colunas Removidas" = Table.SelectColumns(#"Tipo Alterado",{"CONTA_CONTABIL", "COD_CASA", "COD_CENTRO CUSTO", "VALOR", "DATA"}),
+				    #"Tipo Alterado1" = Table.TransformColumnTypes(#"Outras Colunas Removidas",{{"COD_CASA", type text}, {"COD_CENTRO CUSTO", type text}})
+				in
+				    #"Tipo Alterado1"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navegação
+

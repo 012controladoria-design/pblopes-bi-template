@@ -1,0 +1,1963 @@
+table _Medidas
+	lineageTag: b81a728a-9a86-4774-b206-dcb0ccba263a
+
+	measure '001 Realizado' = SUM(fRealizado[VALOR]) + SUM(fAjustesGerenciais[VALOR])
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Realizado
+		lineageTag: 53dddf5b-38c0-49f5-9a98-23b135a858e4
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '002 DRE Realizado' =
+			
+			VAR Subtotal = SELECTEDVALUE(dEstDRE[SUBTOTAL])
+			VAR OrdemContexto = MAX(dEstDRE[ORDEM])
+			VAR RlzContexto = SUM(fRealizado[VALOR]) + sum(fAjustesGerenciais[VALOR]) + SUM(fRlzFinDeprecAmortEstorno[VALOR])
+			VAR RlzAcmSubtotal =
+			CALCULATE(
+			    SUM(fRealizado[VALOR]) + sum(fAjustesGerenciais[VALOR]) +  SUM(fRlzFinDeprecAmortEstorno[VALOR]),
+			    FILTER(
+			        ALL(dEstDRE),
+			        dEstDRE[ORDEM] <= OrdemContexto
+			    )
+			)
+			RETURN
+			SWITCH(
+			    TRUE(),
+			    Subtotal = 0, RlzContexto,
+			    Subtotal = 1 && NOT(ISINSCOPE(dPlanoContas[GRUPO])), RlzAcmSubtotal,
+			    BLANK()
+			)
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Realizado
+		lineageTag: 9436e18c-1d2b-47ea-b18f-2d142a5a8122
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '003 A. V. Realizado' =
+			
+			DIVIDE (
+			    [002 DRE Realizado],
+			    (
+			        CALCULATE (
+			            [002 DRE Realizado],
+			            FILTER (
+			                ALL ( dPlanoContas ),
+			                dPlanoContas[GRUPO_DRE] = "(+) RECEITA COM VENDAS"
+			            )
+			        )
+			            + CALCULATE (
+			                [002 DRE Realizado],
+			                FILTER ( ALL ( dPlanoContas ), dPlanoContas[GRUPO_DRE] = "(-) DEVOLUCOES" )
+			            )
+			    )
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Realizado
+		lineageTag: 24a3f488-0472-4eb5-b0ab-0c11a0a422ef
+
+		changedProperty = FormatString
+
+	measure '007 Resultado Operacional Bruto Rlz' =
+			
+			CALCULATE (
+			    [002 DRE Realizado],
+			    FILTER ( dPlanoContas, dPlanoContas[GRUPO_DRE] = "(+) RECEITA COM VENDAS" )
+			)
+			    + CALCULATE (
+			        [002 DRE Realizado],
+			        FILTER ( dPlanoContas, dPlanoContas[GRUPO_DRE] = "(-) DEVOLUCOES" )
+			    )
+			    + CALCULATE (
+			        [002 DRE Realizado],
+			        FILTER (
+			            dPlanoContas,
+			            dPlanoContas[GRUPO_DRE] = "(-) IMPOSTOS SOBRE AS VENDAS"
+			        )
+			    )
+			    + CALCULATE (
+			        [002 DRE Realizado],
+			        FILTER (
+			            dPlanoContas,
+			            dPlanoContas[GRUPO_DRE] = "(-) CUSTOS DAS VENDAS E SERVICOS"
+			        )
+			    )
+		displayFolder: Realizado
+		lineageTag: e8b0c987-b4d0-4600-b9ce-57e5ef52a91b
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '008 % Margem Operacional Bruta Rlz' = DIVIDE([007 Resultado Operacional Bruto Rlz], [005 Receita Operacional Bruta Rlz])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Realizado
+		lineageTag: 868bee21-299a-4c11-9d1f-2153290597da
+
+	measure '005 Receita Operacional Bruta Rlz' =
+			
+			CALCULATE (
+			    [002 DRE Realizado],
+			    FILTER ( dPlanoContas, dPlanoContas[GRUPO_DRE] = "(+) RECEITA COM VENDAS" )
+			)
+			    + CALCULATE (
+			        [002 DRE Realizado],
+			        FILTER ( dPlanoContas, dPlanoContas[GRUPO_DRE] = "(-) DEVOLUCOES" )
+			    )
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Realizado
+		lineageTag: 069c6fcb-329d-4b33-b5c8-253ef62a2dc9
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '006 Receita Operacional Líquida Rlz' =
+			
+			CALCULATE (
+			    [002 DRE Realizado],
+			    FILTER ( dPlanoContas, dPlanoContas[GRUPO_DRE] = "(+) RECEITA COM VENDAS" )
+			)
+			    + CALCULATE (
+			        [002 DRE Realizado],
+			        FILTER ( dPlanoContas, dPlanoContas[GRUPO_DRE] = "(-) DEVOLUCOES" )
+			    )
+			    + CALCULATE (
+			        [002 DRE Realizado],
+			        FILTER (
+			            dPlanoContas,
+			            dPlanoContas[GRUPO_DRE] = "(-) IMPOSTOS SOBRE AS VENDAS"
+			        )
+			    )
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Realizado
+		lineageTag: 8c057f45-129a-4873-8c85-2f85306c0cd5
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '009 Resultado Operacional Rlz' =
+			
+			CALCULATE (
+			    [002 DRE Realizado],
+			    FILTER ( dPlanoContas, dPlanoContas[GRUPO_DRE] = "(+) RECEITA COM VENDAS" )
+			)
+			    + CALCULATE (
+			        [002 DRE Realizado],
+			        FILTER ( dPlanoContas, dPlanoContas[GRUPO_DRE] = "(-) DEVOLUCOES" )
+			    )
+			    + CALCULATE (
+			        [002 DRE Realizado],
+			        FILTER (
+			            dPlanoContas,
+			            dPlanoContas[GRUPO_DRE] = "(-) IMPOSTOS SOBRE AS VENDAS"
+			        )
+			    )
+			    + CALCULATE (
+			        [002 DRE Realizado],
+			        FILTER (
+			            dPlanoContas,
+			            dPlanoContas[GRUPO_DRE] = "(-) CUSTOS DAS VENDAS E SERVICOS"
+			        )
+			    )
+			    + CALCULATE (
+			        [002 DRE Realizado],
+			        FILTER ( dPlanoContas, dPlanoContas[GRUPO_DRE] = "(-) DESPESAS OPERACIONAIS" )
+			    )
+			    + CALCULATE (
+			        [002 DRE Realizado],
+			        FILTER ( dPlanoContas, dPlanoContas[GRUPO_DRE] = "(+/-) RECEITAS FINANCEIRAS" )
+			    )
+			    + CALCULATE (
+			        [002 DRE Realizado],
+			        FILTER (
+			            dPlanoContas,
+			            dPlanoContas[GRUPO_DRE] = "(+/-) OUTRAS RECEITAS OPERACIONAIS"
+			        )
+			    )
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Realizado
+		lineageTag: 9bc390e4-b453-4306-8246-b286fbca8e8b
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '010 % Margem Operacional Rlz' = DIVIDE([009 Resultado Operacional Rlz], [005 Receita Operacional Bruta Rlz])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Realizado
+		lineageTag: c64723ca-31dc-4b0f-80e5-475d2e3f73d7
+
+		changedProperty = FormatString
+
+	measure '004 ABS Reallizado' = ABS([001 Realizado])
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Realizado
+		lineageTag: d0a9a8fa-2750-4d70-b08e-ea2544f79034
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '011 AV Absoluto Rlz' = [003 A. V. Realizado] * -1
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Realizado
+		lineageTag: 89be68bf-2450-40dd-8b3d-ae10e3cc38eb
+
+		changedProperty = FormatString
+
+	measure '013 Resultado Op. Líquido Total Rlz' = CALCULATE([002 DRE Realizado], ALLSELECTED(dCasa))
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Realizado
+		lineageTag: 01d4ce56-2ed5-44d0-bf63-9b5a4b3c3938
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '012 Resultado Op. Líquido Acm Rlz' =
+			
+			VAR RankResultCasas =
+			    RANKX ( ALLSELECTED ( dCasa ), [002 DRE Realizado] )
+			RETURN
+			    CALCULATE (
+			        [002 DRE Realizado],
+			        TOPN ( RankResultCasas, ALLSELECTED ( dcasa ), [002 DRE Realizado], DESC )
+			    )
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Realizado
+		lineageTag: 5f2477fb-ced0-416a-b885-bb990a613c69
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '014 % Resultado Op. Líquido Rlz' = DIVIDE([002 DRE Realizado],[013 Resultado Op. Líquido Total Rlz])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Realizado
+		lineageTag: 929998c8-29e5-490d-9143-ccc530f25199
+
+		changedProperty = FormatString
+
+	measure '015 % Resultado Op. Líquido Acm Rlz' = DIVIDE([012 Resultado Op. Líquido Acm Rlz],[013 Resultado Op. Líquido Total Rlz])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Realizado
+		lineageTag: c2eb31dc-1be2-4b65-b5fa-660d026efb2c
+
+		changedProperty = FormatString
+
+	measure '016 % ABS Filiais Realizado' = ```
+			
+			VAR ResultBrutoPecas = 
+			CALCULATE(
+			    [001 Realizado],
+			    dPlanoContas[COD_CONTA_CONTABIL] = "3.1.3.1.00.10" ||
+			    dPlanoContas[COD_CONTA_CONTABIL] = "3.1.3.1.00.11" ||
+			    dPlanoContas[COD_CONTA_CONTABIL] = "5.1.4.1.00.03" ||
+			    dPlanoContas[COD_CONTA_CONTABIL] = "5.1.4.1.00.04" ||
+			    dPlanoContas[COD_CONTA_CONTABIL] = "5.1.4.1.00.07" || 
+			    dPlanoContas[COD_CONTA_CONTABIL] = "5.1.4.1.00.08" ||
+			    dPlanoContas[COD_CONTA_CONTABIL] = "5.1.4.1.00.09" ||
+			    dPlanoContas[COD_CONTA_CONTABIL] = "5.1.4.1.00.15" ||
+			    dPlanoContas[GRUPO] = "DEVOLUCOES" ||
+			    dPlanoContas[GRUPO] = "IMPOSTOS SOBRE AS VENDAS" ||
+			    dPlanoContas[GRUPO] = "VENDAS DE MERCAD.E SERVICOS" ||
+			    dPlanoContas[SUB_GRUPO] = "CUSTOS VDAS.MERCADORIAS",
+			    dCentroCusto[SETOR] = "PECAS")
+			    
+			
+			VAR ResultBrutoAssistTec = 
+			CALCULATE(
+			    [001 Realizado],
+			    dPlanoContas[COD_CONTA_CONTABIL] = "3.1.1.2.00.02" || 
+			    dPlanoContas[COD_CONTA_CONTABIL] = "4.1.2.1.00.01" || 
+			    dPlanoContas[GRUPO] = "DEVOLUCOES" ||
+			    dPlanoContas[GRUPO] = "IMPOSTOS SOBRE AS VENDAS",
+			    dCentroCusto[SETOR] = "OFICINA" ||
+			    dCentroCusto[SETOR] = "REFORMADORA")
+			
+			VAR DespComerciais = 
+			CALCULATE(
+			    [001 Realizado],
+			    dPlanoContas[GRUPO] = "DESPESAS COM A COMERCIALIZACAO",
+			    dCentroCusto[SETOR] = "PECAS" ||
+			    dCentroCusto[SETOR] = "OFICINA" ||
+			    dCentroCusto[SETOR] = "REFORMADORA" ||
+			    dCentroCusto[SETOR] = "ALINHAMENTO",
+			    dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.1.2.00.01")
+			
+			VAR DespAdm = 
+			CALCULATE(
+			    [001 Realizado],
+			    dPlanoContas[GRUPO] = "DESPESAS ADMINISTRATIVAS" ||
+			    dPlanoContas[GRUPO] = "VENDAS DE MERCAD.E SERVICOS" ||
+			    dPlanoContas[GRUPO] = "OUTRAS RECEITAS OPERACIONAIS LIQUIDAS" ||
+			    dPlanoContas[GRUPO] = "DEVOLUCOES" ||
+			    dPlanoContas[GRUPO] = "IMPOSTOS SOBRE AS VENDAS",  
+			    dCentroCusto[SETOR] = "ADM",
+			    dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.2.2.00.02" &&
+			    dPlanoContas[COD_CONTA_CONTABIL] <> "3.1.3.1.00.XX")
+			    
+			
+			VAR OutrasRecOpLiqPecas = 
+			CALCULATE(
+			    [001 Realizado],
+			    dPlanoContas[GRUPO] = "OUTRAS RECEITAS OPERACIONAIS LIQUIDAS" &&
+			    dPlanoContas[COD_CONTA_CONTABIL] <> "3.1.3.1.00.10" &&
+			    dPlanoContas[COD_CONTA_CONTABIL] <> "3.1.3.1.00.11" &&
+			    dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.4.1.00.03" &&
+			    dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.4.1.00.04" &&
+			    dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.4.1.00.07" && 
+			    dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.4.1.00.08" &&
+			    dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.4.1.00.09" &&
+			    dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.4.1.00.15",
+			    dCentroCusto[SETOR] = "PECAS")
+			
+			VAR OutrasRecOpLiqAssistTec = 
+			CALCULATE(
+			    [001 Realizado],
+			    dPlanoContas[GRUPO] = "OUTRAS RECEITAS OPERACIONAIS LIQUIDAS",
+			    dCentroCusto[SETOR] = "OFICINA" ||
+			    dCentroCusto[SETOR] = "REFORMADORA")
+			    
+			VAR DeprecAssistTec = 
+			CALCULATE(
+			    [001 Realizado],
+			    dPlanoContas[COD_CONTA_CONTABIL] = "8.0.2.0.00.10" ||
+			    dPlanoContas[COD_CONTA_CONTABIL] = "8.0.3.0.00.10")*-1
+			
+			RETURN
+			   DIVIDE(ResultBrutoPecas + ResultBrutoAssistTec, DespComerciais + DespAdm + OutrasRecOpLiqPecas + OutrasRecOpLiqAssistTec + DeprecAssistTec)*-1
+			```
+		formatString: #,0.00%;-#,0.00%;#,0.00%
+		displayFolder: Realizado
+		lineageTag: 3c3dc06f-3840-45af-afa0-4fa97934ca74
+
+		changedProperty = FormatString
+
+	measure '021 Margem Bruta Caminhões Rlz' =
+			
+			CALCULATE (
+			    [008 % Margem Operacional Bruta Rlz],
+			    dCentroCusto[SETOR] = "CAMINHOES NOVOS"
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Realizado
+		lineageTag: 5f446097-3cf2-4464-b098-258c358fa21c
+
+		changedProperty = FormatString
+
+	measure '021 Margem Líquida Caminhões Rlz' = CALCULATE([003 A. V. Realizado], dCentroCusto[SETOR] = "CAMINHOES NOVOS")
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Realizado
+		lineageTag: 71981250-7fd2-4e90-b573-1b2a29c7fd63
+
+		changedProperty = FormatString
+
+	measure '021 Resultado Líquido Caminhões Rlz' = CALCULATE([002 DRE Realizado], dCentroCusto[SETOR] = "CAMINHOES NOVOS")
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Realizado
+		lineageTag: e1d29e09-dd9f-46c0-bf47-cc0b5a1d4537
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '022 Resultado Líquido Consórcio Rlz' = CALCULATE([002 DRE Realizado], dCentroCusto[SETOR] = "CONSORCIO")
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Realizado
+		lineageTag: bf2d517f-5346-400e-9abd-a73b162d6c77
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '023 Resultado Líquido Ônibus Rlz' = CALCULATE([002 DRE Realizado], dCentroCusto[SETOR] = "ONIBUS")
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Realizado
+		lineageTag: af727a08-c336-42c6-b202-d3ec8f2a69ac
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '024 Resultado Líquido Usados Rlz' = CALCULATE([002 DRE Realizado], dCentroCusto[SETOR] = "CAMINHOES USADOS")
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Realizado
+		lineageTag: 2b40e469-0ac6-4b34-ae0c-8160fac50cbb
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '026 Resultado Líquido Peças Rlz' = CALCULATE([002 DRE Realizado], dCentroCusto[SETOR] = "PECAS")
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Realizado
+		lineageTag: ffc460eb-335a-4bc1-ba86-198aced781ea
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '026 Margem Bruta Peças Rlz' = CALCULATE([008 % Margem Operacional Bruta Rlz], dCentroCusto[SETOR] = "PECAS")
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Realizado
+		lineageTag: c1814b6c-0270-4e5a-a390-b91d013bcb17
+
+		changedProperty = FormatString
+
+	measure '026 Margem Líquida Peças Rlz' = CALCULATE([003 A. V. Realizado], dCentroCusto[SETOR] = "PECAS")
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Realizado
+		lineageTag: e14d52bc-6af7-4847-9289-1962301a8d4c
+
+		changedProperty = FormatString
+
+	measure '027 Resultado Líquido Oficina Rlz' = CALCULATE([002 DRE Realizado], dCentroCusto[SETOR] = "OFICINA")
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Realizado
+		lineageTag: 6a203c87-373b-456c-b947-79b8c8ca0477
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '027 Margem Bruta Oficina Rlz' = CALCULATE([008 % Margem Operacional Bruta Rlz], dCentroCusto[SETOR] = "OFICINA")
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Realizado
+		lineageTag: c6233d4b-533a-48ea-bb01-eb26fcac04e9
+
+		changedProperty = FormatString
+
+	measure '027 Margem Líquida Oficina Rlz' = CALCULATE([003 A. V. Realizado], dCentroCusto[SETOR] = "OFICINA")
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Realizado
+		lineageTag: 276254a1-08e9-4bbd-9f32-5900dc74821b
+
+		changedProperty = FormatString
+
+	measure '028 Resultado Líquido Reformadora MO Rlz' = CALCULATE([002 DRE Realizado], dCentroCusto[SETOR] = "REFORMADORA")
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Realizado
+		lineageTag: e5c922ff-708b-4ceb-8bf2-793df5a65dfa
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '028 Margem Bruta Reformadora MO Rlz' =
+			
+			CALCULATE (
+			    [008 % Margem Operacional Bruta Rlz],
+			    dCentroCusto[SETOR] = "REFORMADORA"
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Realizado
+		lineageTag: 6114c3fe-eb50-4ef8-a67f-e1abf77863b4
+
+		changedProperty = FormatString
+
+	measure '028 Margem Líquida Reformadora MO Rlz' = CALCULATE([003 A. V. Realizado], dCentroCusto[SETOR] = "REFORMADORA")
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Realizado
+		lineageTag: 07fbaeea-d898-4b7e-b465-b8864ceba446
+
+		changedProperty = FormatString
+
+	measure '032 Resultado Líq. ADM Filiais Total Rlz' =
+			
+			CALCULATE (
+			    [002 DRE Realizado],
+			    dCentroCusto[SETOR] = "ADM",
+			    dCasa[COD_CASA] <> "101"
+			)
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Realizado
+		lineageTag: cce3d2d8-fb8f-47ff-bd71-930456e57d88
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '033 Resultado Líq. ADM Matriz Rlz' =
+			
+			CALCULATE (
+			    [002 DRE Realizado],
+			    dCentroCusto[SETOR] = "ADM",
+			    dCasa[COD_CASA] = "101"
+			)
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Realizado
+		lineageTag: 303d2ad0-33c7-4e48-8c79-845be0e342db
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '034 Resultado Líq. Filiais Rlz' = [002 DRE Realizado] - [033 Resultado Líq. ADM Matriz Rlz]
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Realizado
+		lineageTag: dccc4463-956b-499e-b8f2-30f8abb751ae
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '025 Resultado Líquido Motores Rlz' = CALCULATE([002 DRE Realizado], dCentroCusto[SETOR] = "MOTORES")
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Realizado
+		lineageTag: ea914938-2683-48a6-b20e-eaa5ba45dbb1
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '030 Top Dealer Rlz' =
+			
+			CALCULATE (
+			    [002 DRE Realizado],
+			    dCentroCusto[SETOR] = "ADM",
+			    dCasa[COD_CASA] <> "101",
+			    dPlanoContas[CONTA_CONTABIL] = "3.1.3.1.00.XX- TOP DEALER"
+			)
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Realizado
+		lineageTag: 378c0358-f581-4ef8-a587-da3e4a411a14
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '031 Resultado Líq. ADM Filiais s/ Top Dealer Rlz' =
+			
+			CALCULATE (
+			    [002 DRE Realizado],
+			    dCentroCusto[SETOR] = "ADM",
+			    dCasa[COD_CASA] <> "101",
+			    dPlanoContas[CONTA_CONTABIL] <> "3.1.3.1.00.XX- TOP DEALER"
+			)
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Realizado
+		lineageTag: 2ca767c1-20a9-41e7-ab5d-12c910cd5452
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '017 % ABS Scania Realizado' = ```
+			
+			VAR ReceitaLiquidaPecas = 
+			    CALCULATE(
+			        [001 Realizado],
+			        dPlanoContas[COD_CONTA_CONTABIL] = "3.1.1.1.00.02" ||
+			        dPlanoContas[COD_CONTA_CONTABIL] = "3.1.1.1.00.04" ||
+			        dPlanoContas[COD_CONTA_CONTABIL] = "3.1.1.1.00.05" ||
+			        dPlanoContas[COD_CONTA_CONTABIL] = "3.1.3.1.00.10" ||
+			        dPlanoContas[COD_CONTA_CONTABIL] = "3.1.3.1.00.11" ||
+			        dPlanoContas[COD_CONTA_CONTABIL] = "3.1.1.2.00.01" ||
+			        dPlanoContas[COD_CONTA_CONTABIL] = "3.2.1.1.00.01",
+			        dCentroCusto[SETOR] = "PECAS",
+			        dCentroCusto[COD_CENTRO_CUSTO] <> "20400"
+			    )
+			
+			VAR ReceitaLiquidaServicos = 
+			    CALCULATE(
+			        [001 Realizado],
+			        dPlanoContas[COD_CONTA_CONTABIL] = "3.1.1.2.00.01" ||
+			        dPlanoContas[COD_CONTA_CONTABIL] = "3.1.1.2.00.02",
+			        dCentroCusto[SETOR] = "OFICINA" ||
+			        dCentroCusto[SETOR] = "REFORMADORA" ||
+			        dCentroCusto[SETOR] = "MOTORES",
+			        dCentroCusto[COD_CENTRO_CUSTO] <> "20306"
+			    )
+			
+			VAR ImpostosPecas = 
+			    CALCULATE(
+			        [001 Realizado],
+			        dPlanoContas[GRUPO] = "IMPOSTOS SOBRE AS VENDAS",
+			        dCentroCusto[SETOR] = "PECAS",
+			        dCentroCusto[COD_CENTRO_CUSTO] <> "20400"
+			    )
+			
+			VAR ImpostosServicos = 
+			    CALCULATE(
+			        [001 Realizado],
+			        dPlanoContas[GRUPO] = "IMPOSTOS SOBRE AS VENDAS",
+			        dCentroCusto[SETOR] = "OFICINA" ||
+			        dCentroCusto[SETOR] = "REFORMADORA" ||
+			        dCentroCusto[SETOR] = "MOTORES",
+			        dCentroCusto[COD_CENTRO_CUSTO] <> "20306"
+			    )
+			
+			VAR CustosPecas = 
+			    CALCULATE(
+			        [001 Realizado],
+			        dPlanoContas[COD_CONTA_CONTABIL] = "4.1.1.1.00.02" ||
+			        dPlanoContas[COD_CONTA_CONTABIL] = "4.1.1.1.00.04" ||
+			        dPlanoContas[COD_CONTA_CONTABIL] = "4.1.1.1.00.07" ||
+			        dPlanoContas[COD_CONTA_CONTABIL] = "5.1.4.1.00.03" ||
+			        dPlanoContas[COD_CONTA_CONTABIL] = "5.1.4.1.00.04",
+			        dCentroCusto[SETOR] = "PECAS",
+			        dCentroCusto[COD_CENTRO_CUSTO] <> "20400"
+			    )
+			
+			VAR CustosServicos = 
+			    CALCULATE(
+			        [001 Realizado],
+			        dPlanoContas[SUB_GRUPO] = "CUSTO VDAS. DE SERVICOS",
+			        dCentroCusto[COD_CENTRO_CUSTO] <> "20306"
+			    )
+			
+			
+			VAR DepreciacaoServicos = 
+			    CALCULATE(
+			        [001 Realizado],
+			        dPlanoContas[COD_CONTA_CONTABIL] = "8.0.2.0.00.09" ||
+			        dPlanoContas[COD_CONTA_CONTABIL] = "8.0.2.0.00.10" ||
+			        dPlanoContas[COD_CONTA_CONTABIL] = "8.0.3.0.00.09" ||
+			        dPlanoContas[COD_CONTA_CONTABIL] = "8.0.3.0.00.10"
+			    )
+			
+			VAR DespesasCaminhoes = 
+			    CALCULATE(
+			        [001 Realizado],
+			        dPlanoContas[GRUPO_DRE] = "(-) DESPESAS OPERACIONAIS" ||
+			        dPlanoContas[GRUPO_DRE] = "(+/-) OUTRAS RECEITAS OPERACIONAIS",
+			        dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.1.2.00.01" &&
+			        dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.1.2.00.05",
+			        dCentroCusto[COD_CENTRO_CUSTO] = "20101" ||
+			        dCentroCusto[COD_CENTRO_CUSTO] = "20105"
+			    )
+			
+			VAR DespesasOnibus = 
+			    CALCULATE(
+			        [001 Realizado],
+			        dPlanoContas[GRUPO_DRE] = "(-) DESPESAS OPERACIONAIS" ||
+			        dPlanoContas[GRUPO_DRE] = "(+/-) OUTRAS RECEITAS OPERACIONAIS",
+			        dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.1.2.00.01" &&
+			        dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.1.2.00.05",
+			        dCentroCusto[COD_CENTRO_CUSTO] = "20102"
+			    )
+			
+			VAR DespesasUsados = 
+			    CALCULATE(
+			        [001 Realizado],
+			        dPlanoContas[GRUPO_DRE] = "(-) DESPESAS OPERACIONAIS" ||
+			        dPlanoContas[GRUPO_DRE] = "(+/-) OUTRAS RECEITAS OPERACIONAIS",
+			        dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.1.2.00.01" &&
+			        dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.1.2.00.05",
+			        dCentroCusto[COD_CENTRO_CUSTO] = "20103"
+			    )
+			
+			VAR DespesasPecas = 
+			    CALCULATE(
+			        [001 Realizado],
+			        dPlanoContas[GRUPO_DRE] = "(-) DESPESAS OPERACIONAIS" ||
+			        dPlanoContas[GRUPO_DRE] = "(+/-) OUTRAS RECEITAS OPERACIONAIS",
+			        dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.1.2.00.01" &&
+			        dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.1.2.00.05",
+			        dCentroCusto[SETOR] = "PECAS",
+			        dCentroCusto[COD_CENTRO_CUSTO] <> "20400"
+			    )
+			
+			VAR DespesasServicos = 
+			    CALCULATE(
+			        [001 Realizado],
+			        dPlanoContas[GRUPO_DRE] = "(-) DESPESAS OPERACIONAIS" ||
+			        dPlanoContas[GRUPO_DRE] = "(+/-) OUTRAS RECEITAS OPERACIONAIS",
+			        dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.1.2.00.01" &&
+			        dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.1.2.00.05",
+			        dCentroCusto[SETOR] = "OFICINA" ||
+			        dCentroCusto[SETOR] = "REFORMADORA",
+			        dCentroCusto[COD_CENTRO_CUSTO] <> "20306"
+			    )
+			
+			VAR DespesasAdministrativo = 
+			    CALCULATE(
+			        [001 Realizado],
+			        dPlanoContas[GRUPO_DRE] = "(-) DESPESAS OPERACIONAIS" ||
+			        dPlanoContas[GRUPO_DRE] = "(+/-) OUTRAS RECEITAS OPERACIONAIS",
+			        dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.2.2.00.02" &&
+			        dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.2.2.00.05",
+			        dCentroCusto[SETOR] = "ADM"
+			    )
+			
+			VAR LucroBruto = 
+			    ReceitaLiquidaPecas + ReceitaLiquidaServicos + ImpostosPecas + ImpostosServicos + CustosPecas + 
+			    CustosServicos + DepreciacaoServicos
+			
+			VAR DespesasGerais = 
+			    DespesasAdministrativo + DespesasCaminhoes + DespesasPecas + DespesasServicos + DespesasOnibus + DespesasUsados
+			
+			RETURN
+			divide(LucroBruto,DespesasGerais) * -1
+			
+			```
+		formatString: #,0.00%;-#,0.00%;#,0.00%
+		displayFolder: Realizado
+		lineageTag: 38f7d181-077d-48ad-8ea0-c3421090014d
+
+		changedProperty = FormatString
+
+	measure '036 Resultado Líq. Reformadora Peças + MO Rlz' =
+			
+			CALCULATE (
+			    [002 DRE Realizado],
+			    dCentroCusto[SETOR] = "REFORMADORA"
+			        || dCentroCusto[COD_CENTRO_CUSTO] = "20205"
+			)
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Realizado
+		lineageTag: 0ec749ea-4354-409d-9acf-721aa8bd37d3
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '036 Margem Bruta Reformadora Pecas + MO Rlz' =
+			
+			CALCULATE (
+			    [008 % Margem Operacional Bruta Rlz],
+			    dCentroCusto[SETOR] = "REFORMADORA"
+			        || dCentroCusto[COD_CENTRO_CUSTO] = "20205"
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Realizado
+		lineageTag: 161938ac-d86b-40b5-9c70-a490bfa11902
+
+		changedProperty = FormatString
+
+	measure '036 Margem Líquida Reformadora Peças + MO Rlz' =
+			
+			CALCULATE (
+			    [003 A. V. Realizado],
+			    dCentroCusto[SETOR] = "REFORMADORA"
+			        || dCentroCusto[COD_CENTRO_CUSTO] = "20205"
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Realizado
+		lineageTag: 078f64dd-0f7e-4e0d-a02d-61d59b146066
+
+		changedProperty = FormatString
+
+	measure '037 Resultado Líq. Reformadora Peças Rlz' = CALCULATE([002 DRE Realizado], dCentroCusto[COD_CENTRO_CUSTO] = "20205")
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Realizado
+		lineageTag: a10efdf0-59c8-4c29-ae46-aed658be3d49
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '037 Margem Bruta Reformadora Peças Rlz' =
+			
+			CALCULATE (
+			    [008 % Margem Operacional Bruta Rlz],
+			    dCentroCusto[COD_CENTRO_CUSTO] = "20205"
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Realizado
+		lineageTag: 46646e22-bf5a-4c4c-ab4a-d7f4e3a8bed2
+
+		changedProperty = FormatString
+
+	measure '037 Margem Líquida Peças Rlz' = CALCULATE([003 A. V. Realizado], dCentroCusto[COD_CENTRO_CUSTO] = "20205")
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Realizado
+		lineageTag: 1ec6e8fe-4ce5-44b6-a397-c6064b8120cc
+
+		changedProperty = FormatString
+
+	measure '040 DRE Rlz Mesmo Período Ano Anterior' = CALCULATE([002 DRE Realizado],SAMEPERIODLASTYEAR(aCalendario[Data]))
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Realizado
+		lineageTag: a9395d6e-bd16-4e24-8c56-5fa1a060aa5d
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '041 AV Rlz Mesmo Período Anterior' =
+			
+			DIVIDE (
+			    [040 DRE Rlz Mesmo Período Ano Anterior],
+			    (
+			        CALCULATE (
+			            [040 DRE Rlz Mesmo Período Ano Anterior],
+			            FILTER (
+			                ALL ( dPlanoContas ),
+			                dPlanoContas[GRUPO_DRE] = "(+) RECEITA COM VENDAS"
+			            )
+			        )
+			            + CALCULATE (
+			                [040 DRE Rlz Mesmo Período Ano Anterior],
+			                FILTER ( ALL ( dPlanoContas ), dPlanoContas[SUB_GRUPO] = "DEVOLUCOES" )
+			            )
+			    )
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Realizado
+		lineageTag: e1c38c02-96b6-47d6-ad78-870a450ac46d
+
+		changedProperty = FormatString
+
+	measure '042 AH Atual x Anterior Rlz' = [002 DRE Realizado] - [040 DRE Rlz Mesmo Período Ano Anterior]
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Realizado
+		lineageTag: e53cd06b-b8a4-45fc-9d70-d8de79938494
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '043 % AH Atual x Anterior Rlz' =
+			
+			DIVIDE (
+			    [042 AH Atual x Anterior Rlz],
+			    ABS ( [040 DRE Rlz Mesmo Período Ano Anterior] )
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Realizado
+		lineageTag: 32a8e626-49f1-4248-a669-f925c91b282b
+
+		changedProperty = FormatString
+
+	measure '044 Result Op. Líquido Mesmo Período Ano Anterior Rlz' =
+			
+			CALCULATE (
+			    [040 DRE Rlz Mesmo Período Ano Anterior],
+			    FILTER ( dPlanoContas, dPlanoContas[GRUPO_DRE] = "(+) RECEITA COM VENDAS" )
+			)
+			    + CALCULATE (
+			        [040 DRE Rlz Mesmo Período Ano Anterior],
+			        FILTER ( dPlanoContas, dPlanoContas[GRUPO_DRE] = "(-) DEVOLUCOES" )
+			    )
+			    + CALCULATE (
+			        [040 DRE Rlz Mesmo Período Ano Anterior],
+			        FILTER (
+			            dPlanoContas,
+			            dPlanoContas[GRUPO_DRE] = "(-) IMPOSTOS SOBRE AS VENDAS"
+			        )
+			    )
+			    + CALCULATE (
+			        [040 DRE Rlz Mesmo Período Ano Anterior],
+			        FILTER (
+			            dPlanoContas,
+			            dPlanoContas[GRUPO_DRE] = "(-) CUSTOS DAS VENDAS E SERVICOS"
+			        )
+			    )
+			    + CALCULATE (
+			        [040 DRE Rlz Mesmo Período Ano Anterior],
+			        FILTER ( dPlanoContas, dPlanoContas[GRUPO_DRE] = "(-) DESPESAS OPERACIONAIS" )
+			    )
+			    + CALCULATE (
+			        [040 DRE Rlz Mesmo Período Ano Anterior],
+			        FILTER (
+			            dPlanoContas,
+			            dPlanoContas[GRUPO_DRE] = "(+/-) OUTRAS RECEITAS OPERACIONAIS"
+			        )
+			    )
+			    - CALCULATE (
+			        [040 DRE Rlz Mesmo Período Ano Anterior],
+			        FILTER (
+			            dPlanoContas,
+			            dPlanoContas[CONTA_CONTABIL] = "5.1.1.2.00.01- DEPRECIACOES"
+			        )
+			    )
+			    - CALCULATE (
+			        [040 DRE Rlz Mesmo Período Ano Anterior],
+			        FILTER (
+			            dPlanoContas,
+			            dPlanoContas[CONTA_CONTABIL] = "5.1.1.2.00.05- AMORTIZAÇÃO"
+			        )
+			    )
+			    - CALCULATE (
+			        [040 DRE Rlz Mesmo Período Ano Anterior],
+			        FILTER (
+			            dPlanoContas,
+			            dPlanoContas[CONTA_CONTABIL] = "5.1.2.2.00.02- DEPRECIAÇÃO"
+			        )
+			    )
+			    - CALCULATE (
+			        [040 DRE Rlz Mesmo Período Ano Anterior],
+			        FILTER (
+			            dPlanoContas,
+			            dPlanoContas[CONTA_CONTABIL] = "5.1.2.2.00.05- AMORTIZAÇÃO"
+			        )
+			    )
+			    - CALCULATE (
+			        [040 DRE Rlz Mesmo Período Ano Anterior],
+			        FILTER ( dPlanoContas, dPlanoContas[GRUPO_DRE] = "(+) DEPREC / AMORT CUSTO" )
+			    )
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Realizado
+		lineageTag: 75243d91-fcf3-44d7-9317-fec2623d23b2
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '045 Receita Op Bruta Mesmo Período Ano Anterior Rlz' =
+			
+			CALCULATE (
+			    [040 DRE Rlz Mesmo Período Ano Anterior],
+			    FILTER ( dPlanoContas, dPlanoContas[GRUPO_DRE] = "(+) RECEITA COM VENDAS" )
+			)
+			    + CALCULATE (
+			        [040 DRE Rlz Mesmo Período Ano Anterior],
+			        FILTER ( dPlanoContas, dPlanoContas[GRUPO_DRE] = "(-) DEVOLUCOES" )
+			    )
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Realizado
+		lineageTag: 38405a1d-8a8b-463e-94af-38bb7bfcb84e
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '046 % Margem Liq Mesmo Período Ano Anterior Rlz' =
+			
+			DIVIDE (
+			    [044 Result Op. Líquido Mesmo Período Ano Anterior Rlz],
+			    [045 Receita Op Bruta Mesmo Período Ano Anterior Rlz]
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Realizado
+		lineageTag: 37bdcbe8-30ff-4c33-a4b3-9f6aec7284a3
+
+		changedProperty = FormatString
+
+	measure '018 Realizado até:' =
+			
+			VAR MaiorDataRlz =
+			    CALCULATE ( MAX ( fRealizado[DATA] ), ALL ( fRealizado ) )
+			VAR Mes =
+			    FORMAT ( MaiorDataRlz, "MMMM" )
+			RETURN
+			    "* Valores realizados até " & Mes & "/"
+			        & YEAR ( MaiorDataRlz )
+			        & ". Para vendas diretas de Maringá, considera-se o valor de comissão recebido da Scania (20% da venda)."
+		displayFolder: Realizado
+		lineageTag: e211ca9f-3f1d-43bd-90ac-fb53de87d50f
+
+	measure '001 Orçado' =
+			
+			SWITCH (
+			    TRUE (),
+			    [000 Tipo Orçado Selecionado] = "ORÇADO PROJEÇÃO", SUM (fOrcadoProjecao[VALOR]),
+			    [000 Tipo Orçado Selecionado] = "ORÇADO RTM", SUM (fOrcado[VALOR]),
+			    [000 Tipo Orçado Selecionado] = "ORÇADO RTM", SUM (fOrcadoProjecao500[VALOR]),
+			    SUM (fOrcado[VALOR])
+			)
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Orçado
+		lineageTag: a1f6953b-b363-40c7-8a12-e00881939d6d
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '002 DRE Orçado' = ```
+			
+			VAR Subtotal = SELECTEDVALUE(dEstDRE[SUBTOTAL])
+			VAR OrdemContexto = MAX(dEstDRE[ORDEM])
+			VAR RlzContexto = 
+			SWITCH (
+			    TRUE (),
+			    [000 Tipo Orçado Selecionado] = "ORÇADO PROJEÇÃO", SUM(fOrcadoProjecao[VALOR]) + SUM(fOrcProjecaoFinEstorno[VALOR]),
+			    [000 Tipo Orçado Selecionado] = "ORÇADO RTM", SUM(fOrcado[VALOR]) + SUM(fOrcFinEstorno[VALOR]),
+			    [000 Tipo Orçado Selecionado] = "ORÇADO PROJEÇÃO 500", SUM(fOrcadoProjecao500[VALOR]) + SUM(fOrcProjecaoFinEstorno500[VALOR]),
+			    SUM(fOrcado[VALOR]) + SUM(fOrcFinEstorno[VALOR])
+			)
+			VAR RlzAcmSubtotal =
+			CALCULATE(
+			    SWITCH (
+			    TRUE (),
+			    [000 Tipo Orçado Selecionado] = "ORÇADO PROJEÇÃO", SUM(fOrcadoProjecao[VALOR]) + SUM(fOrcProjecaoFinEstorno[VALOR]),
+			    [000 Tipo Orçado Selecionado] = "ORÇADO RTM", SUM(fOrcado[VALOR]) + SUM(fOrcFinEstorno[VALOR]),
+			    [000 Tipo Orçado Selecionado] = "ORÇADO PROJEÇÃO 500", SUM(fOrcadoProjecao500[VALOR]) + SUM(fOrcProjecaoFinEstorno500[VALOR]),
+			    SUM(fOrcado[VALOR]) + SUM(fOrcFinEstorno[VALOR])
+			),
+			    FILTER(
+			        ALL(dEstDRE),
+			        dEstDRE[ORDEM] <= OrdemContexto
+			    )
+			)
+			RETURN
+			SWITCH(
+			    TRUE(),
+			    Subtotal = 0, RlzContexto,
+			    Subtotal = 1 && NOT(ISINSCOPE(dPlanoContas[GRUPO])), RlzAcmSubtotal,
+			    BLANK()
+			)
+			```
+		displayFolder: Orçado
+		lineageTag: 04a4711b-095a-4f28-95a2-ceb6756d633d
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '003 A. V. Orçado' =
+			
+			DIVIDE (
+			    [002 DRE Orçado],
+			    (
+			        CALCULATE (
+			            [002 DRE Orçado],
+			            FILTER (
+			                ALL ( dPlanoContas ),
+			                dPlanoContas[GRUPO_DRE] = "(+) RECEITA COM VENDAS"
+			            )
+			        )
+			            + CALCULATE (
+			                [002 DRE Orçado],
+			                FILTER ( ALL ( dPlanoContas ), dPlanoContas[GRUPO_DRE] = "(-) DEVOLUCOES" )
+			            )
+			    )
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Orçado
+		lineageTag: 20f8a0fb-05c4-40f3-b872-1f56b1d15c8c
+
+		changedProperty = FormatString
+
+	measure '004 ABS Orçado' = ABS([001 Orçado])
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Orçado
+		lineageTag: 340eba1a-4fd3-4a22-a33f-f46d5367171e
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '005 Receita Operacional Bruta Orç' =
+			
+			CALCULATE (
+			    [002 DRE Orçado],
+			    FILTER ( dPlanoContas, dPlanoContas[GRUPO_DRE] = "(+) RECEITA COM VENDAS" )
+			)
+			    + CALCULATE (
+			        [002 DRE Orçado],
+			        FILTER ( dPlanoContas, dPlanoContas[GRUPO_DRE] = "(-) DEVOLUCOES" )
+			    )
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Orçado
+		lineageTag: dc232895-23d7-410c-ab1c-f0e6c4360475
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '006 Receita Operacional Líquida Orç' =
+			
+			CALCULATE (
+			    [002 DRE Orçado],
+			    FILTER ( dPlanoContas, dPlanoContas[GRUPO_DRE] = "(+) RECEITA COM VENDAS" )
+			)
+			    + CALCULATE (
+			        [002 DRE Orçado],
+			        FILTER ( dPlanoContas, dPlanoContas[GRUPO_DRE] = "(-) DEVOLUCOES" )
+			    )
+			    + CALCULATE (
+			        [002 DRE Orçado],
+			        FILTER (
+			            dPlanoContas,
+			            dPlanoContas[GRUPO_DRE] = "(-) IMPOSTOS SOBRE AS VENDAS"
+			        )
+			    )
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Orçado
+		lineageTag: e7c50e47-0615-4581-9864-69ac9997a4e6
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '007 Resultado Operacional Bruto Orç' =
+			
+			CALCULATE (
+			    [002 DRE Orçado],
+			    FILTER ( dPlanoContas, dPlanoContas[GRUPO_DRE] = "(+) RECEITA COM VENDAS" )
+			)
+			    + CALCULATE (
+			        [002 DRE Orçado],
+			        FILTER ( dPlanoContas, dPlanoContas[GRUPO_DRE] = "(-) DEVOLUCOES" )
+			    )
+			    + CALCULATE (
+			        [002 DRE Orçado],
+			        FILTER (
+			            dPlanoContas,
+			            dPlanoContas[GRUPO_DRE] = "(-) IMPOSTOS SOBRE AS VENDAS"
+			        )
+			    )
+			    + CALCULATE (
+			        [002 DRE Orçado],
+			        FILTER (
+			            dPlanoContas,
+			            dPlanoContas[GRUPO_DRE] = "(-) CUSTOS DAS VENDAS E SERVICOS"
+			        )
+			    )
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Orçado
+		lineageTag: 51e0c32e-2094-4d79-84a5-9455d6af5bf1
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '008 % Margem Operacional Bruta Orç' = DIVIDE([007 Resultado Operacional Bruto Orç], [005 Receita Operacional Bruta Orç])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Orçado
+		lineageTag: 7d80a257-f5d1-4008-8ac9-7cda187ff827
+
+		changedProperty = FormatString
+
+	measure '009 Resultado Operacional Orç' =
+			
+			CALCULATE (
+			    [002 DRE Orçado],
+			    FILTER ( dPlanoContas, dPlanoContas[GRUPO_DRE] = "(+) RECEITA COM VENDAS" )
+			)
+			    + CALCULATE (
+			        [002 DRE Orçado],
+			        FILTER ( dPlanoContas, dPlanoContas[GRUPO_DRE] = "(-) DEVOLUCOES" )
+			    )
+			    + CALCULATE (
+			        [002 DRE Orçado],
+			        FILTER (
+			            dPlanoContas,
+			            dPlanoContas[GRUPO_DRE] = "(-) IMPOSTOS SOBRE AS VENDAS"
+			        )
+			    )
+			    + CALCULATE (
+			        [002 DRE Orçado],
+			        FILTER (
+			            dPlanoContas,
+			            dPlanoContas[GRUPO_DRE] = "(-) CUSTOS DAS VENDAS E SERVICOS"
+			        )
+			    )
+			    + CALCULATE (
+			        [002 DRE Orçado],
+			        FILTER ( dPlanoContas, dPlanoContas[GRUPO_DRE] = "(-) DESPESAS OPERACIONAIS" )
+			    )
+			    + CALCULATE (
+			        [002 DRE Orçado],
+			        FILTER ( dPlanoContas, dPlanoContas[GRUPO_DRE] = "(+/-) RECEITAS FINANCEIRAS" )
+			    )
+			    + CALCULATE (
+			        [002 DRE Orçado],
+			        FILTER (
+			            dPlanoContas,
+			            dPlanoContas[GRUPO_DRE] = "(+/-) OUTRAS RECEITAS OPERACIONAIS"
+			        )
+			    )
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Orçado
+		lineageTag: 6be3d25c-e41c-4ac7-b8ca-fb226861fd39
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '010 % Margem Operacional Orç' = DIVIDE([009 Resultado Operacional Orç], [005 Receita Operacional Bruta Orç])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Orçado
+		lineageTag: 0a6c54b6-e4f6-4ace-b420-55a3eff0fb6e
+
+		changedProperty = FormatString
+
+	measure '011 A. H. DRE Rlz x Orç' = [002 DRE Realizado] - [002 DRE Orçado]
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Orçado
+		lineageTag: d8731a4e-a65b-4d50-a811-33906cde024f
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '012 % A. H. DRE Rlz x Orç' = DIVIDE([011 A. H. DRE Rlz x Orç], ABS([002 DRE Orçado]))
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Orçado
+		lineageTag: ff7fc6ed-8925-48cc-b6a1-2367ec78191f
+
+		changedProperty = FormatString
+
+	measure '013 A. V. Absoluto Orç' = [003 A. V. Orçado] * -1
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Orçado
+		lineageTag: 647eb03a-16f8-4dee-acf3-630bfcc6a09c
+
+		changedProperty = FormatString
+
+	measure '018 % ABS Filiais Orçado' = ```
+			
+			VAR ResultBrutoPecas = 
+			CALCULATE(
+			    [001 Orçado],
+			    dPlanoContas[COD_CONTA_CONTABIL] = "3.1.3.1.00.10" ||
+			    dPlanoContas[COD_CONTA_CONTABIL] = "3.1.3.1.00.11" ||
+			    dPlanoContas[COD_CONTA_CONTABIL] = "5.1.4.1.00.03" ||
+			    dPlanoContas[COD_CONTA_CONTABIL] = "5.1.4.1.00.04" ||
+			    dPlanoContas[COD_CONTA_CONTABIL] = "5.1.4.1.00.07" || 
+			    dPlanoContas[COD_CONTA_CONTABIL] = "5.1.4.1.00.08" ||
+			    dPlanoContas[COD_CONTA_CONTABIL] = "5.1.4.1.00.09" ||
+			    dPlanoContas[COD_CONTA_CONTABIL] = "5.1.4.1.00.15" ||
+			    dPlanoContas[GRUPO] = "DEVOLUCOES" ||
+			    dPlanoContas[GRUPO] = "IMPOSTOS SOBRE AS VENDAS" ||
+			    dPlanoContas[GRUPO] = "VENDAS DE MERCAD.E SERVICOS" ||
+			    dPlanoContas[SUB_GRUPO] = "CUSTOS VDAS.MERCADORIAS",
+			    dCentroCusto[SETOR] = "PECAS",
+			    dCentroCusto[COD_CENTRO_CUSTO] <> "20106" &&
+			    dCentroCusto[COD_CENTRO_CUSTO] <> "20400")
+			
+			VAR ResultBrutoAssistTec = 
+			CALCULATE(
+			    [001 Orçado],
+			    dPlanoContas[COD_CONTA_CONTABIL] = "3.1.1.2.00.02" || 
+			    dPlanoContas[COD_CONTA_CONTABIL] = "4.1.2.1.00.01" || 
+			    dPlanoContas[GRUPO] = "DEVOLUCOES" ||
+			    dPlanoContas[GRUPO] = "IMPOSTOS SOBRE AS VENDAS",
+			    dCentroCusto[SETOR] = "OFICINA" ||
+			    dCentroCusto[SETOR] = "REFORMADORA")
+			
+			VAR DespComerciais = 
+			CALCULATE(
+			    [001 Orçado],
+			    dPlanoContas[GRUPO] = "DESPESAS COM A COMERCIALIZACAO",
+			    dCentroCusto[COD_CENTRO_CUSTO] <> "20106",
+			    dCentroCusto[SETOR] = "PECAS" ||
+			    dCentroCusto[SETOR] = "OFICINA" ||
+			    dCentroCusto[SETOR] = "REFORMADORA" ||
+			    dCentroCusto[SETOR] = "ALINHAMENTO",
+			    dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.1.2.00.01")
+			
+			VAR DespAdm = 
+			CALCULATE(
+			    [001 Orçado],
+			    dPlanoContas[GRUPO] = "DESPESAS ADMINISTRATIVAS" ||
+			    dPlanoContas[GRUPO] = "VENDAS DE MERCAD.E SERVICOS" ||
+			    dPlanoContas[GRUPO] = "OUTRAS RECEITAS OPERACIONAIS LIQUIDAS" ||
+			    dPlanoContas[GRUPO] = "DEVOLUCOES" ||
+			    dPlanoContas[GRUPO] = "IMPOSTOS SOBRE AS VENDAS",  
+			    dCentroCusto[SETOR] = "ADM",
+			    dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.2.2.00.02")
+			
+			VAR OutrasRecOpLiqPecas = 
+			CALCULATE(
+			    [001 Orçado],
+			    dPlanoContas[GRUPO] = "OUTRAS RECEITAS OPERACIONAIS LIQUIDAS" &&
+			    dPlanoContas[COD_CONTA_CONTABIL] <> "3.1.3.1.00.10" &&
+			    dPlanoContas[COD_CONTA_CONTABIL] <> "3.1.3.1.00.11" &&
+			    dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.4.1.00.03" &&
+			    dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.4.1.00.04" &&
+			    dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.4.1.00.07" && 
+			    dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.4.1.00.08" &&
+			    dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.4.1.00.09" &&
+			    dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.4.1.00.15",
+			    dCentroCusto[SETOR] = "PECAS")
+			
+			VAR OutrasRecOpLiqAssistTec = 
+			CALCULATE(
+			    [001 Orçado],
+			    dPlanoContas[GRUPO] = "OUTRAS RECEITAS OPERACIONAIS LIQUIDAS",
+			    dCentroCusto[SETOR] = "OFICINA" ||
+			    dCentroCusto[SETOR] = "REFORMADORA")
+			    
+			VAR DeprecAssistTec = 
+			CALCULATE(
+			    [001 Orçado],
+			    dPlanoContas[COD_CONTA_CONTABIL] = "8.0.2.0.00.10" ||
+			    dPlanoContas[COD_CONTA_CONTABIL] = "8.0.3.0.00.10")*-1
+			
+			RETURN
+			    DIVIDE(ResultBrutoPecas + ResultBrutoAssistTec, DespComerciais + DespAdm + OutrasRecOpLiqPecas + OutrasRecOpLiqAssistTec + DeprecAssistTec)*-1
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Orçado
+		lineageTag: aee784ba-6f2b-4cb7-bce0-4159c0196800
+
+		changedProperty = FormatString
+
+	measure '019 % ABS Scania Orçado' = ```
+			
+			VAR ReceitaLiquidaPecas = 
+			    CALCULATE(
+			        [001 Orçado],
+			        dPlanoContas[COD_CONTA_CONTABIL] = "3.1.1.1.00.02" ||
+			        dPlanoContas[COD_CONTA_CONTABIL] = "3.1.1.1.00.04" ||
+			        dPlanoContas[COD_CONTA_CONTABIL] = "3.1.1.1.00.05" ||
+			        dPlanoContas[COD_CONTA_CONTABIL] = "3.1.3.1.00.10" ||
+			        dPlanoContas[COD_CONTA_CONTABIL] = "3.1.3.1.00.11" ||
+			        dPlanoContas[COD_CONTA_CONTABIL] = "3.1.1.2.00.01" ||
+			        dPlanoContas[COD_CONTA_CONTABIL] = "3.2.1.1.00.01",
+			        dCentroCusto[SETOR] = "PECAS",
+			        dCentroCusto[COD_CENTRO_CUSTO] <> "20400"
+			    )
+			
+			VAR ReceitaLiquidaServicos = 
+			    CALCULATE(
+			        [001 Orçado],
+			        dPlanoContas[COD_CONTA_CONTABIL] = "3.1.1.2.00.01" ||
+			        dPlanoContas[COD_CONTA_CONTABIL] = "3.1.1.2.00.02",
+			        dCentroCusto[SETOR] = "OFICINA" ||
+			        dCentroCusto[SETOR] = "REFORMADORA" ||
+			        dCentroCusto[SETOR] = "MOTORES",
+			        dCentroCusto[COD_CENTRO_CUSTO] <> "20306"
+			    )
+			
+			VAR ImpostosPecas = 
+			    CALCULATE(
+			        [001 Orçado],
+			        dPlanoContas[GRUPO] = "IMPOSTOS SOBRE AS VENDAS",
+			        dCentroCusto[SETOR] = "PECAS",
+			        dCentroCusto[COD_CENTRO_CUSTO] <> "20400"
+			    )
+			
+			VAR ImpostosServicos = 
+			    CALCULATE(
+			        [001 Orçado],
+			        dPlanoContas[GRUPO] = "IMPOSTOS SOBRE AS VENDAS",
+			        dCentroCusto[SETOR] = "OFICINA" ||
+			        dCentroCusto[SETOR] = "REFORMADORA" ||
+			        dCentroCusto[SETOR] = "MOTORES",
+			        dCentroCusto[COD_CENTRO_CUSTO] <> "20306"
+			    )
+			
+			VAR CustosPecas = 
+			    CALCULATE(
+			        [001 Orçado],
+			        dPlanoContas[COD_CONTA_CONTABIL] = "4.1.1.1.00.02" ||
+			        dPlanoContas[COD_CONTA_CONTABIL] = "4.1.1.1.00.04" ||
+			        dPlanoContas[COD_CONTA_CONTABIL] = "4.1.1.1.00.07" ||
+			        dPlanoContas[COD_CONTA_CONTABIL] = "5.1.4.1.00.03" ||
+			        dPlanoContas[COD_CONTA_CONTABIL] = "5.1.4.1.00.04",
+			        dCentroCusto[SETOR] = "PECAS",
+			        dCentroCusto[COD_CENTRO_CUSTO] <> "20400"
+			    )
+			
+			VAR CustosServicos = 
+			    CALCULATE(
+			        [001 Orçado],
+			        dPlanoContas[SUB_GRUPO] = "CUSTO VDAS. DE SERVICOS",
+			        dCentroCusto[COD_CENTRO_CUSTO] <> "20306"
+			    )
+			
+			
+			VAR DepreciacaoServicos = 
+			    CALCULATE(
+			        [001 Orçado],
+			        dPlanoContas[COD_CONTA_CONTABIL] = "8.0.2.0.00.09" ||
+			        dPlanoContas[COD_CONTA_CONTABIL] = "8.0.2.0.00.10" ||
+			        dPlanoContas[COD_CONTA_CONTABIL] = "8.0.3.0.00.09" ||
+			        dPlanoContas[COD_CONTA_CONTABIL] = "8.0.3.0.00.10"
+			    )
+			
+			VAR DespesasCaminhoes = 
+			    CALCULATE(
+			        [001 Orçado],
+			        dPlanoContas[GRUPO_DRE] = "(-) DESPESAS OPERACIONAIS" ||
+			        dPlanoContas[GRUPO_DRE] = "(+/-) OUTRAS RECEITAS OPERACIONAIS",
+			        dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.1.2.00.01" &&
+			        dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.1.2.00.05",
+			        dCentroCusto[COD_CENTRO_CUSTO] = "20101" ||
+			        dCentroCusto[COD_CENTRO_CUSTO] = "20105"
+			    )
+			
+			VAR DespesasOnibus = 
+			    CALCULATE(
+			        [001 Orçado],
+			        dPlanoContas[GRUPO_DRE] = "(-) DESPESAS OPERACIONAIS" ||
+			        dPlanoContas[GRUPO_DRE] = "(+/-) OUTRAS RECEITAS OPERACIONAIS",
+			        dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.1.2.00.01" &&
+			        dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.1.2.00.05",
+			        dCentroCusto[COD_CENTRO_CUSTO] = "20102"
+			    )
+			
+			VAR DespesasUsados = 
+			    CALCULATE(
+			        [001 Orçado],
+			        dPlanoContas[GRUPO_DRE] = "(-) DESPESAS OPERACIONAIS" ||
+			        dPlanoContas[GRUPO_DRE] = "(+/-) OUTRAS RECEITAS OPERACIONAIS",
+			        dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.1.2.00.01" &&
+			        dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.1.2.00.05",
+			        dCentroCusto[COD_CENTRO_CUSTO] = "20103"
+			    )
+			
+			VAR DespesasPecas = 
+			    CALCULATE(
+			        [001 Orçado],
+			        dPlanoContas[GRUPO_DRE] = "(-) DESPESAS OPERACIONAIS" ||
+			        dPlanoContas[GRUPO_DRE] = "(+/-) OUTRAS RECEITAS OPERACIONAIS",
+			        dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.1.2.00.01" &&
+			        dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.1.2.00.05",
+			        dCentroCusto[SETOR] = "PECAS",
+			        dCentroCusto[COD_CENTRO_CUSTO] <> "20400"
+			    )
+			
+			VAR DespesasServicos = 
+			    CALCULATE(
+			        [001 Orçado],
+			        dPlanoContas[GRUPO_DRE] = "(-) DESPESAS OPERACIONAIS" ||
+			        dPlanoContas[GRUPO_DRE] = "(+/-) OUTRAS RECEITAS OPERACIONAIS",
+			        dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.1.2.00.01" &&
+			        dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.1.2.00.05",
+			        dCentroCusto[SETOR] = "OFICINA" ||
+			        dCentroCusto[SETOR] = "REFORMADORA",
+			        dCentroCusto[COD_CENTRO_CUSTO] <> "20306"
+			    )
+			
+			VAR DespesasAdministrativo = 
+			    CALCULATE(
+			        [001 Orçado],
+			        dPlanoContas[GRUPO_DRE] = "(-) DESPESAS OPERACIONAIS" ||
+			        dPlanoContas[GRUPO_DRE] = "(+/-) OUTRAS RECEITAS OPERACIONAIS",
+			        dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.2.2.00.02" &&
+			        dPlanoContas[COD_CONTA_CONTABIL] <> "5.1.2.2.00.05",
+			        dCentroCusto[SETOR] = "ADM"
+			    )
+			
+			VAR LucroBruto = 
+			    ReceitaLiquidaPecas + ReceitaLiquidaServicos + ImpostosPecas + ImpostosServicos + CustosPecas + 
+			    CustosServicos + DepreciacaoServicos
+			
+			VAR DespesasGerais = 
+			    DespesasAdministrativo + DespesasCaminhoes + DespesasPecas + DespesasServicos + DespesasOnibus + DespesasUsados
+			
+			RETURN
+			divide(LucroBruto,DespesasGerais) * -1
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Orçado
+		lineageTag: c6e63e21-5b93-4fac-9999-f8a3df3334a3
+
+		changedProperty = FormatString
+
+	measure '047 AV Absoluto Rlz Mesmo Período Anterior' = [041 AV Rlz Mesmo Período Anterior] * -1
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Realizado
+		lineageTag: af50157e-6c7f-49e4-9168-4201ae5b0c93
+
+		changedProperty = FormatString
+
+	measure '020 DRE Orç Mesmo Período Ano Anterior' = CALCULATE([002 DRE Orçado],SAMEPERIODLASTYEAR(aCalendario[Data]))
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Orçado
+		lineageTag: 50211977-e987-46ba-a76d-88137ecb99cc
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '021 AV Orç Mesmo Período Anterior' =
+			
+			DIVIDE (
+			    [020 DRE Orç Mesmo Período Ano Anterior],
+			    (
+			        CALCULATE (
+			            [020 DRE Orç Mesmo Período Ano Anterior],
+			            FILTER (
+			                ALL ( dPlanoContas ),
+			                dPlanoContas[GRUPO_DRE] = "(+) RECEITA COM VENDAS"
+			            )
+			        )
+			            + CALCULATE (
+			                [020 DRE Orç Mesmo Período Ano Anterior],
+			                FILTER ( ALL ( dPlanoContas ), dPlanoContas[SUB_GRUPO] = "DEVOLUCOES" )
+			            )
+			    )
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Orçado
+		lineageTag: 500848b7-93f2-41eb-bcf1-6905dc0ec151
+
+		changedProperty = FormatString
+
+	measure '021 Margem Bruta Caminhões Orç' =
+			
+			CALCULATE (
+			    [008 % Margem Operacional Bruta Orç],
+			    dCentroCusto[SETOR] = "CAMINHOES NOVOS"
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Orçado
+		lineageTag: 5dcb4a65-5c0e-4865-9cd6-efc5cc23a17c
+
+	measure '021 Margem Líquida Caminhões Orç' = CALCULATE([003 A. V. Orçado], dCentroCusto[SETOR] = "CAMINHOES NOVOS")
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Orçado
+		lineageTag: ab7e8e0a-a8be-44da-84cf-d305f325e580
+
+	measure '021 Resultado Líquido Caminhões Orç' = CALCULATE([002 DRE Orçado], dCentroCusto[SETOR] = "CAMINHOES NOVOS")
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Orçado
+		lineageTag: 2bafec45-0cd0-415a-b867-6931bc60cc59
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '022 Resultado Líquido Consórcio Orç' = CALCULATE([002 DRE Orçado], dCentroCusto[SETOR] = "CONSORCIO")
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Orçado
+		lineageTag: 2062d752-01f0-4afe-ac99-4f7340c93dd7
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '023 Resultado Líquido Ônibus Orç' = CALCULATE([002 DRE Orçado], dCentroCusto[SETOR] = "ONIBUS")
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Orçado
+		lineageTag: b935b888-56e9-4d40-afc3-51ea7b8fa01f
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '024 Resultado Líquido Usados Orç' = CALCULATE([002 DRE Orçado], dCentroCusto[SETOR] = "CAMINHOES USADOS")
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Orçado
+		lineageTag: 5ec497d9-5736-42be-8664-1d25f04dc32b
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '025 Resultado Líquido Motores Orç' = CALCULATE([002 DRE Orçado], dCentroCusto[SETOR] = "MOTORES")
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Orçado
+		lineageTag: 4f8d54d6-f6df-4483-a9fd-af38da9ebe27
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '026 Margem Bruta Peças Orç' = CALCULATE([008 % Margem Operacional Bruta Orç], dCentroCusto[SETOR] = "PECAS")
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Orçado
+		lineageTag: b94ee37c-d930-45d9-9bcd-3e92bac84de6
+
+	measure '026 Margem Líquida Peças Orç' = CALCULATE([003 A. V. Orçado], dCentroCusto[SETOR] = "PECAS")
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Orçado
+		lineageTag: d39a94e5-426c-4dd6-84b2-ca944fdbcbf0
+
+	measure '026 Resultado Líquido Peças Orç' = CALCULATE([002 DRE Orçado], dCentroCusto[SETOR] = "PECAS")
+		displayFolder: Orçado
+		lineageTag: bb8285af-c147-4e79-a4f4-10e07de42dc5
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '027 Margem Bruta Oficina Orç' = CALCULATE([008 % Margem Operacional Bruta Orç], dCentroCusto[SETOR] = "OFICINA")
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Orçado
+		lineageTag: bd5e6bf7-ad52-41bb-a2ee-1d06d3239625
+
+	measure '027 Margem Líquida Oficina Orç' = CALCULATE([003 A. V. Orçado], dCentroCusto[SETOR] = "OFICINA")
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Orçado
+		lineageTag: 818f1115-e321-4950-b22a-e48c591c69eb
+
+	measure '027 Resultado Líquido Oficina Orç' = CALCULATE([002 DRE Orçado], dCentroCusto[SETOR] = "OFICINA")
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Orçado
+		lineageTag: dece543f-cf11-4e01-8bd3-ab900feafba6
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '028 Margem Bruta Reformadora MO Orç' =
+			
+			CALCULATE (
+			    [008 % Margem Operacional Bruta Orç],
+			    dCentroCusto[SETOR] = "REFORMADORA"
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Orçado
+		lineageTag: ba04d1b2-e629-4bb9-aeb5-da8e935e8302
+
+	measure '028 Margem Líquida Reformadora MO Orç' = CALCULATE([003 A. V. Orçado], dCentroCusto[SETOR] = "REFORMADORA")
+		displayFolder: Orçado
+		lineageTag: 03b9445b-58f5-43ac-bde5-a89bc10fe6a7
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '028 Resultado Líquido Reformadora MO Orç' = CALCULATE([002 DRE Orçado], dCentroCusto[SETOR] = "REFORMADORA")
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Orçado
+		lineageTag: f6a63724-4def-4133-a279-f9d40d4c5d76
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '030 Top Dealer Orç' =
+			
+			CALCULATE (
+			    [002 DRE Orçado],
+			    dCentroCusto[SETOR] = "ADM",
+			    dCasa[COD_CASA] <> "101",
+			    dPlanoContas[CONTA_CONTABIL] = "3.1.3.1.00.XX- TOP DEALER"
+			)
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Orçado
+		lineageTag: 91405a0f-5340-4303-9a7e-223e418c323e
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '031 Resultado Líq. ADM Filiais s/ Top Dealer Orç' =
+			
+			CALCULATE (
+			    [002 DRE Orçado],
+			    dCentroCusto[SETOR] = "ADM",
+			    dCasa[COD_CASA] <> "101",
+			    dPlanoContas[CONTA_CONTABIL] <> "3.1.3.1.00.XX- TOP DEALER"
+			)
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Orçado
+		lineageTag: 567c067e-1d28-4208-ae8f-559f52d39f3c
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '032 Resultado Líq. ADM Filiais Total Orç' =
+			
+			CALCULATE (
+			    [002 DRE Orçado],
+			    dCentroCusto[SETOR] = "ADM",
+			    dCasa[COD_CASA] <> "101"
+			)
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Orçado
+		lineageTag: 1f7355fb-12e8-44c5-ae5a-e59765afb106
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '033 Resultado Líq. Adm Matriz Orç' =
+			
+			CALCULATE (
+			    [002 DRE Orçado],
+			    dCasa[COD_CASA] = "101",
+			    dCentroCusto[SETOR] = "ADM"
+			)
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Orçado
+		lineageTag: ec6d12a3-216e-4e1f-9e8d-02a8f0d14016
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '034 Resultado Líq. Filiais Orc' =
+			
+			CALCULATE(
+			    [002 DRE Orçado],
+			    dCasa[COD_CASA] <>"101"
+			)
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Orçado
+		lineageTag: e6f87476-f90c-470c-a584-7c197d209b13
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '000 Tipo Orçado Selecionado' = SELECTEDVALUE('dTipoOrçamento'[TIPO])
+		displayFolder: Orçado
+		lineageTag: 7ed74c39-db96-4b7f-88e0-5828e34bf759
+
+	measure '048 Ebit RLZ' =
+			
+			CALCULATE (
+			    [002 DRE Realizado],
+			        dPlanoContas[GRUPO_DRE] = "(+) RECEITA COM VENDAS" ||
+			        dPlanoContas[GRUPO_DRE] = "(-) DEVOLUCOES" ||
+			        dPlanoContas[GRUPO_DRE] = "(-) IMPOSTOS SOBRE AS VENDAS" ||
+			        dPlanoContas[GRUPO_DRE] = "(-) CUSTOS DAS VENDAS E SERVICOS" ||
+			        dPlanoContas[GRUPO_DRE] = "(-) DESPESAS OPERACIONAIS" ||
+			        dPlanoContas[GRUPO_DRE] = "(+) ESTORNO DEPREC / AMORT CUSTO" ||
+			        dPlanoContas[GRUPO_DRE] = "(+) ESTORNO DEPRECIACOES / AMORTIZACOES DESPESAS"
+			)
+			
+			/* - CALCULATE(
+			    [002 DRE Realizado],
+			        dPlanoContas[CONTA_CONTABIL] = "3.1.3.1.00.10- RECEITAS DE GARANTIA" ||
+			        dPlanoContas[CONTA_CONTABIL] = "3.1.3.1.00.11- RECEITAS DE REVISÃO" ||
+			        dPlanoContas[CONTA_CONTABIL] = "5.1.4.1.00.08- PIS S/ GARANTIAS E REVISOES -" ||
+			        dPlanoContas[CONTA_CONTABIL] = "5.1.4.1.00.09- COFINS S/ GARANTIAS E REVISOES" ||
+			        dPlanoContas[CONTA_CONTABIL] = "5.1.4.1.00.15- ICMS S/ REPOS.GARANTIA E REVIS." ||
+			        dPlanoContas[CONTA_CONTABIL] = "5.1.4.1.00.03- REPOSICAO EM GARANTIAS" ||
+			        dPlanoContas[CONTA_CONTABIL] = "5.1.4.1.00.04- DESPESAS COM REVISOES"
+			) */
+		displayFolder: Realizado
+		lineageTag: b36ace05-2024-4497-bc30-4f69a07f0aca
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '049 % Ebit RLZ' = ```
+			
+			    DIVIDE(
+			        [048 Ebit RLZ], [006 Receita Operacional Líquida Rlz]
+			    )
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Realizado
+		lineageTag: 5634b8a7-41c0-4b81-9842-6be43198c8bf
+
+	measure '001 Ativo Circulante' = ```
+			
+			    CALCULATE(
+			        sum(f_Dados_BP_Rlz[VALOR]),
+			        f_Dados_BP_Rlz[GRUPO] = "ATIVO CIRCULANTE"
+			    )
+			```
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Dados_BP
+		lineageTag: 7058719d-323a-42a5-a6e0-794d295a0883
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '002 Passivo Circulante' = ```
+			
+			    CALCULATE(
+			        sum(f_Dados_BP_Rlz[VALOR]),
+			        f_Dados_BP_Rlz[GRUPO] = "PASSIVO CIRCULANTE"
+			    )
+			```
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Dados_BP
+		lineageTag: 2b93a45d-942e-46e7-a8b8-67a42c1b1ab7
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '004 Estoque' = ```
+			
+			    CALCULATE(
+			        sum(f_Dados_BP_Rlz[VALOR]),
+			        f_Dados_BP_Rlz[GRUPO] = "ESTOQUE"
+			    )
+			```
+		displayFolder: Dados_BP
+		lineageTag: d469aa46-699b-4326-baca-8ba1379ace3d
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '005 Lucro Liquido' = ```
+			
+			    CALCULATE(
+			        sum(f_Dados_BP_Rlz[VALOR]),
+			        f_Dados_BP_Rlz[GRUPO] = "LUCRO LIQUIDO"
+			    )
+			```
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Dados_BP
+		lineageTag: f42ce6f4-e406-47b2-ab6b-a19d28abdf7e
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '006 Patrimonio Liquido' = ```
+			
+			    CALCULATE(
+			        sum(f_Dados_BP_Rlz[VALOR]),
+			        f_Dados_BP_Rlz[GRUPO] = "PATRIMONIO LIQUIDO"
+			    )
+			```
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Dados_BP
+		lineageTag: 644bd92f-ad1f-4ffe-b356-922b950dead1
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '003 Passivo Nao Circulante' = ```
+			
+			    CALCULATE(
+			        sum(f_Dados_BP_Rlz[VALOR]),
+			        f_Dados_BP_Rlz[GRUPO] = "PASSIVO NAO CIRCULANTE"
+			    )
+			```
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Dados_BP
+		lineageTag: 29460a6c-3c00-4927-8ca7-2e475c42f10c
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '007 ROE' =
+			
+			Var Lucro_Liquido = [001 Realizado]
+			Var Patrimonio_Liquido = CALCULATE(sum(f_Dados_BP_Rlz[VALOR]), f_Dados_BP_Rlz[GRUPO] = "PATRIMONIO LIQUIDO")
+			Var Parcial = DIVIDE(Lucro_Liquido * 0.65, 9)*12
+			
+			RETURN
+			DIVIDE(Parcial, Patrimonio_Liquido)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Dados_BP
+		lineageTag: 6c996081-72f5-442c-bd05-12cef61f0abf
+
+	measure '008 ILC' = DIVIDE([001 Ativo Circulante], [002 Passivo Circulante])
+		formatString: 0.0000
+		displayFolder: Dados_BP
+		lineageTag: 7a6c061b-4f90-4c9f-8e12-c88be257e0f7
+
+	measure '009 ILS' = divide([001 Ativo Circulante] - [004 Estoque], [002 Passivo Circulante])
+		formatString: 0.0000
+		displayFolder: Dados_BP
+		lineageTag: 3922f298-b24a-4398-b0d6-075b0cc7bc8a
+
+	measure '010 ICD' = DIVIDE([002 DRE Realizado], [002 Passivo Circulante] + [003 Passivo Nao Circulante])
+		formatString: 0.0000
+		displayFolder: Dados_BP
+		lineageTag: b15579ba-5cfc-4a67-83e5-262997f77401
+
+	measure '050 Representatividade Desp. Operacionais x Faturamento' =
+			
+			Var Desp_Operacionais = CALCULATE([001 Realizado], dPlanoContas[GRUPO_DRE] = "(-) DESPESAS OPERACIONAIS")
+			
+			Return
+			DIVIDE(Desp_Operacionais*-1, [006 Receita Operacional Líquida Rlz])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Realizado
+		lineageTag: 8e755bd9-06c4-44f9-8c9b-cf5a45c7fe13
+
+	measure 'CR Carteira' =
+			
+			CALCULATE ( SUM ( fTitulosReceber[saldo] ),
+			    fTitulosReceber[em_aberto] = 1,
+			    fTitulosReceber[tipo_especie] <> "Antecipação" )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		lineageTag: a18788c2-091b-4e40-ab8c-039120032984
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'CR Qtd Títulos' =
+			
+			CALCULATE ( COUNTROWS ( fTitulosReceber ),
+			    fTitulosReceber[em_aberto] = 1,
+			    fTitulosReceber[tipo_especie] <> "Antecipação",
+			    fTitulosReceber[saldo] > 0 )
+		formatString: 0
+		lineageTag: ea6c0626-e57d-4fd8-9900-48403e8c6acd
+
+	measure 'CR Vencido' = CALCULATE ( [CR Carteira], fTitulosReceber[Dias em Atraso] > 0 )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		lineageTag: 5688df9d-d0cc-43c9-bb98-a0736674ebdb
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'CR A Vencer' = CALCULATE ( [CR Carteira], fTitulosReceber[Dias em Atraso] <= 0 )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		lineageTag: 33476772-fe86-4857-8bf6-52d7997ee023
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'CR % Vencido' = DIVIDE ( [CR Vencido], [CR Carteira] )
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 711ce0ba-66fc-4922-abc6-7229afc10e57
+
+	measure 'CR Antecipações de Clientes' =
+			
+			CALCULATE ( SUM ( fTitulosReceber[saldo] ),
+			    fTitulosReceber[em_aberto] = 1,
+			    fTitulosReceber[tipo_especie] = "Antecipação" )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		lineageTag: 2a0eaade-9cb7-45c8-92bc-572de8d5cb44
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'CR Vencido +90 Dias' =
+			
+			CALCULATE ( [CR Carteira], fTitulosReceber[Dias em Atraso] > 90 )
+		lineageTag: 1b48dce7-eedd-48a2-8028-30b56b1c19ae
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'CR Maior Atraso (dias)' =
+			
+			CALCULATE ( MAX ( fTitulosReceber[Dias em Atraso] ),
+			    fTitulosReceber[em_aberto] = 1,
+			    fTitulosReceber[tipo_especie] <> "Antecipação",
+			    fTitulosReceber[saldo] > 0 )
+		formatString: 0
+		lineageTag: ef9008fa-0b1e-4b89-b5fa-77dc1aabd572
+
+	measure 'CR Vence 7 Dias' =
+			
+			CALCULATE ( [CR Carteira],
+			    fTitulosReceber[Dias em Atraso] <= 0,
+			    fTitulosReceber[Dias em Atraso] >= -7 )
+		lineageTag: 738e3c4a-1325-42c0-b26f-9f67380a5634
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'CR Vence Hoje' =
+			
+			CALCULATE ( [CR Carteira], fTitulosReceber[Dias em Atraso] = 0 )
+		lineageTag: 75070a74-c2f1-46b1-aef8-8c2b41cae8ec
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'CR Qtd Vencidos' =
+			
+			CALCULATE ( [CR Qtd Títulos], fTitulosReceber[Dias em Atraso] > 0 )
+		formatString: 0
+		lineageTag: ae6c8f89-cc8f-45be-a8f2-c743f996c6b4
+
+	measure 'CR Recebido Período' = ```
+			
+			   CALCULATE ( SUM ( fTitulosReceber[valor_original] ),
+			       fTitulosReceber[em_aberto] = 0,
+			       fTitulosReceber[tipo_especie] <> "Antecipação",
+			       USERELATIONSHIP ( dCalendario[Data], fTitulosReceber[data_liquidacao] ) )
+			```
+		lineageTag: 5b637266-a694-4b9d-89e3-37891abe9a39
+
+	measure 'CR Qtd Clientes com Vencido' =
+			
+			CALCULATE ( DISTINCTCOUNT ( fTitulosReceber[cod_cliente] ),
+			    fTitulosReceber[em_aberto] = 1,
+			    fTitulosReceber[tipo_especie] <> "Antecipação",
+			    fTitulosReceber[saldo] > 0,
+			    fTitulosReceber[Dias em Atraso] > 0 )
+		formatString: 0
+		lineageTag: ef6a9281-4e67-4136-85fb-9ff2370b7169
+
+	measure 'CR % Top 10 Clientes' =
+			
+			VAR _Total = CALCULATE ( [CR Carteira], REMOVEFILTERS ( pEmitente[cod_cliente] ) )
+			VAR _Tab = ADDCOLUMNS ( ALL ( pEmitente[cod_cliente] ), "ValorCli", [CR Carteira] )
+			VAR _Top = TOPN ( 10, _Tab, [ValorCli], DESC )
+			RETURN
+			    DIVIDE ( SUMX ( _Top, [ValorCli] ), _Total )
+		lineageTag: 2c42f0ab-4892-4f3a-b7cf-9517e75055b0
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'CR Cor Aging' =
+			
+			IF ( NOT ISINSCOPE ( dCasa[CASA] ), BLANK (),
+			VAR _Faixa = SELECTEDVALUE ( fTitulosReceber[Faixa Aging] )
+			VAR _Valor = [CR Carteira]
+			VAR _Max = MAXX ( ALLSELECTED ( dCasa[CASA] ), [CR Carteira] )
+			VAR _p = DIVIDE ( _Valor, _Max )
+			RETURN
+			    IF ( ISBLANK ( _Valor ) || ISBLANK ( _Faixa ), BLANK (),
+			        IF ( _Faixa = "A vencer",
+			            SWITCH ( TRUE (), _p > 0.66, "#7DCEA0", _p > 0.33, "#A9DFBF", "#E9F7EF" ),
+			            SWITCH ( TRUE (), _p > 0.75, "#E6776A", _p > 0.5, "#F1A89F", _p > 0.25, "#F7CDC8", "#FCECEA" ) ) ) )
+		lineageTag: eb28ed49-723d-43dd-bb11-6a0592db2ac0
+
+	measure 'CR Título Top 10' = ```
+			
+			   "10 maiores clientes · " & FORMAT ( [CR % Top 10 Clientes], "0%" ) & " da carteira"
+			```
+		lineageTag: a4719611-2116-4293-8b57-66c1d019ff07
+
+	measure 'CR % da Carteira' =
+			
+			DIVIDE ( [CR Carteira], CALCULATE ( [CR Carteira], REMOVEFILTERS ( pEmitente ) ) )
+		lineageTag: 197415f0-50c0-44f4-a515-a81cc657673e
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'CR Rótulo Top Clientes' = ```
+			
+			   FORMAT ( [CR Carteira] / 1000000, "0.00" ) & " mi · " & FORMAT ( [CR % da Carteira], "0.0%" )
+			```
+		lineageTag: 6dcf3ade-7ef7-474c-9823-b05f3a2020c6
+
+	partition _Medidas-e0807ed9-830e-46df-b71f-9de294b53a18 = m
+		mode: import
+		queryGroup: Medidas
+		source =
+				let
+				    Fonte = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [#"Coluna 1" = _t]),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(Fonte,{{"Coluna 1", type text}}),
+				    #"Colunas Removidas" = Table.RemoveColumns(#"Tipo Alterado",{"Coluna 1"})
+				in
+				    #"Colunas Removidas"
+
+	annotation PBI_ResultType = Table
+
