@@ -1,0 +1,161 @@
+table fLancamentosContabeis
+	lineageTag: 4681ee33-0fc6-4f20-a3d2-06dd461e02bd
+
+	column lote
+		dataType: int64
+		formatString: 0
+		lineageTag: 02dc476f-ec84-4336-9d29-057470967108
+		summarizeBy: none
+		sourceColumn: lote
+
+		annotation SummarizationSetBy = Automatic
+
+	column lancamento
+		dataType: int64
+		formatString: 0
+		lineageTag: 13b6b3e7-28a0-4b7f-adc4-dd53ae8f182c
+		summarizeBy: none
+		sourceColumn: lancamento
+
+		annotation SummarizationSetBy = Automatic
+
+	column sequencia
+		dataType: int64
+		formatString: 0
+		lineageTag: 68be382c-82c0-4b83-ae68-351739254f0c
+		summarizeBy: none
+		sourceColumn: sequencia
+
+		annotation SummarizationSetBy = Automatic
+
+	column cod_estab
+		dataType: string
+		lineageTag: 83d1cad6-8b74-495f-b880-6d93a4ebfde8
+		summarizeBy: none
+		sourceColumn: cod_estab
+
+		annotation SummarizationSetBy = Automatic
+
+	column cod_cta_ctbl
+		dataType: string
+		lineageTag: d5e2864c-6b2c-48a9-b41f-470861ac50fa
+		summarizeBy: none
+		sourceColumn: cod_cta_ctbl
+
+		annotation SummarizationSetBy = Automatic
+
+	column cod_ccusto
+		dataType: string
+		lineageTag: e6d67100-d37a-465d-8631-c1af24cae3c2
+		summarizeBy: none
+		sourceColumn: cod_ccusto
+
+		annotation SummarizationSetBy = Automatic
+
+	column CONTA_CONTABIL
+		dataType: string
+		lineageTag: 6f85cf0f-26ea-4303-8df2-b06cda436787
+		summarizeBy: none
+		sourceColumn: CONTA_CONTABIL
+
+		annotation SummarizationSetBy = Automatic
+
+	column data_lancamento
+		dataType: dateTime
+		formatString: dd/MM/yyyy
+		lineageTag: 47932eee-b99c-4013-85c3-d62b27a94869
+		summarizeBy: none
+		sourceColumn: data_lancamento
+
+		annotation SummarizationSetBy = Automatic
+
+	column natureza
+		dataType: string
+		lineageTag: 7fc5b225-6e54-467e-92ae-d644c509abfe
+		summarizeBy: none
+		sourceColumn: natureza
+
+		annotation SummarizationSetBy = Automatic
+
+	column valor_lancamento
+		dataType: double
+		lineageTag: 902cf642-e491-41eb-a3aa-11b31c1494f7
+		summarizeBy: sum
+		sourceColumn: valor_lancamento
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column historico
+		dataType: string
+		lineageTag: 4bd04c4b-bebc-4717-b197-22167136dcf5
+		summarizeBy: none
+		sourceColumn: historico
+
+		annotation SummarizationSetBy = Automatic
+
+	column documento
+		dataType: string
+		lineageTag: d438aba4-3e2f-437c-afd9-8116f5f7ae11
+		summarizeBy: none
+		sourceColumn: documento
+
+		annotation SummarizationSetBy = Automatic
+
+	column especie
+		dataType: string
+		lineageTag: e45f7986-ab2c-4a4a-b824-58f45455d70b
+		summarizeBy: none
+		sourceColumn: especie
+
+		annotation SummarizationSetBy = Automatic
+
+	column cenario
+		dataType: string
+		lineageTag: 32f4f901-4420-4686-b455-82650d680f23
+		summarizeBy: none
+		sourceColumn: cenario
+
+		annotation SummarizationSetBy = Automatic
+
+	column modulo
+		dataType: string
+		lineageTag: 2ec0920e-b702-4297-8945-5eb791b4de1b
+		summarizeBy: none
+		sourceColumn: modulo
+
+		annotation SummarizationSetBy = Automatic
+
+	column VALOR
+		dataType: double
+		lineageTag: 533d0851-02bc-4fb0-85a8-967e6d5f6891
+		summarizeBy: sum
+		sourceColumn: VALOR
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition fLancamentosContabeis = m
+		mode: import
+		source =
+				let
+				    Fonte = Value.NativeQuery(PostgreSQL.Database("192.168.0.234", "pblopes_dts"), "SELECT#(lf)    i.num_lote_ctbl                     AS lote,#(lf)    i.num_lancto_ctbl                   AS lancamento,#(lf)    i.num_seq_lancto_ctbl               AS sequencia,#(lf)    i.cod_estab                         AS cod_estab,#(lf)    i.cod_cta_ctbl                      AS cod_cta_ctbl,#(lf)    i.cod_ccusto                        AS cod_ccusto,#(lf)    i.dat_lancto_ctbl                   AS data_lancamento,#(lf)    i.ind_natur_lancto_ctbl             AS natureza,#(lf)    i.val_lancto_ctbl                   AS valor_lancamento,#(lf)    i.des_histor_lancto_ctbl            AS historico,#(lf)    i.des_docto                         AS documento,#(lf)    i.cod_espec_docto                   AS especie,#(lf)    i.cod_cenar_ctbl                    AS cenario,#(lf)    l.cod_modul_dtsul                   AS modulo#(lf)FROM public.item_lancto_ctbl i#(lf)LEFT JOIN public.lote_ctbl l ON l.num_lote_ctbl = i.num_lote_ctbl#(lf)WHERE i.dat_lancto_ctbl >= DATE '2021-01-01'#(lf)  AND LEFT(i.cod_cta_ctbl, 1) IN ('3', '4', '5', '8')      -- só contas de resultado#(lf)  AND CAST(i.log_lancto_apurac_restdo AS int) = 0          -- tira a apuração de resultado", null, [EnableFolding=true]),
+				    // chave só com dígitos para casar a conta do Datasul com dPlanoContas[CONTA_CONTABIL]
+				    Digitos = (t as nullable text) as nullable text => if t = null then null else Text.Select(Text.BeforeDelimiter(Text.Trim(t), " "), {"0".."9"}),
+				    Plano = Table.Buffer(Table.Distinct(Table.AddColumn(Table.SelectColumns(dPlanoContas, {"CONTA_CONTABIL"}), "CHAVE", each Digitos([CONTA_CONTABIL]), type text), {"CHAVE"})),
+				    ComChave = Table.AddColumn(Fonte, "CHAVE", each Digitos([cod_cta_ctbl]), type text),
+				    Mesclado = Table.NestedJoin(ComChave, {"CHAVE"}, Plano, {"CHAVE"}, "Plano", JoinKind.LeftOuter),
+				    Expandido = Table.ExpandTableColumn(Mesclado, "Plano", {"CONTA_CONTABIL"}),
+				    // receita (crédito) positiva e despesa (débito) negativa, igual à fRealizado[VALOR]
+				    ComValor = Table.AddColumn(Expandido, "VALOR", each if [natureza] = "CR" then [valor_lancamento] else - [valor_lancamento], type number),
+				    Removidas = Table.RemoveColumns(ComValor, {"CHAVE"}),
+				    Tipos = Table.TransformColumnTypes(Removidas, {{"data_lancamento", type date}, {"cod_estab", type text}, {"cod_ccusto", type text}, {"CONTA_CONTABIL", type text}})
+				in
+				    Tipos
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

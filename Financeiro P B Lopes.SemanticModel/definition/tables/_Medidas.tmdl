@@ -2029,6 +2029,40 @@ table _Medidas
 		displayFolder: Contas a Pagar
 		lineageTag: 4914c2b2-9a22-4db1-872c-b37710109a5a
 
+	measure 'DRE Lançamentos' =
+			
+			SUM ( fLancamentosContabeis[VALOR] )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Detalhe DRE
+		lineageTag: a0ddac23-76f5-46af-8831-49708f5a3bed
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'DRE Qtd Lançamentos' =
+			
+			COUNTROWS ( fLancamentosContabeis )
+		formatString: 0
+		displayFolder: Detalhe DRE
+		lineageTag: 411c3bdd-a2dd-4068-9eac-f91439c77ef7
+
+	measure 'CR Valor Original (títulos em aberto)' =
+			
+			IF ( NOT ISBLANK ( [CR Carteira] ), SUM ( fTitulosReceber[valor_original] ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Contas a Receber
+		lineageTag: 8aef1c7b-e113-41a4-a9be-68eb153e0110
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'CP Valor Original (títulos em aberto)' =
+			
+			IF ( NOT ISBLANK ( [CP Carteira] ), SUM ( fTitulosPagar[valor_original] ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Contas a Pagar
+		lineageTag: c7de7f4e-2c3d-4f61-aee0-33bcecf8f785
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
 	partition _Medidas-e0807ed9-830e-46df-b71f-9de294b53a18 = m
 		mode: import
 		queryGroup: Medidas

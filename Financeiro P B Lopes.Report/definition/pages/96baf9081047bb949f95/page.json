@@ -1,0 +1,239 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
+  "name": "96baf9081047bb949f95",
+  "displayName": "Lançamentos DRE",
+  "displayOption": "FitToPage",
+  "height": 720,
+  "width": 1280,
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "a82bdd03b67d02e89d76",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dEstDRE"
+              }
+            },
+            "Property": "GRUPO_DRE"
+          }
+        },
+        "type": "Categorical",
+        "howCreated": "Drillthrough"
+      },
+      {
+        "name": "9d13b57060a416b16a4f",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dPlanoContas"
+              }
+            },
+            "Property": "GRUPO"
+          }
+        },
+        "type": "Categorical",
+        "howCreated": "Drillthrough"
+      },
+      {
+        "name": "975b2d4f4d6880af326a",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dPlanoContas"
+              }
+            },
+            "Property": "SUB_GRUPO"
+          }
+        },
+        "type": "Categorical",
+        "howCreated": "Drillthrough"
+      },
+      {
+        "name": "69f79de6e793c79640f8",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dPlanoContas"
+              }
+            },
+            "Property": "CONTA_CONTABIL"
+          }
+        },
+        "type": "Categorical",
+        "howCreated": "Drillthrough"
+      },
+      {
+        "name": "86678c22594d8d356016",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "aCalendario"
+              }
+            },
+            "Property": "Nome do Mês"
+          }
+        },
+        "type": "Categorical",
+        "howCreated": "Drillthrough"
+      }
+    ]
+  },
+  "pageBinding": {
+    "name": "1807f67c4d75e3cff9e2",
+    "type": "Drillthrough",
+    "referenceScope": "Default",
+    "parameters": [
+      {
+        "name": "914718b312c4285ee9b3",
+        "boundFilter": "a82bdd03b67d02e89d76",
+        "fieldExpr": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dEstDRE"
+              }
+            },
+            "Property": "GRUPO_DRE"
+          }
+        }
+      },
+      {
+        "name": "f5f6a180a59b0266624d",
+        "boundFilter": "9d13b57060a416b16a4f",
+        "fieldExpr": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dPlanoContas"
+              }
+            },
+            "Property": "GRUPO"
+          }
+        }
+      },
+      {
+        "name": "ef23190d94e10b1421ef",
+        "boundFilter": "975b2d4f4d6880af326a",
+        "fieldExpr": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dPlanoContas"
+              }
+            },
+            "Property": "SUB_GRUPO"
+          }
+        }
+      },
+      {
+        "name": "83b16a8cb313f6acd200",
+        "boundFilter": "69f79de6e793c79640f8",
+        "fieldExpr": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dPlanoContas"
+              }
+            },
+            "Property": "CONTA_CONTABIL"
+          }
+        }
+      },
+      {
+        "name": "bbb6c952286b9e319be5",
+        "boundFilter": "86678c22594d8d356016",
+        "fieldExpr": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "aCalendario"
+              }
+            },
+            "Property": "Nome do Mês"
+          }
+        }
+      }
+    ]
+  },
+  "objects": {
+    "background": [
+      {
+        "properties": {
+          "image": {
+            "image": {
+              "name": {
+                "expr": {
+                  "Literal": {
+                    "Value": "'Apresentação em Modelo (4).png'"
+                  }
+                }
+              },
+              "url": {
+                "expr": {
+                  "ResourcePackageItem": {
+                    "PackageName": "RegisteredResources",
+                    "PackageType": 1,
+                    "ItemName": "Apresenta__o_em_Modelo_(4)9038574016168753.png"
+                  }
+                }
+              },
+              "scaling": {
+                "expr": {
+                  "Literal": {
+                    "Value": "'Fill'"
+                  }
+                }
+              }
+            }
+          },
+          "transparency": {
+            "expr": {
+              "Literal": {
+                "Value": "0D"
+              }
+            }
+          },
+          "color": {
+            "solid": {
+              "color": {
+                "expr": {
+                  "ThemeDataColor": {
+                    "ColorId": 0,
+                    "Percent": 0
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ],
+    "outspacePane": [
+      {
+        "properties": {}
+      }
+    ],
+    "filterCard": [
+      {
+        "properties": {},
+        "selector": {
+          "id": "Available"
+        }
+      },
+      {
+        "properties": {},
+        "selector": {
+          "id": "Applied"
+        }
+      }
+    ]
+  },
+  "type": "Drillthrough",
+  "visibility": "HiddenInViewMode"
+}

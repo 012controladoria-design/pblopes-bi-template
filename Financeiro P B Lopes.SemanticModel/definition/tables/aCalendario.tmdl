@@ -73,7 +73,7 @@ table aCalendario
 		source =
 				let
 				    DataInicial = List.Min(fRealizado[DATA] & fOrcado[DATA] & fAjustesGerenciais[DATA]),
-				    DataFinal = List.Max(fRealizado[DATA] & fOrcado[DATA] & fAjustesGerenciais[DATA]),
+				    DataFinal = Date.EndOfMonth(List.Max(fRealizado[DATA] & fOrcado[DATA] & fAjustesGerenciais[DATA])),
 				    QtdDias = Duration.Days(DataFinal - DataInicial) + 1,
 				    Lista = List.Dates(DataInicial, QtdDias, #duration(1,0,0,0)),
 				    Tabela = #table(

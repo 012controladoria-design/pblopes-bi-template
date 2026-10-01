@@ -49,7 +49,7 @@ queryGroup 'Orçado Projeção\Consultas Auxiliares'
 
 annotation __PBI_TimeIntelligenceEnabled = 0
 
-annotation PBI_QueryOrder = ["RealizadoComCentroCusto","RealizadoSemCentroCusto","aCalendario","dCasa","dCentroCusto","dEstDRE","dPlanoContas","fAjustesGerenciais","fOrcado","fOrcadoProjecao","fOrcadoProjecao500","fOrcFinEstorno","fOrcProjecaoFinEstorno","fOrcProjecaoFinEstorno500","fRealizado","Parâmetro2","Transformar o Arquivo de Exemplo (2)","Arquivo de Amostra (2)","Transformar Arquivo (2)","_Medidas","Parâmetro3","Transformar o Arquivo de Exemplo (3)","Arquivo de Amostra (3)","Transformar Arquivo (3)","Parâmetro4","Arquivo de Amostra (4)","Transformar Arquivo (4)","Transformar o Arquivo de Exemplo (4)","fRlzFinDeprecAmortEstorno","Parâmetro5","Transformar o Arquivo de Exemplo (5)","Arquivo de Amostra (5)","Transformar Arquivo (5)","dTipoOrçamento","f_Dados_BP_Rlz","pCcusto","pCond_Pagto","pConta_Corrente","pCta_contabil","pEstrut_contabil","pEstrut_fat","pDocum_est","pItem_doc_est","pItem_lancto_cont","pLote_contabil","pMovto_estoque","pPortador","pSdo_contabil","pSaldo_fluxocx","fTitulosReceber","pTit_apb","pEmitente","fTitulosPagar","pFornecedor"]
+annotation PBI_QueryOrder = ["RealizadoComCentroCusto","RealizadoSemCentroCusto","aCalendario","dCasa","dCentroCusto","dEstDRE","dPlanoContas","fAjustesGerenciais","fOrcado","fOrcadoProjecao","fOrcadoProjecao500","fOrcFinEstorno","fOrcProjecaoFinEstorno","fOrcProjecaoFinEstorno500","fRealizado","Parâmetro2","Transformar o Arquivo de Exemplo (2)","Arquivo de Amostra (2)","Transformar Arquivo (2)","_Medidas","Parâmetro3","Transformar o Arquivo de Exemplo (3)","Arquivo de Amostra (3)","Transformar Arquivo (3)","Parâmetro4","Arquivo de Amostra (4)","Transformar Arquivo (4)","Transformar o Arquivo de Exemplo (4)","fRlzFinDeprecAmortEstorno","Parâmetro5","Transformar o Arquivo de Exemplo (5)","Arquivo de Amostra (5)","Transformar Arquivo (5)","dTipoOrçamento","f_Dados_BP_Rlz","pCcusto","pCond_Pagto","pConta_Corrente","pCta_contabil","pEstrut_contabil","pEstrut_fat","pDocum_est","pItem_doc_est","pItem_lancto_cont","pLote_contabil","pMovto_estoque","pPortador","pSdo_contabil","pSaldo_fluxocx","fTitulosReceber","pTit_apb","pEmitente","fTitulosPagar","pFornecedor","fLancamentosContabeis"]
 
 annotation PBI_ProTooling = ["DevMode"]
 
@@ -91,6 +91,7 @@ ref table dCalendario
 ref table dEspecieCR
 ref table fTitulosPagar
 ref table pFornecedor
+ref table fLancamentosContabeis
 
 ref role Londrina
 ref role Maringá
