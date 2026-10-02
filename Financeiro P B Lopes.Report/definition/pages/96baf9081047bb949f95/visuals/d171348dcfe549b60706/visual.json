@@ -27,8 +27,8 @@
                 }
               },
               "queryRef": "_Medidas.001 Realizado",
-              "nativeQueryRef": "Valor na DRE (balancete)",
-              "displayName": "Valor na DRE (balancete)"
+              "nativeQueryRef": "Valor na DRE (banco + ajustes)",
+              "displayName": "Valor na DRE (banco + ajustes)"
             }
           ]
         }
