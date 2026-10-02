@@ -15,22 +15,6 @@
       "icon": [
         {
           "properties": {
-            "shapeType": {
-              "expr": {
-                "Literal": {
-                  "Value": "'blank'"
-                }
-              }
-            }
-          },
-          "selector": {
-            "id": "default"
-          }
-        }
-      ],
-      "fill": [
-        {
-          "properties": {
             "show": {
               "expr": {
                 "Literal": {
@@ -38,15 +22,17 @@
                 }
               }
             }
-          },
-          "selector": {
-            "id": "default"
           }
-        }
-      ],
-      "outline": [
+        },
         {
           "properties": {
+            "shapeType": {
+              "expr": {
+                "Literal": {
+                  "Value": "'blank'"
+                }
+              }
+            },
             "show": {
               "expr": {
                 "Literal": {
@@ -66,13 +52,84 @@
             "show": {
               "expr": {
                 "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'ver vencidos  ›'"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#9FC5FF'"
+                    }
+                  }
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            },
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "horizontalAlignment": "'right'",
+            "verticalAlignment": "'bottom'"
+          },
+          "selector": {
+            "id": "default"
+          }
+        }
+      ],
+      "fill": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
                   "Value": "false"
                 }
               }
             }
-          },
-          "selector": {
-            "id": "default"
+          }
+        }
+      ],
+      "outline": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
           }
         }
       ]
@@ -105,7 +162,7 @@
             "tooltip": {
               "expr": {
                 "Literal": {
-                  "Value": "'Clique para abrir os títulos'"
+                  "Value": "'Abre a lista dos títulos vencidos'"
                 }
               }
             }
@@ -126,6 +183,19 @@
         }
       ],
       "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "border": [
         {
           "properties": {
             "show": {
