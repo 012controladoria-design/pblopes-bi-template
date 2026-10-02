@@ -414,6 +414,502 @@ table _Medidas
 		displayFolder: Detalhe DRE
 		lineageTag: c79f617d-cb95-4bdc-b5c0-f9660c4ff5e6
 
+	/// Último fim de mês com saldo dentro do período filtrado. É a data do balanço mostrado.
+	measure 'BP Data-base' =
+			
+			CALCULATE ( MAX ( fSaldosContabeis[data_ref] ), REMOVEFILTERS ( dContaBP ) )
+		formatString: dd/MM/yyyy
+		displayFolder: Balanço Patrimonial
+		lineageTag: 3ce24e88-02b2-4175-b8e2-ebb24ffaf3eb
+
+	measure 'BP Data-base Texto' =
+			
+			"Posição em " & FORMAT ( [BP Data-base], "dd/MM/yyyy" )
+		displayFolder: Balanço Patrimonial
+		lineageTag: 7631142f-88bf-4692-a536-3cdf4f86b422
+
+	/// Saldo na data-base. Balanço é foto de uma data, não soma de meses: pega só o último fim de mês do filtro.
+	measure 'BP Saldo' =
+			
+			VAR _Data = [BP Data-base]
+			RETURN
+			    CALCULATE ( SUM ( fSaldosContabeis[saldo_bp] ), fSaldosContabeis[data_ref] = _Data )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Balanço Patrimonial
+		lineageTag: f9d23fb4-1142-4359-ba05-b6c18221547d
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'BP Saldo Fim do Ano Anterior' =
+			
+			VAR _Data = [BP Data-base]
+			VAR _Ref = DATE ( YEAR ( _Data ) - 1, 12, 31 )
+			RETURN
+			    IF ( NOT ISBLANK ( _Data ),
+			        CALCULATE ( SUM ( fSaldosContabeis[saldo_bp] ), REMOVEFILTERS ( aCalendario ), fSaldosContabeis[data_ref] = _Ref ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Balanço Patrimonial
+		lineageTag: 07f15351-1f9f-4155-ad7d-b4e29c8d4d5f
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'BP Variação' =
+			
+			[BP Saldo] - [BP Saldo Fim do Ano Anterior]
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Balanço Patrimonial
+		lineageTag: 6b4aafc1-de00-4a4b-8636-053c87448c78
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'BP Variação %' =
+			
+			DIVIDE ( [BP Variação], ABS ( [BP Saldo Fim do Ano Anterior] ) )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Balanço Patrimonial
+		lineageTag: 9c9c5954-1963-4669-808e-0697e140fac1
+
+	/// Participação da linha no total do seu lado (Ativo ou Passivo + PL).
+	measure 'BP AV %' =
+			
+			DIVIDE ( [BP Saldo], CALCULATE ( [BP Saldo], ALLEXCEPT ( dContaBP, dContaBP[lado] ) ) )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Balanço Patrimonial
+		lineageTag: a6d4b9cd-72ec-41c5-b07a-509ff341d875
+
+	measure 'BP Ativo Total' =
+			
+			CALCULATE ( [BP Saldo], dContaBP[lado] = "ATIVO" )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Balanço Patrimonial
+		lineageTag: 6373167d-c8e0-4ec0-9d4d-f149bc4cfc44
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'BP Passivo e PL' =
+			
+			CALCULATE ( [BP Saldo], dContaBP[lado] = "PASSIVO E PATRIMÔNIO LÍQUIDO" )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Balanço Patrimonial
+		lineageTag: 30dbe6de-a57e-4275-9ace-443b4af4674c
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	/// Conferência: deve ser zero. Diferente de zero = conta sem classificação ou saldo com sinal invertido.
+	measure 'BP Diferença' =
+			
+			[BP Ativo Total] - [BP Passivo e PL]
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Balanço Patrimonial
+		lineageTag: ffe8d87a-9f6d-4d4a-9906-8a6ec85743e1
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'BP Ativo Circulante' =
+			
+			CALCULATE ( [BP Saldo], dContaBP[classe] = "AC" )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Balanço Patrimonial
+		lineageTag: a04885de-6e39-4c84-9f81-3b90f0b2f757
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'BP Ativo Não Circulante' =
+			
+			CALCULATE ( [BP Saldo], dContaBP[classe] = "ANC" )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Balanço Patrimonial
+		lineageTag: 59b7ac77-f33f-46c9-a170-862e4c693d85
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'BP Passivo Circulante' =
+			
+			CALCULATE ( [BP Saldo], dContaBP[classe] = "PC" )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Balanço Patrimonial
+		lineageTag: 0013f7ae-36f0-4299-91c9-744c6ee8cf11
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'BP Passivo Não Circulante' =
+			
+			CALCULATE ( [BP Saldo], dContaBP[classe] = "PNC" )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Balanço Patrimonial
+		lineageTag: b4e16fa9-450e-4bd8-8dc6-9b41842a6cd4
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	/// PL mais o resultado do exercício ainda não apurado (contas 3 a 9).
+	measure 'BP Patrimônio Líquido' =
+			
+			CALCULATE ( [BP Saldo], dContaBP[classe] IN { "PL", "RES" } )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Balanço Patrimonial
+		lineageTag: b89fd0c3-9b3d-4905-9376-b08c657ed187
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'BP Estoques' =
+			
+			CALCULATE ( [BP Saldo], dContaBP[eh_estoque] = 1 )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Balanço Patrimonial
+		lineageTag: f8036ec8-ceb4-4a41-a0c8-c814439c7448
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'BP Disponível' =
+			
+			CALCULATE ( [BP Saldo], dContaBP[eh_disponivel] = 1 )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Balanço Patrimonial
+		lineageTag: 16d82b64-d30c-4b56-a273-53b20e143ac5
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'IF Tem Filtro de Período' =
+			
+			ISFILTERED ( aCalendario[Ano] ) || ISFILTERED ( aCalendario[Data] )
+		displayFolder: Indicadores Financeiros
+		lineageTag: f48e2e74-fb3c-4784-b3d5-01e3e98710af
+
+	/// Último ano com realizado. Usado quando nenhum ano está filtrado.
+	measure 'IF Ano Padrão' =
+			
+			YEAR ( CALCULATE ( MAX ( fRealizado[DATA] ), REMOVEFILTERS () ) )
+		formatString: 0
+		displayFolder: Indicadores Financeiros
+		lineageTag: e2abeea7-384e-44ce-92b4-4052ae5aefaa
+
+	measure 'IF Receita Bruta' =
+			
+			VAR _Ano = [IF Ano Padrão]
+			RETURN
+			    IF ( [IF Tem Filtro de Período],
+			        CALCULATE ( [002 DRE Realizado], dEstDRE[GRUPO_DRE] = "(=) RECEITA OPERACIONAL BRUTA" ),
+			        CALCULATE ( [002 DRE Realizado], dEstDRE[GRUPO_DRE] = "(=) RECEITA OPERACIONAL BRUTA", aCalendario[Ano] = _Ano ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Indicadores Financeiros
+		lineageTag: 70d1eac5-e8a5-4e24-89fa-2cc134d462c5
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	/// Linha (=) RECEITA OPERACIONAL LIQUIDA da DRE. Sem ano filtrado, usa o último ano com realizado.
+	measure 'IF Receita Líquida' =
+			
+			VAR _Ano = [IF Ano Padrão]
+			RETURN
+			    IF ( [IF Tem Filtro de Período],
+			        CALCULATE ( [002 DRE Realizado], dEstDRE[GRUPO_DRE] = "(=) RECEITA OPERACIONAL LIQUIDA" ),
+			        CALCULATE ( [002 DRE Realizado], dEstDRE[GRUPO_DRE] = "(=) RECEITA OPERACIONAL LIQUIDA", aCalendario[Ano] = _Ano ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Indicadores Financeiros
+		lineageTag: 22678826-84b4-455a-bc68-c6bfcc12e472
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'IF Lucro Bruto' =
+			
+			VAR _Ano = [IF Ano Padrão]
+			RETURN
+			    IF ( [IF Tem Filtro de Período],
+			        CALCULATE ( [002 DRE Realizado], dEstDRE[GRUPO_DRE] = "(=) RESULTADO OPERACIONAL BRUTO" ),
+			        CALCULATE ( [002 DRE Realizado], dEstDRE[GRUPO_DRE] = "(=) RESULTADO OPERACIONAL BRUTO", aCalendario[Ano] = _Ano ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Indicadores Financeiros
+		lineageTag: 5bf81079-cf2d-48e3-be2b-f86fa468dd6e
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'IF Despesas Operacionais' =
+			
+			VAR _Ano = [IF Ano Padrão]
+			RETURN
+			    IF ( [IF Tem Filtro de Período],
+			        CALCULATE ( [002 DRE Realizado], dEstDRE[GRUPO_DRE] = "(-) DESPESAS OPERACIONAIS" ),
+			        CALCULATE ( [002 DRE Realizado], dEstDRE[GRUPO_DRE] = "(-) DESPESAS OPERACIONAIS", aCalendario[Ano] = _Ano ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Indicadores Financeiros
+		lineageTag: c686c562-1d13-440e-baee-6cc2faac6dc6
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'IF Resultado Operacional' =
+			
+			VAR _Ano = [IF Ano Padrão]
+			RETURN
+			    IF ( [IF Tem Filtro de Período],
+			        CALCULATE ( [002 DRE Realizado], dEstDRE[GRUPO_DRE] = "(=) RESULTADO OPERACIONAL LÍQUIDO" ),
+			        CALCULATE ( [002 DRE Realizado], dEstDRE[GRUPO_DRE] = "(=) RESULTADO OPERACIONAL LÍQUIDO", aCalendario[Ano] = _Ano ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Indicadores Financeiros
+		lineageTag: 9b228297-8c61-4d93-8034-9626c70399f5
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'IF Resultado Financeiro' =
+			
+			VAR _Ano = [IF Ano Padrão]
+			RETURN
+			    IF ( [IF Tem Filtro de Período],
+			        CALCULATE ( [002 DRE Realizado], dEstDRE[GRUPO_DRE] = "(+/-) RECEITAS FINANCEIRAS" ),
+			        CALCULATE ( [002 DRE Realizado], dEstDRE[GRUPO_DRE] = "(+/-) RECEITAS FINANCEIRAS", aCalendario[Ano] = _Ano ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Indicadores Financeiros
+		lineageTag: 648e750a-a41c-4b79-9617-dce2d611263d
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'IF Lucro Líquido' =
+			
+			VAR _Ano = [IF Ano Padrão]
+			RETURN
+			    IF ( [IF Tem Filtro de Período],
+			        CALCULATE ( [002 DRE Realizado], dEstDRE[GRUPO_DRE] = "(=) LUCRO OU PREJUIZO DO EXERCICIO" ),
+			        CALCULATE ( [002 DRE Realizado], dEstDRE[GRUPO_DRE] = "(=) LUCRO OU PREJUIZO DO EXERCICIO", aCalendario[Ano] = _Ano ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Indicadores Financeiros
+		lineageTag: d033d02b-a1d5-4573-97dc-c521f1494f84
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'IF Margem Bruta %' =
+			
+			DIVIDE ( [IF Lucro Bruto], [IF Receita Líquida] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Indicadores Financeiros
+		lineageTag: 353f7ae7-d13b-4020-9ebe-839194caaa97
+
+	measure 'IF Margem Operacional %' =
+			
+			DIVIDE ( [IF Resultado Operacional], [IF Receita Líquida] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Indicadores Financeiros
+		lineageTag: d16d42bb-133c-48ce-837d-cbf5a1ec2211
+
+	measure 'IF Margem Líquida %' =
+			
+			DIVIDE ( [IF Lucro Líquido], [IF Receita Líquida] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Indicadores Financeiros
+		lineageTag: 3cd66352-22ba-42cf-a792-9693c5642a52
+
+	measure 'IF Despesas Operacionais / Receita %' =
+			
+			DIVIDE ( - [IF Despesas Operacionais], [IF Receita Líquida] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Indicadores Financeiros
+		lineageTag: 380d626a-01ad-4e02-9df7-5a30bfd447c6
+
+	/// Ativo circulante ÷ passivo circulante.
+	measure 'IF Liquidez Corrente' =
+			
+			DIVIDE ( [BP Ativo Circulante], [BP Passivo Circulante] )
+		formatString: 0.00
+		displayFolder: Indicadores Financeiros
+		lineageTag: 1edffd70-d643-436d-8064-b8d0b6387b8f
+
+	/// (Ativo circulante − estoques) ÷ passivo circulante.
+	measure 'IF Liquidez Seca' =
+			
+			DIVIDE ( [BP Ativo Circulante] - [BP Estoques], [BP Passivo Circulante] )
+		formatString: 0.00
+		displayFolder: Indicadores Financeiros
+		lineageTag: 812f09c6-6ab0-4966-83fd-8188753ce0ad
+
+	/// Disponível (caixa, bancos, aplicações) ÷ passivo circulante.
+	measure 'IF Liquidez Imediata' =
+			
+			DIVIDE ( [BP Disponível], [BP Passivo Circulante] )
+		formatString: 0.00
+		displayFolder: Indicadores Financeiros
+		lineageTag: e2830bcb-a29c-4c53-9c4c-d1a3e892de71
+
+	measure 'IF Endividamento Geral %' =
+			
+			DIVIDE ( [BP Passivo Circulante] + [BP Passivo Não Circulante], [BP Ativo Total] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Indicadores Financeiros
+		lineageTag: f8f65243-10b6-45af-bb4b-a703fabd279c
+
+	measure 'IF Composição do Endividamento %' =
+			
+			DIVIDE ( [BP Passivo Circulante], [BP Passivo Circulante] + [BP Passivo Não Circulante] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Indicadores Financeiros
+		lineageTag: a6a1cf25-c68c-478e-a818-93e96a70bfd7
+
+	measure 'IF Capital de Terceiros / PL' =
+			
+			DIVIDE ( [BP Passivo Circulante] + [BP Passivo Não Circulante], [BP Patrimônio Líquido] )
+		formatString: 0.00
+		displayFolder: Indicadores Financeiros
+		lineageTag: d41f97d0-0df5-4d0d-9906-92f2690a1c0d
+
+	measure 'IF Capital Circulante Líquido' =
+			
+			[BP Ativo Circulante] - [BP Passivo Circulante]
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Indicadores Financeiros
+		lineageTag: 061c7a1e-3516-4e6f-b314-a4074ed8e2d5
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	/// Lucro líquido do período ÷ patrimônio líquido no fim do período.
+	measure 'IF ROE %' =
+			
+			VAR _Ano = [IF Ano Padrão]
+			VAR _Fim = IF ( [IF Tem Filtro de Período], MAX ( aCalendario[Data] ), DATE ( _Ano, 12, 31 ) )
+			VAR _DataBP =
+			    CALCULATE ( MAX ( fSaldosContabeis[data_ref] ),
+			        REMOVEFILTERS ( aCalendario ), REMOVEFILTERS ( dContaBP ),
+			        fSaldosContabeis[data_ref] <= _Fim )
+			VAR _Base =
+			    CALCULATE ( SUM ( fSaldosContabeis[saldo_bp] ),
+			        REMOVEFILTERS ( aCalendario ),
+			        fSaldosContabeis[data_ref] = _DataBP,
+			        dContaBP[classe] IN { "PL", "RES" } )
+			RETURN
+			    DIVIDE ( [IF Lucro Líquido], _Base )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Indicadores Financeiros
+		lineageTag: fc15c171-2cee-49a1-b6fb-af4648f75e2e
+
+	/// Lucro líquido do período ÷ ativo total no fim do período.
+	measure 'IF ROA %' =
+			
+			VAR _Ano = [IF Ano Padrão]
+			VAR _Fim = IF ( [IF Tem Filtro de Período], MAX ( aCalendario[Data] ), DATE ( _Ano, 12, 31 ) )
+			VAR _DataBP =
+			    CALCULATE ( MAX ( fSaldosContabeis[data_ref] ),
+			        REMOVEFILTERS ( aCalendario ), REMOVEFILTERS ( dContaBP ),
+			        fSaldosContabeis[data_ref] <= _Fim )
+			VAR _Base =
+			    CALCULATE ( SUM ( fSaldosContabeis[saldo_bp] ),
+			        REMOVEFILTERS ( aCalendario ),
+			        fSaldosContabeis[data_ref] = _DataBP,
+			        dContaBP[lado] = "ATIVO" )
+			RETURN
+			    DIVIDE ( [IF Lucro Líquido], _Base )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Indicadores Financeiros
+		lineageTag: 14503c6f-dc4b-4500-bab2-b505bd1679c5
+
+	/// Carteira a receber menos carteira a pagar, posição atual dos títulos.
+	measure 'IF Saldo CR menos CP' =
+			
+			[CR Carteira] - [CP Carteira]
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Indicadores Financeiros
+		lineageTag: fa4616b6-220d-4eb0-8426-8eca9474825f
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	/// Despesas operacionais da DRE com sinal positivo, sem regra de período.
+	measure 'CC Despesas Base' =
+			
+			- CALCULATE (
+			    SUM ( fRealizado[VALOR] ) + SUM ( fAjustesGerenciais[VALOR] ) + SUM ( fRlzFinDeprecAmortEstorno[VALOR] ),
+			    dPlanoContas[GRUPO_DRE] = "(-) DESPESAS OPERACIONAIS" )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Despesas por Centro de Custo
+		lineageTag: 5a5204b0-0d3f-4291-a214-c898694b1a85
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	/// Despesas operacionais do período. Sem ano filtrado, usa o último ano com realizado.
+	measure 'CC Despesas' =
+			
+			VAR _Ano = [IF Ano Padrão]
+			RETURN
+			    IF ( [IF Tem Filtro de Período],
+			        [CC Despesas Base],
+			        CALCULATE ( [CC Despesas Base], aCalendario[Ano] = _Ano ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Despesas por Centro de Custo
+		lineageTag: 145e1be5-0da3-4b00-b8ae-da6e393b8766
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'CC Despesas Ano Anterior' =
+			
+			VAR _Ano = [IF Ano Padrão]
+			RETURN
+			    IF ( [IF Tem Filtro de Período],
+			        CALCULATE ( [CC Despesas Base], REMOVEFILTERS ( aCalendario ), DATEADD ( aCalendario[Data], -1, YEAR ) ),
+			        CALCULATE ( [CC Despesas Base], aCalendario[Ano] = _Ano - 1 ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Despesas por Centro de Custo
+		lineageTag: fa66c819-88e7-42e0-8278-0c0d30298884
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'CC Variação vs Ano Anterior %' =
+			
+			DIVIDE ( [CC Despesas] - [CC Despesas Ano Anterior], [CC Despesas Ano Anterior] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Despesas por Centro de Custo
+		lineageTag: 29777378-5a99-43c3-9a52-38bbfd27acc4
+
+	measure 'CC % da Receita Líquida' =
+			
+			DIVIDE ( [CC Despesas], [IF Receita Líquida] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Despesas por Centro de Custo
+		lineageTag: e4ec8a6b-fcce-40db-99e9-d92123fa7075
+
+	measure 'CC % do Total' =
+			
+			DIVIDE ( [CC Despesas], CALCULATE ( [CC Despesas], ALLSELECTED ( dCentroCusto ), ALLSELECTED ( dPlanoContas ) ) )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Despesas por Centro de Custo
+		lineageTag: 2e5decef-f6e1-46ca-8955-efa4ed2c6e69
+
+	measure 'CC Qtd Meses' =
+			
+			VAR _Ano = [IF Ano Padrão]
+			RETURN
+			    IF ( [IF Tem Filtro de Período],
+			        CALCULATE ( DISTINCTCOUNT ( fRealizado[DATA] ) ),
+			        CALCULATE ( DISTINCTCOUNT ( fRealizado[DATA] ), aCalendario[Ano] = _Ano ) )
+		formatString: 0
+		displayFolder: Despesas por Centro de Custo
+		lineageTag: 2e34af42-4c22-42d3-9fac-91c06c6d334b
+
+	measure 'CC Média Mensal' =
+			
+			DIVIDE ( [CC Despesas], [CC Qtd Meses] )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Despesas por Centro de Custo
+		lineageTag: 7a51eeab-c19d-4765-81b3-2e4f6a08806a
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'CC Maior Centro de Custo' =
+			
+			VAR _Top = TOPN ( 1, VALUES ( dCentroCusto[CENTRO_CUSTO] ), [CC Despesas], DESC )
+			RETURN
+			    CONCATENATEX ( _Top, dCentroCusto[CENTRO_CUSTO], ", " )
+		displayFolder: Despesas por Centro de Custo
+		lineageTag: 4f045e0e-fd76-47bd-865f-705ac5630030
+
+	measure 'CC Qtd Centros de Custo' =
+			
+			COUNTROWS ( FILTER ( VALUES ( dCentroCusto[CENTRO_CUSTO] ), [CC Despesas] > 0 ) )
+		formatString: 0
+		displayFolder: Despesas por Centro de Custo
+		lineageTag: fb3e3a5b-9c8a-4d46-aa94-4c616dabd2c8
+
+	measure 'CC Período Texto' =
+			
+			IF ( [IF Tem Filtro de Período],
+			    "Período filtrado",
+			    "Ano " & [IF Ano Padrão] & " (use o filtro Período para mudar)" )
+		displayFolder: Despesas por Centro de Custo
+		lineageTag: d016297d-efc7-4cb3-a233-4b8b7c1357ea
+
 	partition _Medidas-e0807ed9-830e-46df-b71f-9de294b53a18 = m
 		mode: import
 		queryGroup: Medidas

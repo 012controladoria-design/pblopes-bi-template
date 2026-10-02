@@ -97,3 +97,15 @@ relationship b5ac67b3-c27e-4fb2-af09-82e0b09c76d7
 relationship e693e7b9-2d53-4896-a5a4-2ea394084db2
 	fromColumn: fLancamentosContabeis.data_lancamento
 	toColumn: aCalendario.Data
+
+relationship 81a13f09-2206-481e-84e5-b6e2c48ced8e
+	fromColumn: fSaldosContabeis.cod_cta_ctbl
+	toColumn: dContaBP.cod_cta_ctbl
+
+relationship 8f6b5faa-b06b-4788-9fc6-4ad67b8f8f5e
+	fromColumn: fSaldosContabeis.cod_estab
+	toColumn: dCasa.COD_CASA
+
+relationship 33f8d12c-8f9f-4ec2-967e-2b7f11dd87b8
+	fromColumn: fSaldosContabeis.data_ref
+	toColumn: aCalendario.Data

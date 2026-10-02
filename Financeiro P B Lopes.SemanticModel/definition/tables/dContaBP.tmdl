@@ -1,0 +1,140 @@
+/// Contas analíticas do balanço com grupos (AC, ANC, PC, PNC, PL) e nomes dos níveis do plano de contas do Datasul.
+table dContaBP
+	lineageTag: 93f7dc9f-b8c0-4450-916a-9942fffbc52b
+
+	column cod_cta_ctbl
+		dataType: string
+		lineageTag: e6b224b1-0273-4405-937c-dadc6871c0b7
+		summarizeBy: none
+		sourceColumn: cod_cta_ctbl
+
+		annotation SummarizationSetBy = Automatic
+
+	column conta_formatada
+		dataType: string
+		lineageTag: 7970891b-78c3-4359-a313-8ba5dbe4a7fe
+		summarizeBy: none
+		sourceColumn: conta_formatada
+
+		annotation SummarizationSetBy = Automatic
+
+	column descricao
+		dataType: string
+		lineageTag: 04193496-fa67-406c-8752-beaed4dfa5e2
+		summarizeBy: none
+		sourceColumn: descricao
+
+		annotation SummarizationSetBy = Automatic
+
+	column conta
+		dataType: string
+		lineageTag: 1cf5df3e-34e9-45df-ac53-3e3c7515643f
+		summarizeBy: none
+		sourceColumn: conta
+
+		annotation SummarizationSetBy = Automatic
+
+	column lado
+		dataType: string
+		lineageTag: e8d0f25b-15c0-4cd9-84c0-37f502b793e6
+		summarizeBy: none
+		sourceColumn: lado
+
+		annotation SummarizationSetBy = Automatic
+
+	column grupo_bp
+		dataType: string
+		lineageTag: 11d0a38c-652b-4c7b-8615-821735aa9bd7
+		summarizeBy: none
+		sourceColumn: grupo_bp
+		sortByColumn: ordem_grupo
+
+		annotation SummarizationSetBy = Automatic
+
+	column ordem_grupo
+		dataType: int64
+		formatString: 0
+		lineageTag: 6118b46d-1a8b-4883-ac08-66a40e3b2d15
+		summarizeBy: none
+		sourceColumn: ordem_grupo
+
+		annotation SummarizationSetBy = Automatic
+
+	column subgrupo
+		dataType: string
+		lineageTag: 96edd3e9-6e96-40d7-84b2-fc15987af6a7
+		summarizeBy: none
+		sourceColumn: subgrupo
+
+		annotation SummarizationSetBy = Automatic
+
+	column classe
+		dataType: string
+		lineageTag: ffc86896-0501-4bff-8a70-3c9e0776f237
+		summarizeBy: none
+		sourceColumn: classe
+
+		annotation SummarizationSetBy = Automatic
+
+	column eh_estoque
+		dataType: int64
+		formatString: 0
+		lineageTag: 062f6cf5-62f3-4959-ace9-ec09c001d5b1
+		summarizeBy: none
+		sourceColumn: eh_estoque
+
+		annotation SummarizationSetBy = Automatic
+
+	column eh_disponivel
+		dataType: int64
+		formatString: 0
+		lineageTag: 101f5bf0-5a86-4fb5-9c5c-62a5e36a16a8
+		summarizeBy: none
+		sourceColumn: eh_disponivel
+
+		annotation SummarizationSetBy = Automatic
+
+	column nivel1
+		dataType: string
+		lineageTag: 1b388fcd-cb30-4eb7-8aba-af6c6329407e
+		summarizeBy: none
+		sourceColumn: nivel1
+
+		annotation SummarizationSetBy = Automatic
+
+	column nivel2
+		dataType: string
+		lineageTag: 2d85c671-2886-4cf5-9dbd-0e05b3aaa1ae
+		summarizeBy: none
+		sourceColumn: nivel2
+
+		annotation SummarizationSetBy = Automatic
+
+	column nivel3
+		dataType: string
+		lineageTag: 924cba30-dcc2-4684-931c-205c5641828a
+		summarizeBy: none
+		sourceColumn: nivel3
+
+		annotation SummarizationSetBy = Automatic
+
+	column nivel4
+		dataType: string
+		lineageTag: 26db4f58-68f1-4eed-a032-80bb5717c53d
+		summarizeBy: none
+		sourceColumn: nivel4
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dContaBP = m
+		mode: import
+		source =
+				let
+				    Fonte = Value.NativeQuery(PostgreSQL.Database("192.168.0.234", "pblopes_dts"), "WITH par AS (#(lf)    -- plano de contas, finalidade econômica (moeda) e cenário mais usados no sdo_ctbl#(lf)    SELECT#(lf)        (SELECT cod_plano_cta_ctbl FROM public.sdo_ctbl GROUP BY 1 ORDER BY COUNT(*) DESC LIMIT 1) AS plano,#(lf)        (SELECT cod_finalid_econ   FROM public.sdo_ctbl GROUP BY 1 ORDER BY COUNT(*) DESC LIMIT 1) AS fin,#(lf)        (SELECT cod_cenar_ctbl     FROM public.sdo_ctbl GROUP BY 1 ORDER BY COUNT(*) DESC LIMIT 1) AS cen#(lf)),#(lf)contas AS (#(lf)    SELECT DISTINCT TRIM(s.cod_cta_ctbl) AS cod#(lf)    FROM public.sdo_ctbl s#(lf)    JOIN par p ON s.cod_plano_cta_ctbl = p.plano#(lf)    WHERE NOT EXISTS (SELECT 1 FROM public.estrut_cta_ctbl e#(lf)                      WHERE e.cod_plano_cta_ctbl = p.plano AND TRIM(e.cod_cta_ctbl_pai) = TRIM(s.cod_cta_ctbl))#(lf)),#(lf)nomes AS (#(lf)    SELECT TRIM(c.cod_cta_ctbl) AS cod, MAX(c.des_tit_ctbl) AS nome#(lf)    FROM public.cta_ctbl c JOIN par p ON c.cod_plano_cta_ctbl = p.plano#(lf)    GROUP BY 1#(lf)),#(lf)niveis AS (#(lf)    SELECT k.cod,#(lf)           t.nome AS descricao,#(lf)           COALESCE(n1.nome, m1.nome) AS nivel1,#(lf)           COALESCE(n2.nome, m2.nome) AS nivel2,#(lf)           COALESCE(n3.nome, m3.nome) AS nivel3,#(lf)           COALESCE(n4.nome, m4.nome) AS nivel4#(lf)    FROM contas k#(lf)    LEFT JOIN nomes t  ON t.cod  = k.cod#(lf)    LEFT JOIN nomes n1 ON n1.cod = LEFT(k.cod, 1)#(lf)    LEFT JOIN nomes m1 ON m1.cod = RPAD(LEFT(k.cod, 1), LENGTH(k.cod), '0')#(lf)    LEFT JOIN nomes n2 ON n2.cod = LEFT(k.cod, 2)#(lf)    LEFT JOIN nomes m2 ON m2.cod = RPAD(LEFT(k.cod, 2), LENGTH(k.cod), '0')#(lf)    LEFT JOIN nomes n3 ON n3.cod = LEFT(k.cod, 3)#(lf)    LEFT JOIN nomes m3 ON m3.cod = RPAD(LEFT(k.cod, 3), LENGTH(k.cod), '0')#(lf)    LEFT JOIN nomes n4 ON n4.cod = LEFT(k.cod, 4)#(lf)    LEFT JOIN nomes m4 ON m4.cod = RPAD(LEFT(k.cod, 4), LENGTH(k.cod), '0')#(lf)),#(lf)classif AS (#(lf)    SELECT n.*,#(lf)           CASE WHEN LENGTH(n.cod) = 8#(lf)                THEN SUBSTR(n.cod,1,1)||'.'||SUBSTR(n.cod,2,1)||'.'||SUBSTR(n.cod,3,1)||'.'||SUBSTR(n.cod,4,1)||'.'||SUBSTR(n.cod,5,2)||'.'||SUBSTR(n.cod,7,2)#(lf)                ELSE n.cod END AS conta_formatada,#(lf)           SUBSTR(n.cod,1,1)||'.'||SUBSTR(n.cod,2,1)||'.'||SUBSTR(n.cod,3,1) AS cod3,#(lf)           CASE#(lf)               WHEN LEFT(n.cod,1) = '1' THEN#(lf)                   CASE WHEN UPPER(COALESCE(n.nivel2,'')) LIKE '%N_O CIRC%' THEN 'ANC'#(lf)                        WHEN LEFT(n.cod,2) = '11' THEN 'AC' ELSE 'ANC' END#(lf)               WHEN LEFT(n.cod,1) = '2' THEN#(lf)                   CASE WHEN UPPER(COALESCE(n.nivel2,'')) LIKE '%PATRIM%'   THEN 'PL'#(lf)                        WHEN UPPER(COALESCE(n.nivel2,'')) LIKE '%N_O CIRC%' THEN 'PNC'#(lf)                        WHEN LEFT(n.cod,2) = '21' THEN 'PC'#(lf)                        WHEN LEFT(n.cod,2) = '22' THEN 'PNC'#(lf)                        ELSE 'PL' END#(lf)               ELSE 'RES'#(lf)           END AS classe#(lf)    FROM niveis n#(lf))#(lf)SELECT#(lf)    c.cod AS cod_cta_ctbl,#(lf)    c.conta_formatada,#(lf)    COALESCE(c.descricao, '(sem descrição)') AS descricao,#(lf)    c.conta_formatada || ' - ' || COALESCE(c.descricao, '(sem descrição)') AS conta,#(lf)    CASE WHEN c.classe IN ('AC','ANC') THEN 'ATIVO' ELSE 'PASSIVO E PATRIMÔNIO LÍQUIDO' END AS lado,#(lf)    CASE c.classe WHEN 'AC'  THEN 'ATIVO CIRCULANTE'     WHEN 'ANC' THEN 'ATIVO NÃO CIRCULANTE'#(lf)                  WHEN 'PC'  THEN 'PASSIVO CIRCULANTE'   WHEN 'PNC' THEN 'PASSIVO NÃO CIRCULANTE'#(lf)                  ELSE 'PATRIMÔNIO LÍQUIDO' END AS grupo_bp,#(lf)    CASE c.classe WHEN 'AC' THEN 1 WHEN 'ANC' THEN 2 WHEN 'PC' THEN 3 WHEN 'PNC' THEN 4 ELSE 5 END AS ordem_grupo,#(lf)    CASE WHEN c.classe = 'RES' THEN '9 RESULTADO DO EXERCÍCIO (A APURAR)'#(lf)         ELSE c.cod3 || ' ' || COALESCE(c.nivel3, 'GRUPO ' || c.cod3) END AS subgrupo,#(lf)    c.classe,#(lf)    CASE WHEN c.classe = 'AC' AND (UPPER(COALESCE(c.nivel3,'')) LIKE '%ESTOQUE%' OR UPPER(COALESCE(c.nivel4,'')) LIKE '%ESTOQUE%') THEN 1 ELSE 0 END AS eh_estoque,#(lf)    CASE WHEN c.classe = 'AC' AND (UPPER(COALESCE(c.nivel3,'')) LIKE '%DISPON%' OR UPPER(COALESCE(c.nivel3,'')) LIKE '%CAIXA%') THEN 1 ELSE 0 END AS eh_disponivel,#(lf)    c.nivel1, c.nivel2, c.nivel3, c.nivel4#(lf)FROM classif c")
+				in
+				    Fonte
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+
