@@ -65,21 +65,6 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "dCentroCusto"
-                    }
-                  },
-                  "Property": "CENTRO_CUSTO"
-                }
-              },
-              "queryRef": "dCentroCusto.CENTRO_CUSTO",
-              "nativeQueryRef": "Centro de Custo",
-              "displayName": "Centro de Custo"
-            },
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
                       "Entity": "fLancamentosContabeis"
                     }
                   },
@@ -89,6 +74,36 @@
               "queryRef": "fLancamentosContabeis.historico",
               "nativeQueryRef": "Histórico",
               "displayName": "Histórico"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "DRE Lançamentos"
+                }
+              },
+              "queryRef": "_Medidas.DRE Lançamentos",
+              "nativeQueryRef": "Valor",
+              "displayName": "Valor"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dCentroCusto"
+                    }
+                  },
+                  "Property": "CENTRO_CUSTO"
+                }
+              },
+              "queryRef": "dCentroCusto.CENTRO_CUSTO",
+              "nativeQueryRef": "Centro de Custo",
+              "displayName": "Centro de Custo"
             },
             {
               "field": {
@@ -149,21 +164,6 @@
               "queryRef": "fLancamentosContabeis.lancamento",
               "nativeQueryRef": "Lançamento",
               "displayName": "Lançamento"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "_Medidas"
-                    }
-                  },
-                  "Property": "DRE Lançamentos"
-                }
-              },
-              "queryRef": "_Medidas.DRE Lançamentos",
-              "nativeQueryRef": "Valor",
-              "displayName": "Valor"
             }
           ]
         }
@@ -402,6 +402,148 @@
                 }
               }
             }
+          }
+        }
+      ],
+      "columnWidth": [
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "80D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fLancamentosContabeis.data_lancamento"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "130D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "dCasa.CASA"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "230D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "dPlanoContas.CONTA_CONTABIL"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "330D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fLancamentosContabeis.historico"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "120D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "_Medidas.DRE Lançamentos"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "160D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "dCentroCusto.CENTRO_CUSTO"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "120D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fLancamentosContabeis.documento"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "70D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fLancamentosContabeis.modulo"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "70D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fLancamentosContabeis.lote"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "80D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "fLancamentosContabeis.lancamento"
           }
         }
       ]

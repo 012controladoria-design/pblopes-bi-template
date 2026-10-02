@@ -152,6 +152,21 @@
       "groupName": "ESPECIE_CP",
       "fieldChanges": true,
       "filterChanges": true
+    },
+    "visualContainerObjects": {
+      "general": [
+        {
+          "properties": {
+            "keepLayerOrder": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ]
     }
   }
 }
