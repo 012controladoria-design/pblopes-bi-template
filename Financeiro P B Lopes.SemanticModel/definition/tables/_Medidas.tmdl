@@ -1050,6 +1050,20 @@ table _Medidas
 
 		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
 
+	/// Tema escolhido na tela (segmentação oculta de cada página, trocada pelo botão ☀/☾). Sem seleção = Escuro.
+	measure 'Tema Selecionado' =
+			
+			SELECTEDVALUE ( dTema[Tema], "Escuro" )
+		displayFolder: Tema
+		lineageTag: 353bdf4b-aba8-4e5c-b98f-fd716f2fb073
+
+	/// Cor das letras que ficam direto sobre o fundo: azul Scania (#041E42) no tema claro, branco no escuro. Usada na formatação condicional (fx) dos visuais.
+	measure 'Tema Cor Texto' =
+			
+			IF ( [Tema Selecionado] = "Claro", "#041E42", "#FFFFFF" )
+		displayFolder: Tema
+		lineageTag: 7022d356-b39b-4803-a908-a375ba99bfba
+
 	partition _Medidas-e0807ed9-830e-46df-b71f-9de294b53a18 = m
 		mode: import
 		queryGroup: Medidas

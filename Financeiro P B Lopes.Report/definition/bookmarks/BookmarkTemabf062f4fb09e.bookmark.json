@@ -1,0 +1,134 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/2.1.0/schema.json",
+  "displayName": "Tema escuro · Fluxo de Caixa (DFC)",
+  "name": "BookmarkTemabf062f4fb09e",
+  "options": {
+    "applyOnlyToTargetVisuals": true,
+    "targetVisualNames": [
+      "tema2c88cca5e682f060",
+      "tema856b63866276f52d",
+      "tema518a670e143a5a17",
+      "temacd17c590364bc5ba",
+      "tema62a9de0631dd640d",
+      "5914a2eed659c48aa854",
+      "274322b8ad2f12672f93",
+      "temad347bcb3c0b5eb86"
+    ]
+  },
+  "explorationState": {
+    "version": "1.3",
+    "activeSection": "c54eb56c7779047741e9",
+    "sections": {
+      "c54eb56c7779047741e9": {
+        "visualContainers": {
+          "tema62a9de0631dd640d": {
+            "singleVisual": {
+              "visualType": "actionButton"
+            }
+          },
+          "5914a2eed659c48aa854": {
+            "singleVisual": {
+              "visualType": "image"
+            }
+          },
+          "274322b8ad2f12672f93": {
+            "singleVisual": {
+              "visualType": "textbox"
+            }
+          },
+          "tema2c88cca5e682f060": {
+            "singleVisual": {
+              "visualType": "image",
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "tema856b63866276f52d": {
+            "singleVisual": {
+              "visualType": "actionButton",
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "tema518a670e143a5a17": {
+            "singleVisual": {
+              "visualType": "image",
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "temacd17c590364bc5ba": {
+            "singleVisual": {
+              "visualType": "textbox",
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "temad347bcb3c0b5eb86": {
+            "singleVisual": {
+              "visualType": "slicer",
+              "display": {
+                "mode": "hidden"
+              },
+              "objects": {
+                "merge": {
+                  "general": [
+                    {
+                      "properties": {
+                        "filter": {
+                          "filter": {
+                            "Version": 2,
+                            "From": [
+                              {
+                                "Name": "t",
+                                "Entity": "dTema",
+                                "Type": 0
+                              }
+                            ],
+                            "Where": [
+                              {
+                                "Condition": {
+                                  "In": {
+                                    "Expressions": [
+                                      {
+                                        "Column": {
+                                          "Expression": {
+                                            "SourceRef": {
+                                              "Source": "t"
+                                            }
+                                          },
+                                          "Property": "Tema"
+                                        }
+                                      }
+                                    ],
+                                    "Values": [
+                                      [
+                                        {
+                                          "Literal": {
+                                            "Value": "'Escuro'"
+                                          }
+                                        }
+                                      ]
+                                    ]
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

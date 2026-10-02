@@ -1,0 +1,131 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/2.1.0/schema.json",
+  "displayName": "Tema claro · Duplicata de Duplicata de Contas a Receber",
+  "name": "BookmarkTemaed9e8eb3b1dc",
+  "options": {
+    "applyOnlyToTargetVisuals": true,
+    "targetVisualNames": [
+      "tema1fa1557ac2bd372f",
+      "temabad2ead81c3407fb",
+      "tema80883d80ba6b6d25",
+      "temaa7ce7445c8591e54",
+      "temaae2d2fd0e3807a11",
+      "e2d2a94a264701811e09",
+      "d844e7444509891d0d01",
+      "tema1becc1115530c757"
+    ]
+  },
+  "explorationState": {
+    "version": "1.3",
+    "activeSection": "b311270107da631d3a4c",
+    "sections": {
+      "b311270107da631d3a4c": {
+        "visualContainers": {
+          "tema1fa1557ac2bd372f": {
+            "singleVisual": {
+              "visualType": "image"
+            }
+          },
+          "temabad2ead81c3407fb": {
+            "singleVisual": {
+              "visualType": "actionButton"
+            }
+          },
+          "tema80883d80ba6b6d25": {
+            "singleVisual": {
+              "visualType": "image"
+            }
+          },
+          "temaa7ce7445c8591e54": {
+            "singleVisual": {
+              "visualType": "textbox"
+            }
+          },
+          "temaae2d2fd0e3807a11": {
+            "singleVisual": {
+              "visualType": "actionButton",
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "e2d2a94a264701811e09": {
+            "singleVisual": {
+              "visualType": "image",
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "d844e7444509891d0d01": {
+            "singleVisual": {
+              "visualType": "textbox",
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "tema1becc1115530c757": {
+            "singleVisual": {
+              "visualType": "slicer",
+              "display": {
+                "mode": "hidden"
+              },
+              "objects": {
+                "merge": {
+                  "general": [
+                    {
+                      "properties": {
+                        "filter": {
+                          "filter": {
+                            "Version": 2,
+                            "From": [
+                              {
+                                "Name": "t",
+                                "Entity": "dTema",
+                                "Type": 0
+                              }
+                            ],
+                            "Where": [
+                              {
+                                "Condition": {
+                                  "In": {
+                                    "Expressions": [
+                                      {
+                                        "Column": {
+                                          "Expression": {
+                                            "SourceRef": {
+                                              "Source": "t"
+                                            }
+                                          },
+                                          "Property": "Tema"
+                                        }
+                                      }
+                                    ],
+                                    "Values": [
+                                      [
+                                        {
+                                          "Literal": {
+                                            "Value": "'Claro'"
+                                          }
+                                        }
+                                      ]
+                                    ]
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

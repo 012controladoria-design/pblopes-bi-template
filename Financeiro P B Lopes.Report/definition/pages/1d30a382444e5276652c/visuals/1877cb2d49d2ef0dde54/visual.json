@@ -1071,6 +1071,22 @@
                   "Value": "'Matriz RLZ'"
                 }
               }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "_Medidas"
+                        }
+                      },
+                      "Property": "Tema Cor Texto"
+                    }
+                  }
+                }
+              }
             }
           }
         }

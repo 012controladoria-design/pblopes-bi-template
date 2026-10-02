@@ -1,0 +1,134 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/2.1.0/schema.json",
+  "displayName": "Tema escuro · Despesas por Centro de Custo",
+  "name": "BookmarkTema4e83eb856c91",
+  "options": {
+    "applyOnlyToTargetVisuals": true,
+    "targetVisualNames": [
+      "tema79494c9a6354ce6f",
+      "tema1a2279504fb54ad8",
+      "temaadc9b37a03c8e6ea",
+      "tema2ab60a6eeac2e73c",
+      "tema2e8f90002ab714d5",
+      "afba1665a0eed95b7f40",
+      "d49c9d55d7fcea713fb5",
+      "temae810311bb2ecf523"
+    ]
+  },
+  "explorationState": {
+    "version": "1.3",
+    "activeSection": "da0543ae7efa25bdcac7",
+    "sections": {
+      "da0543ae7efa25bdcac7": {
+        "visualContainers": {
+          "tema2e8f90002ab714d5": {
+            "singleVisual": {
+              "visualType": "actionButton"
+            }
+          },
+          "afba1665a0eed95b7f40": {
+            "singleVisual": {
+              "visualType": "image"
+            }
+          },
+          "d49c9d55d7fcea713fb5": {
+            "singleVisual": {
+              "visualType": "textbox"
+            }
+          },
+          "tema79494c9a6354ce6f": {
+            "singleVisual": {
+              "visualType": "image",
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "tema1a2279504fb54ad8": {
+            "singleVisual": {
+              "visualType": "actionButton",
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "temaadc9b37a03c8e6ea": {
+            "singleVisual": {
+              "visualType": "image",
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "tema2ab60a6eeac2e73c": {
+            "singleVisual": {
+              "visualType": "textbox",
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "temae810311bb2ecf523": {
+            "singleVisual": {
+              "visualType": "slicer",
+              "display": {
+                "mode": "hidden"
+              },
+              "objects": {
+                "merge": {
+                  "general": [
+                    {
+                      "properties": {
+                        "filter": {
+                          "filter": {
+                            "Version": 2,
+                            "From": [
+                              {
+                                "Name": "t",
+                                "Entity": "dTema",
+                                "Type": 0
+                              }
+                            ],
+                            "Where": [
+                              {
+                                "Condition": {
+                                  "In": {
+                                    "Expressions": [
+                                      {
+                                        "Column": {
+                                          "Expression": {
+                                            "SourceRef": {
+                                              "Source": "t"
+                                            }
+                                          },
+                                          "Property": "Tema"
+                                        }
+                                      }
+                                    ],
+                                    "Values": [
+                                      [
+                                        {
+                                          "Literal": {
+                                            "Value": "'Escuro'"
+                                          }
+                                        }
+                                      ]
+                                    ]
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

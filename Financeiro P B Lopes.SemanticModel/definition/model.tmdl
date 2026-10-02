@@ -55,6 +55,7 @@ ref table fLancamentosContabeis
 ref table fSaldosContabeis
 ref table dContaBP
 ref table dEstDFC
+ref table dTema
 
 ref role Londrina
 ref role Maringá

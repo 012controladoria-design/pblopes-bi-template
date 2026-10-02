@@ -1,0 +1,35 @@
+/// Opções de tema do relatório (Escuro / Claro). Tabela escrita no modelo, sem relacionamento: um filtro nela só muda as cores.
+table dTema
+	lineageTag: b7ca6da0-41b1-4a5a-a23a-76a067e7147c
+
+	column Tema
+		lineageTag: a780c7bf-9f85-4c40-abfb-afc8a7e5ac05
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Tema]
+		sortByColumn: Ordem
+
+		annotation SummarizationSetBy = Automatic
+
+	column Ordem
+		formatString: 0
+		lineageTag: 8cca8acd-e780-4869-82a7-18f3748db0a4
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Ordem]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dTema = calculated
+		mode: import
+		source =
+				DATATABLE (
+				    "Tema", STRING, "Ordem", INTEGER,
+				    {
+				        { "Escuro", 1 },
+				        { "Claro", 2 }
+				    }
+				)
+
+	annotation PBI_Id = ee2521b2220f43fc85b7abe72290b663
+
