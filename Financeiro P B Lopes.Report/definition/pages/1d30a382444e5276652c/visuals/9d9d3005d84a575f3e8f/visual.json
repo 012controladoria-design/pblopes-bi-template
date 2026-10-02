@@ -130,6 +130,24 @@
           "selector": {
             "id": "hover"
           }
+        },
+        {
+          "properties": {
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#4A5578'"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "id": "disabled"
+          }
         }
       ],
       "fill": [
@@ -200,6 +218,31 @@
           "selector": {
             "id": "hover"
           }
+        },
+        {
+          "properties": {
+            "fillColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#B8C2D9'"
+                    }
+                  }
+                }
+              }
+            },
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "id": "disabled"
+          }
         }
       ],
       "outline": [
@@ -230,21 +273,28 @@
             "type": {
               "expr": {
                 "Literal": {
-                  "Value": "'Bookmark'"
+                  "Value": "'Drillthrough'"
                 }
               }
             },
-            "bookmark": {
+            "drillthroughSection": {
               "expr": {
                 "Literal": {
-                  "Value": "'Bookmarkc17bc917182fa43e8b6b'"
+                  "Value": "'96baf9081047bb949f95'"
                 }
               }
             },
-            "tooltip": {
+            "disabledTooltip": {
               "expr": {
                 "Literal": {
-                  "Value": "'Clique antes numa linha ou célula da DRE e depois aqui para ver os lançamentos que compõem o valor'"
+                  "Value": "'Clique antes numa linha ou célula da DRE'"
+                }
+              }
+            },
+            "enabledTooltip": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Abre os lançamentos da seleção'"
                 }
               }
             }

@@ -130,6 +130,24 @@
           "selector": {
             "id": "hover"
           }
+        },
+        {
+          "properties": {
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#4A5578'"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "id": "disabled"
+          }
         }
       ],
       "fill": [
@@ -200,6 +218,31 @@
           "selector": {
             "id": "hover"
           }
+        },
+        {
+          "properties": {
+            "fillColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#B8C2D9'"
+                    }
+                  }
+                }
+              }
+            },
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "id": "disabled"
+          }
         }
       ],
       "outline": [
@@ -230,21 +273,28 @@
             "type": {
               "expr": {
                 "Literal": {
-                  "Value": "'Bookmark'"
+                  "Value": "'Drillthrough'"
                 }
               }
             },
-            "bookmark": {
+            "drillthroughSection": {
               "expr": {
                 "Literal": {
-                  "Value": "'Bookmark978a5179a8f9d9f4a482'"
+                  "Value": "'7737cdddb2c076300f40'"
                 }
               }
             },
-            "tooltip": {
+            "disabledTooltip": {
               "expr": {
                 "Literal": {
-                  "Value": "'Clique antes numa barra, fatia ou célula para filtrar; sem seleção abre todos os títulos em aberto'"
+                  "Value": "'Clique antes numa barra, fatia ou célula da tabela'"
+                }
+              }
+            },
+            "enabledTooltip": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Abre os títulos da seleção'"
                 }
               }
             }
