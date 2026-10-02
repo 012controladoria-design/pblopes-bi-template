@@ -1,0 +1,283 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/report/3.3.0/schema.json",
+  "themeCollection": {
+    "baseTheme": {
+      "name": "CY18SU07",
+      "reportVersionAtImport": {
+        "visual": "1.8.23",
+        "report": "2.0.23",
+        "page": "1.3.23"
+      },
+      "type": "SharedResources"
+    }
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "Filter54a50373fd693e43b0a8",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dCasa"
+              }
+            },
+            "Property": "CASA"
+          }
+        },
+        "type": "Categorical",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "d",
+              "Entity": "dCasa",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "Not": {
+                  "Expression": {
+                    "In": {
+                      "Expressions": [
+                        {
+                          "Column": {
+                            "Expression": {
+                              "SourceRef": {
+                                "Source": "d"
+                              }
+                            },
+                            "Property": "CASA"
+                          }
+                        }
+                      ],
+                      "Values": [
+                        [
+                          {
+                            "Literal": {
+                              "Value": "'113 HU TRANSPORTES'"
+                            }
+                          }
+                        ],
+                        [
+                          {
+                            "Literal": {
+                              "Value": "'114 TRANSPANORAMA'"
+                            }
+                          }
+                        ],
+                        [
+                          {
+                            "Literal": {
+                              "Value": "'115 SANDOVALINA'"
+                            }
+                          }
+                        ]
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "howCreated": "User",
+        "isHiddenInViewMode": true,
+        "objects": {
+          "general": [
+            {
+              "properties": {
+                "isInvertedSelectionMode": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "true"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "objects": {
+    "section": [
+      {
+        "properties": {
+          "verticalAlignment": {
+            "expr": {
+              "Literal": {
+                "Value": "'Top'"
+              }
+            }
+          }
+        }
+      }
+    ],
+    "outspacePane": [
+      {
+        "properties": {
+          "expanded": {
+            "expr": {
+              "Literal": {
+                "Value": "true"
+              }
+            }
+          },
+          "visible": {
+            "expr": {
+              "Literal": {
+                "Value": "true"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "publicCustomVisuals": [
+    "ChicletSlicer1448559807354",
+    "PBI_CV_16948668_E17D_454B_8664_2F2C470EA8C1",
+    "PBI_CV_7B952816_A48F_49B4_9E13_15E3BB2C0337",
+    "TornadoChart1452517688218"
+  ],
+  "resourcePackages": [
+    {
+      "name": "PBI_CV_16948668_E17D_454B_8664_2F2C470EA8C1",
+      "type": "CustomVisual",
+      "items": [
+        {
+          "name": "PBI_CV_16948668_E17D_454B_8664_2F2C470EA8C1.pbiviz.json",
+          "path": "PBI_CV_16948668_E17D_454B_8664_2F2C470EA8C1.pbiviz.json",
+          "type": "CustomVisualMetadata"
+        }
+      ]
+    },
+    {
+      "name": "PBI_CV_7B952816_A48F_49B4_9E13_15E3BB2C0337",
+      "type": "CustomVisual",
+      "items": [
+        {
+          "name": "PBI_CV_7B952816_A48F_49B4_9E13_15E3BB2C0337.pbiviz.json",
+          "path": "PBI_CV_7B952816_A48F_49B4_9E13_15E3BB2C0337.pbiviz.json",
+          "type": "CustomVisualMetadata"
+        }
+      ]
+    },
+    {
+      "name": "TornadoChart1452517688218",
+      "type": "CustomVisual",
+      "items": [
+        {
+          "name": "TornadoChart1452517688218.pbiviz.json",
+          "path": "TornadoChart1452517688218.pbiviz.json",
+          "type": "CustomVisualMetadata"
+        }
+      ]
+    },
+    {
+      "name": "RegisteredResources",
+      "type": "RegisteredResources",
+      "items": [
+        {
+          "name": "Apresenta__o_em_Modelo_(2)24063336469426322.png",
+          "path": "Apresenta__o_em_Modelo_(2)24063336469426322.png",
+          "type": "Image"
+        },
+        {
+          "name": "Apresenta__o_em_Modelo_(4)9038574016168753.png",
+          "path": "Apresenta__o_em_Modelo_(4)9038574016168753.png",
+          "type": "Image"
+        },
+        {
+          "name": "Apresenta__o_em_Modelo38058965616810503.png",
+          "path": "Apresenta__o_em_Modelo38058965616810503.png",
+          "type": "Image"
+        },
+        {
+          "name": "PBlopes_Scania_branco24556797047258305.png",
+          "path": "PBlopes_Scania_branco24556797047258305.png",
+          "type": "Image"
+        },
+        {
+          "name": "PBlopes_Scania_branco9919042233749773.png",
+          "path": "PBlopes_Scania_branco9919042233749773.png",
+          "type": "Image"
+        },
+        {
+          "name": "PBLopes_Scania_colorido6903853022629551.png",
+          "path": "PBLopes_Scania_colorido6903853022629551.png",
+          "type": "Image"
+        },
+        {
+          "name": "Slide44697203180037486.SVG",
+          "path": "Slide44697203180037486.SVG",
+          "type": "Image"
+        },
+        {
+          "name": "Slide454209173932719.SVG",
+          "path": "Slide454209173932719.SVG",
+          "type": "Image"
+        },
+        {
+          "name": "Slide45703984778794213.SVG",
+          "path": "Slide45703984778794213.SVG",
+          "type": "Image"
+        },
+        {
+          "name": "Slide516042408119564344.SVG",
+          "path": "Slide516042408119564344.SVG",
+          "type": "Image"
+        },
+        {
+          "name": "Slide55201699840401917.SVG",
+          "path": "Slide55201699840401917.SVG",
+          "type": "Image"
+        },
+        {
+          "name": "Slide847991351590303744.SVG",
+          "path": "Slide847991351590303744.SVG",
+          "type": "Image"
+        },
+        {
+          "name": "Slide88529588352764554.SVG",
+          "path": "Slide88529588352764554.SVG",
+          "type": "Image"
+        },
+        {
+          "name": "Fundo_Tema_Claro7310452896314507.jpg",
+          "path": "Fundo_Tema_Claro7310452896314507.jpg",
+          "type": "Image"
+        }
+      ]
+    },
+    {
+      "name": "SharedResources",
+      "type": "SharedResources",
+      "items": [
+        {
+          "name": "CY18SU07",
+          "path": "BaseThemes/CY18SU07.json",
+          "type": "BaseTheme"
+        }
+      ]
+    }
+  ],
+  "settings": {
+    "useStylableVisualContainerHeader": true,
+    "exportDataMode": "AllowSummarized",
+    "defaultDrillFilterOtherVisuals": true,
+    "allowChangeFilterTypes": true,
+    "useEnhancedTooltips": true
+  },
+  "slowDataSourceSettings": {
+    "isCrossHighlightingDisabled": false,
+    "isSlicerSelectionsButtonEnabled": false,
+    "isFilterSelectionsButtonEnabled": false,
+    "isFieldWellButtonEnabled": false,
+    "isApplyAllButtonEnabled": false
+  }
+}

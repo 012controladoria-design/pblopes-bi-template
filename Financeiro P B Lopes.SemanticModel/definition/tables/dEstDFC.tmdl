@@ -1,0 +1,80 @@
+/// Estrutura da DFC (método indireto): uma linha por item, com a atividade (grupo), a ordem e o tipo de cálculo. Tabela escrita no próprio modelo, sem Excel.
+table dEstDFC
+	lineageTag: 15b7944f-254e-418a-85e9-33368ea3a527
+
+	column ORDEM
+		formatString: 0
+		lineageTag: c2eda398-2183-4ed1-9808-c8bf20d26c77
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [ORDEM]
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Código que liga a linha às contas: é o mesmo valor da coluna dContaBP[DFC Código].
+	column CODIGO
+		lineageTag: 411eb662-f42d-4639-87f1-eb6788438c03
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [CODIGO]
+
+		annotation SummarizationSetBy = Automatic
+
+	column LINHA
+		lineageTag: f7872c43-ea3b-4b5b-83d9-11899ea36338
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [LINHA]
+		sortByColumn: ORDEM
+
+		annotation SummarizationSetBy = Automatic
+
+	column ORDEM_GRUPO
+		formatString: 0
+		lineageTag: 5ee79166-b625-4087-b89a-82f9dff72876
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [ORDEM_GRUPO]
+
+		annotation SummarizationSetBy = Automatic
+
+	column GRUPO
+		lineageTag: ce6337a1-c20e-4a2c-865b-4f75b4e5c1b4
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [GRUPO]
+		sortByColumn: ORDEM_GRUPO
+
+		annotation SummarizationSetBy = Automatic
+
+	/// RESULTADO = vem da DRE contábil; CONTAS = variação dos saldos das contas da linha; PL = variação do PL menos o resultado.
+	column TIPO
+		lineageTag: b66d628d-940e-435a-9f38-44e92b39c225
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [TIPO]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dEstDFC = calculated
+		mode: import
+		source =
+				DATATABLE (
+				    "ORDEM", INTEGER, "CODIGO", STRING, "LINHA", STRING, "ORDEM_GRUPO", INTEGER, "GRUPO", STRING, "TIPO", STRING,
+				    {
+				        { 1, "OP-RESULTADO", "Resultado do período", 1, "1. ATIVIDADES OPERACIONAIS", "RESULTADO" },
+				        { 2, "OP-DEPRECIACAO", "(+) Depreciação e amortização", 1, "1. ATIVIDADES OPERACIONAIS", "CONTAS" },
+				        { 3, "OP-CLIENTES", "(Aumento) redução de clientes", 1, "1. ATIVIDADES OPERACIONAIS", "CONTAS" },
+				        { 4, "OP-ESTOQUES", "(Aumento) redução de estoques", 1, "1. ATIVIDADES OPERACIONAIS", "CONTAS" },
+				        { 5, "OP-OUTROS-ATIVOS", "(Aumento) redução de outros ativos", 1, "1. ATIVIDADES OPERACIONAIS", "CONTAS" },
+				        { 6, "OP-FORNECEDORES", "Aumento (redução) de fornecedores", 1, "1. ATIVIDADES OPERACIONAIS", "CONTAS" },
+				        { 7, "OP-OBRIGACOES", "Aumento (redução) de obrigações trabalhistas e tributárias", 1, "1. ATIVIDADES OPERACIONAIS", "CONTAS" },
+				        { 8, "OP-OUTROS-PASSIVOS", "Aumento (redução) de outros passivos", 1, "1. ATIVIDADES OPERACIONAIS", "CONTAS" },
+				        { 9, "INV-ATIVO-NAO-CIRCULANTE", "Imobilizado, intangível e investimentos", 2, "2. ATIVIDADES DE INVESTIMENTO", "CONTAS" },
+				        { 10, "FIN-EMPRESTIMOS", "Empréstimos e financiamentos (captação − pagamento)", 3, "3. ATIVIDADES DE FINANCIAMENTO", "CONTAS" },
+				        { 11, "FIN-PATRIMONIO-LIQUIDO", "Capital, lucros distribuídos e outras movimentações do PL", 3, "3. ATIVIDADES DE FINANCIAMENTO", "PL" }
+				    }
+				)
+
+	annotation PBI_Id = fe419aed21d84826ba4ed8fbc7fdb3ad
+

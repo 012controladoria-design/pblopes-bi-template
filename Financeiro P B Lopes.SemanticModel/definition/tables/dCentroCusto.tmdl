@@ -1,0 +1,49 @@
+table dCentroCusto
+	lineageTag: eb514332-ea03-4df6-9fd5-e933d6bcf763
+
+	column COD_CENTRO_CUSTO
+		dataType: string
+		lineageTag: e7146f27-7c90-46ca-a121-e552ba430d24
+		summarizeBy: none
+		sourceColumn: COD_CENTRO_CUSTO
+
+		annotation SummarizationSetBy = Automatic
+
+	column DESCRICAO_CENTRO_CUSTO
+		dataType: string
+		lineageTag: f27851c9-47cd-4999-a3c2-ee49ea48e99f
+		summarizeBy: none
+		sourceColumn: DESCRICAO_CENTRO_CUSTO
+
+		annotation SummarizationSetBy = Automatic
+
+	column CENTRO_CUSTO
+		dataType: string
+		lineageTag: 1b99e992-03b0-4468-a542-3a083902257a
+		summarizeBy: none
+		sourceColumn: CENTRO_CUSTO
+
+		annotation SummarizationSetBy = Automatic
+
+	column SETOR
+		dataType: string
+		lineageTag: cd19de2a-6196-428c-ba86-c281f787ec28
+		summarizeBy: none
+		sourceColumn: SETOR
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dCentroCusto-0adf0306-4ce6-4d40-bff4-233f8e6a8dd7 = m
+		mode: import
+		source =
+				let
+				    Fonte = Excel.Workbook(File.Contents("\\192.168.0.8\Sys1\Home\BiPowerBI\PB Lopes\Resultado Gerencial\Tabelas_DRE.xlsx"), null, true),
+				    dCentroCusto_Table = Fonte{[Item="dCentroCusto",Kind="Table"]}[Data],
+				    #"Tipo Alterado" = Table.TransformColumnTypes(dCentroCusto_Table,{{"COD_CENTRO_CUSTO", type text}, {"DESCRICAO_CENTRO_CUSTO", type text}, {"CENTRO_CUSTO", type text}, {"SETOR", type text}})
+				in
+				    #"Tipo Alterado"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navegação
+

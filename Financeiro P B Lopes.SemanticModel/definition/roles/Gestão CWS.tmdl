@@ -1,0 +1,7 @@
+role 'Gestão CWS'
+	modelPermission: read
+
+	tablePermission dCasa = [COD_CASA] == "108" || [COD_CASA] == "110" || [COD_CASA] == "115" || [COD_CASA] == "116"
+
+	annotation PBI_Id = 585c71d0d6624ec68bcf96d99354ad72
+

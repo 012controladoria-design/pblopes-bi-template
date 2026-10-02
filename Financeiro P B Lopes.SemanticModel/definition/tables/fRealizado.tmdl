@@ -1,0 +1,76 @@
+table fRealizado
+	lineageTag: dbb24153-82ba-46b7-aec1-daf13ce85857
+
+	column TOTAL
+		dataType: double
+		lineageTag: ffc4b0e6-7eac-4c5e-860b-73fdf2a46b04
+		summarizeBy: sum
+		sourceColumn: TOTAL
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column CONTA_CONTABIL
+		dataType: string
+		lineageTag: ceb9f92c-bbdb-468f-b105-4b16c527531d
+		summarizeBy: none
+		sourceColumn: CONTA_CONTABIL
+
+		annotation SummarizationSetBy = Automatic
+
+	column COD_CASA
+		dataType: string
+		lineageTag: 3fdf752a-8cc5-4717-bc88-6d30bc33c3e3
+		summarizeBy: none
+		sourceColumn: COD_CASA
+
+		annotation SummarizationSetBy = Automatic
+
+	column COD_CENTRO_CUSTO
+		dataType: string
+		lineageTag: 6ba566c1-708e-46bb-a8b8-088a2bef0424
+		summarizeBy: none
+		sourceColumn: COD_CENTRO_CUSTO
+
+		annotation SummarizationSetBy = Automatic
+
+	column DATA
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: c8db1b1e-6604-401c-adc9-2a0644cc1f7c
+		summarizeBy: none
+		sourceColumn: DATA
+
+		changedProperty = FormatString
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column TIPO = RELATED(dPlanoContas[TIPO])
+		lineageTag: 4521f3b6-c62a-4879-ae34-cadd307a4cd5
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column VALOR = IF([TIPO] = "-",[TOTAL] * - 1,[TOTAL])
+		lineageTag: e6d8ef25-e629-4506-a924-537ffec3cf0d
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition fRealizado-e4494697-0304-4092-802b-81fd03dec335 = m
+		mode: import
+		source =
+				let
+				    Fonte = RealizadoBanco
+				in
+				    Fonte
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navegação
+

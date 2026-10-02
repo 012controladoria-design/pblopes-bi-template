@@ -1,0 +1,134 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/2.1.0/schema.json",
+  "displayName": "Tema escuro · Indicadores Financeiros",
+  "name": "BookmarkTema5f4504d49d7b",
+  "options": {
+    "applyOnlyToTargetVisuals": true,
+    "targetVisualNames": [
+      "temafd07f9982b9ce957",
+      "tema4060e80d22ec873a",
+      "temada06e9a026227470",
+      "temad17955df36124ec3",
+      "tema88b9ee62b5c477c5",
+      "6f65da6b40148829f75c",
+      "cf654eb6ba3e5a2d689d",
+      "temaac4b548d0f8feb35"
+    ]
+  },
+  "explorationState": {
+    "version": "1.3",
+    "activeSection": "a11ea76190d42b2d4d40",
+    "sections": {
+      "a11ea76190d42b2d4d40": {
+        "visualContainers": {
+          "tema88b9ee62b5c477c5": {
+            "singleVisual": {
+              "visualType": "actionButton"
+            }
+          },
+          "6f65da6b40148829f75c": {
+            "singleVisual": {
+              "visualType": "image"
+            }
+          },
+          "cf654eb6ba3e5a2d689d": {
+            "singleVisual": {
+              "visualType": "textbox"
+            }
+          },
+          "temafd07f9982b9ce957": {
+            "singleVisual": {
+              "visualType": "image",
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "tema4060e80d22ec873a": {
+            "singleVisual": {
+              "visualType": "actionButton",
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "temada06e9a026227470": {
+            "singleVisual": {
+              "visualType": "image",
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "temad17955df36124ec3": {
+            "singleVisual": {
+              "visualType": "textbox",
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "temaac4b548d0f8feb35": {
+            "singleVisual": {
+              "visualType": "slicer",
+              "display": {
+                "mode": "hidden"
+              },
+              "objects": {
+                "merge": {
+                  "general": [
+                    {
+                      "properties": {
+                        "filter": {
+                          "filter": {
+                            "Version": 2,
+                            "From": [
+                              {
+                                "Name": "t",
+                                "Entity": "dTema",
+                                "Type": 0
+                              }
+                            ],
+                            "Where": [
+                              {
+                                "Condition": {
+                                  "In": {
+                                    "Expressions": [
+                                      {
+                                        "Column": {
+                                          "Expression": {
+                                            "SourceRef": {
+                                              "Source": "t"
+                                            }
+                                          },
+                                          "Property": "Tema"
+                                        }
+                                      }
+                                    ],
+                                    "Values": [
+                                      [
+                                        {
+                                          "Literal": {
+                                            "Value": "'Escuro'"
+                                          }
+                                        }
+                                      ]
+                                    ]
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

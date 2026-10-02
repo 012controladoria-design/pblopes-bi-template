@@ -1,0 +1,124 @@
+table aCalendario
+	lineageTag: d91f69e4-f0bf-44c2-af83-bff120b6a36d
+
+	column Data
+		dataType: dateTime
+		formatString: mmmm" de "yyyy
+		lineageTag: 9f84b799-5602-4b62-8567-cf953e899638
+		summarizeBy: none
+		sourceColumn: Data
+
+		changedProperty = FormatString
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column Ano
+		dataType: int64
+		formatString: 0
+		lineageTag: 34d1a77b-c9f1-4acd-89ee-6ad16dad6d34
+		summarizeBy: sum
+		sourceColumn: Ano
+
+		changedProperty = DataType
+
+		changedProperty = FormatString
+
+		annotation SummarizationSetBy = Automatic
+
+	column Mês
+		dataType: double
+		formatString: 0
+		lineageTag: e305cbcb-8066-495d-979c-3fdcf4128cbd
+		summarizeBy: sum
+		sourceColumn: Mês
+
+		changedProperty = FormatString
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Nome do Mês'
+		dataType: string
+		lineageTag: 27a89147-d59b-439a-b7d4-74a64d9e7e9d
+		summarizeBy: none
+		sourceColumn: Nome do Mês
+		sortByColumn: Mês
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Dia da Semana'
+		dataType: string
+		lineageTag: 030efc1f-7828-456b-875c-a2ad31392d4d
+		summarizeBy: none
+		sourceColumn: Dia da Semana
+
+		annotation SummarizationSetBy = Automatic
+
+	column Trimestre
+		dataType: double
+		formatString: 0
+		lineageTag: 1ef46c87-a659-45a1-967f-998aba078409
+		summarizeBy: sum
+		sourceColumn: Trimestre
+
+		annotation SummarizationSetBy = Automatic
+
+	column AnoMes = YEAR ( aCalendario[Data] ) * 100 + MONTH ( aCalendario[Data] )
+		dataType: int64
+		formatString: 0
+		lineageTag: 0ab13c4c-2cd0-48c2-bf3d-26d8eac857e8
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Mês e ano abreviados (ex.: out/26), para eixos de gráfico que atravessam anos.
+	column 'Mês/Ano' = FORMAT ( aCalendario[Data], "MMM/yy", "pt-BR" )
+		dataType: string
+		lineageTag: 231e9dad-e7e3-4d7f-8fab-fe66f652e64f
+		summarizeBy: none
+		sortByColumn: AnoMes
+
+		annotation SummarizationSetBy = Automatic
+
+	partition aCalendario-fab4429c-1a3b-42a5-8af0-860848bfde89 = m
+		mode: import
+		source =
+				let
+				    DataInicial = List.Min(fRealizado[DATA] & fAjustesGerenciais[DATA]),
+				    DataFinal = Date.EndOfMonth(List.Max(fRealizado[DATA] & fAjustesGerenciais[DATA] & {Date.From(DateTime.LocalNow())})),
+				    QtdDias = Duration.Days(DataFinal - DataInicial) + 1,
+				    Lista = List.Dates(DataInicial, QtdDias, #duration(1,0,0,0)),
+				    Tabela = #table(
+				        type table[
+				            Data=date,
+				            Ano=number,
+				            Trimestre=number,
+				            Mês=number,
+				            Nome do Mês=text,
+				            Dia da Semana=text
+				        ],
+				        List.Transform(
+				            Lista,
+				            each {
+				                _,
+				                Date.Year(_),
+				                Date.QuarterOfYear(_),
+				                Date.Month(_),
+				                Date.MonthName(_),
+				                Date.DayOfWeekName(_)
+				
+				            }
+				        )
+				    )
+				in
+				    Tabela
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navegação
+

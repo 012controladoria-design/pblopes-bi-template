@@ -1,0 +1,1107 @@
+table _Medidas
+	lineageTag: b81a728a-9a86-4774-b206-dcb0ccba263a
+
+	measure '001 Realizado' = SUM(fRealizado[VALOR]) + SUM(fAjustesGerenciais[VALOR])
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		displayFolder: Realizado
+		lineageTag: 53dddf5b-38c0-49f5-9a98-23b135a858e4
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '002 DRE Realizado' =
+			
+			VAR Subtotal = SELECTEDVALUE(dEstDRE[SUBTOTAL])
+			VAR OrdemContexto = MAX(dEstDRE[ORDEM])
+			VAR RlzContexto = SUM(fRealizado[VALOR]) + sum(fAjustesGerenciais[VALOR]) + SUM(fRlzFinDeprecAmortEstorno[VALOR])
+			VAR RlzAcmSubtotal =
+			CALCULATE(
+			    SUM(fRealizado[VALOR]) + sum(fAjustesGerenciais[VALOR]) +  SUM(fRlzFinDeprecAmortEstorno[VALOR]),
+			    FILTER(
+			        ALL(dEstDRE),
+			        dEstDRE[ORDEM] <= OrdemContexto
+			    )
+			)
+			RETURN
+			SWITCH(
+			    TRUE(),
+			    Subtotal = 0, RlzContexto,
+			    Subtotal = 1 && NOT(ISINSCOPE(dPlanoContas[GRUPO])), RlzAcmSubtotal,
+			    BLANK()
+			)
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Realizado
+		lineageTag: 9436e18c-1d2b-47ea-b18f-2d142a5a8122
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure '003 A. V. Realizado' =
+			
+			DIVIDE (
+			    [002 DRE Realizado],
+			    (
+			        CALCULATE (
+			            [002 DRE Realizado],
+			            FILTER (
+			                ALL ( dPlanoContas ),
+			                dPlanoContas[GRUPO_DRE] = "(+) RECEITA COM VENDAS"
+			            )
+			        )
+			            + CALCULATE (
+			                [002 DRE Realizado],
+			                FILTER ( ALL ( dPlanoContas ), dPlanoContas[GRUPO_DRE] = "(-) DEVOLUCOES" )
+			            )
+			    )
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Realizado
+		lineageTag: 24a3f488-0472-4eb5-b0ab-0c11a0a422ef
+
+		changedProperty = FormatString
+
+	measure '018 Realizado até:' =
+			
+			VAR MaiorDataRlz =
+			    CALCULATE ( MAX ( fRealizado[DATA] ), ALL ( fRealizado ) )
+			VAR Mes =
+			    FORMAT ( MaiorDataRlz, "MMMM" )
+			RETURN
+			    "* Valores realizados até " & Mes & "/"
+			        & YEAR ( MaiorDataRlz )
+			        & ". Para vendas diretas de Maringá, considera-se o valor de comissão recebido da Scania (20% da venda)."
+		displayFolder: Realizado
+		lineageTag: e211ca9f-3f1d-43bd-90ac-fb53de87d50f
+
+	measure 'CR Carteira' =
+			
+			CALCULATE ( SUM ( fTitulosReceber[saldo] ),
+			    fTitulosReceber[em_aberto] = 1,
+			    fTitulosReceber[tipo_especie] <> "Antecipação" )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		lineageTag: a18788c2-091b-4e40-ab8c-039120032984
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'CR Qtd Títulos' =
+			
+			CALCULATE ( COUNTROWS ( fTitulosReceber ),
+			    fTitulosReceber[em_aberto] = 1,
+			    fTitulosReceber[tipo_especie] <> "Antecipação",
+			    fTitulosReceber[saldo] > 0 )
+		formatString: 0
+		lineageTag: ea6c0626-e57d-4fd8-9900-48403e8c6acd
+
+	measure 'CR Vencido' = CALCULATE ( [CR Carteira], fTitulosReceber[Dias em Atraso] > 0 )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		lineageTag: 5688df9d-d0cc-43c9-bb98-a0736674ebdb
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'CR A Vencer' = CALCULATE ( [CR Carteira], fTitulosReceber[Dias em Atraso] <= 0 )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		lineageTag: 33476772-fe86-4857-8bf6-52d7997ee023
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'CR % Vencido' = DIVIDE ( [CR Vencido], [CR Carteira] )
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 711ce0ba-66fc-4922-abc6-7229afc10e57
+
+	measure 'CR Antecipações de Clientes' =
+			
+			CALCULATE ( SUM ( fTitulosReceber[saldo] ),
+			    fTitulosReceber[em_aberto] = 1,
+			    fTitulosReceber[tipo_especie] = "Antecipação" )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		lineageTag: 2a0eaade-9cb7-45c8-92bc-572de8d5cb44
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'CR Vencido +90 Dias' =
+			
+			CALCULATE ( [CR Carteira], fTitulosReceber[Dias em Atraso] > 90 )
+		lineageTag: 1b48dce7-eedd-48a2-8028-30b56b1c19ae
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'CR Maior Atraso (dias)' =
+			
+			CALCULATE ( MAX ( fTitulosReceber[Dias em Atraso] ),
+			    fTitulosReceber[em_aberto] = 1,
+			    fTitulosReceber[tipo_especie] <> "Antecipação",
+			    fTitulosReceber[saldo] > 0 )
+		formatString: 0
+		lineageTag: ef9008fa-0b1e-4b89-b5fa-77dc1aabd572
+
+	measure 'CR Vence 7 Dias' =
+			
+			CALCULATE ( [CR Carteira],
+			    fTitulosReceber[Dias em Atraso] <= 0,
+			    fTitulosReceber[Dias em Atraso] >= -7 )
+		lineageTag: 738e3c4a-1325-42c0-b26f-9f67380a5634
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'CR Vence Hoje' =
+			
+			CALCULATE ( [CR Carteira], fTitulosReceber[Dias em Atraso] = 0 )
+		lineageTag: 75070a74-c2f1-46b1-aef8-8c2b41cae8ec
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'CR Qtd Vencidos' =
+			
+			CALCULATE ( [CR Qtd Títulos], fTitulosReceber[Dias em Atraso] > 0 )
+		formatString: 0
+		lineageTag: ae6c8f89-cc8f-45be-a8f2-c743f996c6b4
+
+	measure 'CR Recebido Período' = ```
+			
+			   CALCULATE ( SUM ( fTitulosReceber[valor_original] ),
+			       fTitulosReceber[em_aberto] = 0,
+			       fTitulosReceber[tipo_especie] <> "Antecipação",
+			       USERELATIONSHIP ( dCalendario[Data], fTitulosReceber[data_liquidacao] ) )
+			```
+		lineageTag: 5b637266-a694-4b9d-89e3-37891abe9a39
+
+	measure 'CR Qtd Clientes com Vencido' =
+			
+			CALCULATE ( DISTINCTCOUNT ( fTitulosReceber[cod_cliente] ),
+			    fTitulosReceber[em_aberto] = 1,
+			    fTitulosReceber[tipo_especie] <> "Antecipação",
+			    fTitulosReceber[saldo] > 0,
+			    fTitulosReceber[Dias em Atraso] > 0 )
+		formatString: 0
+		lineageTag: ef6a9281-4e67-4136-85fb-9ff2370b7169
+
+	measure 'CR % Top 10 Clientes' =
+			
+			VAR _Total = CALCULATE ( [CR Carteira], REMOVEFILTERS ( pEmitente[cod_cliente] ) )
+			VAR _Tab = ADDCOLUMNS ( ALL ( pEmitente[cod_cliente] ), "ValorCli", [CR Carteira] )
+			VAR _Top = TOPN ( 10, _Tab, [ValorCli], DESC )
+			RETURN
+			    DIVIDE ( SUMX ( _Top, [ValorCli] ), _Total )
+		lineageTag: 2c42f0ab-4892-4f3a-b7cf-9517e75055b0
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'CR Cor Aging' =
+			
+			IF ( NOT ISINSCOPE ( dCasa[CASA] ), BLANK (),
+			VAR _Faixa = SELECTEDVALUE ( fTitulosReceber[Faixa Aging] )
+			VAR _Valor = [CR Carteira]
+			VAR _Max = MAXX ( ALLSELECTED ( dCasa[CASA] ), [CR Carteira] )
+			VAR _p = DIVIDE ( _Valor, _Max )
+			RETURN
+			    IF ( ISBLANK ( _Valor ) || ISBLANK ( _Faixa ), BLANK (),
+			        IF ( _Faixa = "A vencer",
+			            SWITCH ( TRUE (), _p > 0.66, "#7DCEA0", _p > 0.33, "#A9DFBF", "#E9F7EF" ),
+			            SWITCH ( TRUE (), _p > 0.75, "#E6776A", _p > 0.5, "#F1A89F", _p > 0.25, "#F7CDC8", "#FCECEA" ) ) ) )
+		lineageTag: eb28ed49-723d-43dd-bb11-6a0592db2ac0
+
+	measure 'CR Título Top 10' = ```
+			
+			   "10 maiores clientes · " & FORMAT ( [CR % Top 10 Clientes], "0%" ) & " da carteira"
+			```
+		lineageTag: a4719611-2116-4293-8b57-66c1d019ff07
+
+	measure 'CR % da Carteira' =
+			
+			DIVIDE ( [CR Carteira], CALCULATE ( [CR Carteira], REMOVEFILTERS ( pEmitente ) ) )
+		lineageTag: 197415f0-50c0-44f4-a515-a81cc657673e
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'CR Rótulo Top Clientes' = ```
+			
+			   FORMAT ( [CR Carteira] / 1000000, "0.00" ) & " mi · " & FORMAT ( [CR % da Carteira], "0.0%" )
+			```
+		lineageTag: 6dcf3ade-7ef7-474c-9823-b05f3a2020c6
+
+	measure 'CP Carteira' =
+			
+			CALCULATE ( SUM ( fTitulosPagar[saldo] ),
+			    fTitulosPagar[em_aberto] = 1,
+			    NOT fTitulosPagar[tipo_especie] IN { "Antecipação", "Previsão" } )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Contas a Pagar
+		lineageTag: 0416b933-dc2a-48cd-b9e6-5cd94ea209bc
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'CP Qtd Títulos' =
+			
+			CALCULATE ( COUNTROWS ( fTitulosPagar ),
+			    fTitulosPagar[em_aberto] = 1,
+			    NOT fTitulosPagar[tipo_especie] IN { "Antecipação", "Previsão" },
+			    fTitulosPagar[saldo] > 0 )
+		formatString: 0
+		displayFolder: Contas a Pagar
+		lineageTag: 489026e6-6cc4-41ac-a8b0-064c635e5a30
+
+	measure 'CP Vencido' =
+			
+			CALCULATE ( [CP Carteira], fTitulosPagar[Dias em Atraso] > 0 )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Contas a Pagar
+		lineageTag: 35a690ae-4e4f-4d4a-8292-610ab24746f7
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'CP A Vencer' =
+			
+			CALCULATE ( [CP Carteira], fTitulosPagar[Dias em Atraso] <= 0 )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Contas a Pagar
+		lineageTag: d1a2fc31-cff3-4880-9135-740d47435cdb
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'CP % Vencido' =
+			
+			DIVIDE ( [CP Vencido], [CP Carteira] )
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Contas a Pagar
+		lineageTag: 1d5a553f-35e8-4d1a-8385-ed93a52b2f84
+
+	measure 'CP Adiantamentos a Fornecedores' =
+			
+			CALCULATE ( SUM ( fTitulosPagar[saldo] ),
+			    fTitulosPagar[em_aberto] = 1,
+			    fTitulosPagar[tipo_especie] = "Antecipação" )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Contas a Pagar
+		lineageTag: 92a56eeb-0750-44e8-b094-9af6113cddc3
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'CP Vence 7 Dias' =
+			
+			CALCULATE ( [CP Carteira],
+			    fTitulosPagar[Dias em Atraso] <= 0,
+			    fTitulosPagar[Dias em Atraso] >= -7 )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Contas a Pagar
+		lineageTag: 3810d08b-4949-49e1-a24c-3e6415b471dd
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'CP % da Carteira' =
+			
+			DIVIDE ( [CP Carteira], CALCULATE ( [CP Carteira], REMOVEFILTERS ( pFornecedor ) ) )
+		formatString: 0.0%
+		displayFolder: Contas a Pagar
+		lineageTag: 11432b94-4055-4d15-be5a-a6be9921529b
+
+	measure 'CP Rótulo Top Fornecedores' =
+			
+			FORMAT ( [CP Carteira] / 1000000, "0.00" ) & " mi · " & FORMAT ( [CP % da Carteira], "0.0%" )
+		displayFolder: Contas a Pagar
+		lineageTag: 4914c2b2-9a22-4db1-872c-b37710109a5a
+
+	measure 'DRE Lançamentos' =
+			
+			SUM ( fLancamentosContabeis[VALOR] )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Detalhe DRE
+		lineageTag: a0ddac23-76f5-46af-8831-49708f5a3bed
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'DRE Qtd Lançamentos' =
+			
+			COUNTROWS ( fLancamentosContabeis )
+		formatString: 0
+		displayFolder: Detalhe DRE
+		lineageTag: 411c3bdd-a2dd-4068-9eac-f91439c77ef7
+
+	measure 'CR Valor Original (títulos em aberto)' =
+			
+			IF ( NOT ISBLANK ( [CR Carteira] ), SUM ( fTitulosReceber[valor_original] ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Contas a Receber
+		lineageTag: 8aef1c7b-e113-41a4-a9be-68eb153e0110
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'CP Valor Original (títulos em aberto)' =
+			
+			IF ( NOT ISBLANK ( [CP Carteira] ), SUM ( fTitulosPagar[valor_original] ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Contas a Pagar
+		lineageTag: c7de7f4e-2c3d-4f61-aee0-33bcecf8f785
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'CR Valor Original (vencidos)' =
+			
+			IF ( NOT ISBLANK ( [CR Vencido] ), SUM ( fTitulosReceber[valor_original] ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Contas a Receber
+		lineageTag: 070e9e40-232e-4f2e-b4dd-32bf079e5fa5
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'CR Valor Original (a vencer)' =
+			
+			IF ( NOT ISBLANK ( [CR A Vencer] ), SUM ( fTitulosReceber[valor_original] ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Contas a Receber
+		lineageTag: 463bc30b-4288-49b4-b8a6-e470a7c1ab7b
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'CR Valor Original (antecipações)' =
+			
+			IF ( NOT ISBLANK ( [CR Antecipações de Clientes] ), SUM ( fTitulosReceber[valor_original] ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Contas a Receber
+		lineageTag: 37e9afe1-ec0d-4ee9-a0b9-8c0fe6825f29
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'CP Valor Original (vencidos)' =
+			
+			IF ( NOT ISBLANK ( [CP Vencido] ), SUM ( fTitulosPagar[valor_original] ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Contas a Pagar
+		lineageTag: d50834ac-6e13-4754-a42f-165470e89560
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'CP Valor Original (a vencer)' =
+			
+			IF ( NOT ISBLANK ( [CP A Vencer] ), SUM ( fTitulosPagar[valor_original] ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Contas a Pagar
+		lineageTag: afe51c99-13fa-485a-ba9f-88ac817883d1
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'CP Valor Original (adiantamentos)' =
+			
+			IF ( NOT ISBLANK ( [CP Adiantamentos a Fornecedores] ), SUM ( fTitulosPagar[valor_original] ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Contas a Pagar
+		lineageTag: b4c2421d-310d-4235-a9aa-afac3f6044b5
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'DRE Detalhe Título' =
+			
+			VAR _Item =
+			    COALESCE (
+			        SELECTEDVALUE ( dPlanoContas[CONTA_CONTABIL] ),
+			        SELECTEDVALUE ( dPlanoContas[SUB_GRUPO] ),
+			        SELECTEDVALUE ( dPlanoContas[GRUPO] ),
+			        SELECTEDVALUE ( dEstDRE[GRUPO_DRE] ),
+			        "Lançamentos"
+			    )
+			VAR _Mes = SELECTEDVALUE ( aCalendario[Nome do Mês] )
+			RETURN
+			    _Item & IF ( NOT ISBLANK ( _Mes ), " · " & UPPER ( _Mes ) )
+		displayFolder: Detalhe DRE
+		lineageTag: bc263b31-e0ea-4bf2-a6c0-d6ca87a717e3
+
+	measure 'DRE Detalhe Resumo' =
+			
+			VAR _Qtd = [DRE Qtd Lançamentos]
+			RETURN
+			    IF ( ISBLANK ( _Qtd ),
+			        "Nenhum lançamento encontrado no Datasul para esta linha",
+			        FORMAT ( _Qtd, "#,0" ) & " lançamento(s) · total R$ " & FORMAT ( [DRE Lançamentos], "#,0.00" ) )
+		displayFolder: Detalhe DRE
+		lineageTag: c79f617d-cb95-4bdc-b5c0-f9660c4ff5e6
+
+	/// Último fim de mês com saldo dentro do período filtrado. É a data do balanço mostrado.
+	measure 'BP Data-base' =
+			
+			CALCULATE ( MAX ( fSaldosContabeis[data_ref] ), REMOVEFILTERS ( dContaBP ) )
+		formatString: dd/MM/yyyy
+		displayFolder: Balanço Patrimonial
+		lineageTag: 3ce24e88-02b2-4175-b8e2-ebb24ffaf3eb
+
+	measure 'BP Data-base Texto' =
+			
+			"Posição em " & FORMAT ( [BP Data-base], "dd/MM/yyyy" )
+		displayFolder: Balanço Patrimonial
+		lineageTag: 7631142f-88bf-4692-a536-3cdf4f86b422
+
+	/// Saldo na data-base. Balanço é foto de uma data, não soma de meses: pega só o último fim de mês do filtro.
+	measure 'BP Saldo' =
+			
+			VAR _Data = [BP Data-base]
+			RETURN
+			    CALCULATE ( SUM ( fSaldosContabeis[saldo_bp] ), fSaldosContabeis[data_ref] = _Data )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Balanço Patrimonial
+		lineageTag: f9d23fb4-1142-4359-ba05-b6c18221547d
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'BP Saldo Fim do Ano Anterior' =
+			
+			VAR _Data = [BP Data-base]
+			VAR _Ref = DATE ( YEAR ( _Data ) - 1, 12, 31 )
+			RETURN
+			    IF ( NOT ISBLANK ( _Data ),
+			        CALCULATE ( SUM ( fSaldosContabeis[saldo_bp] ), REMOVEFILTERS ( aCalendario ), fSaldosContabeis[data_ref] = _Ref ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Balanço Patrimonial
+		lineageTag: 07f15351-1f9f-4155-ad7d-b4e29c8d4d5f
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'BP Variação' =
+			
+			[BP Saldo] - [BP Saldo Fim do Ano Anterior]
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Balanço Patrimonial
+		lineageTag: 6b4aafc1-de00-4a4b-8636-053c87448c78
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'BP Variação %' =
+			
+			DIVIDE ( [BP Variação], ABS ( [BP Saldo Fim do Ano Anterior] ) )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Balanço Patrimonial
+		lineageTag: 9c9c5954-1963-4669-808e-0697e140fac1
+
+	/// Participação da linha no total do seu lado (Ativo ou Passivo + PL).
+	measure 'BP AV %' =
+			
+			DIVIDE ( [BP Saldo], CALCULATE ( [BP Saldo], ALLEXCEPT ( dContaBP, dContaBP[lado] ) ) )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Balanço Patrimonial
+		lineageTag: a6d4b9cd-72ec-41c5-b07a-509ff341d875
+
+	measure 'BP Ativo Total' =
+			
+			CALCULATE ( [BP Saldo], dContaBP[lado] = "ATIVO" )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Balanço Patrimonial
+		lineageTag: 6373167d-c8e0-4ec0-9d4d-f149bc4cfc44
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'BP Passivo e PL' =
+			
+			CALCULATE ( [BP Saldo], dContaBP[lado] = "PASSIVO E PATRIMÔNIO LÍQUIDO" )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Balanço Patrimonial
+		lineageTag: 30dbe6de-a57e-4275-9ace-443b4af4674c
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	/// Conferência: deve ser zero. Diferente de zero = conta sem classificação ou saldo com sinal invertido.
+	measure 'BP Diferença' =
+			
+			[BP Ativo Total] - [BP Passivo e PL]
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Balanço Patrimonial
+		lineageTag: ffe8d87a-9f6d-4d4a-9906-8a6ec85743e1
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'BP Ativo Circulante' =
+			
+			CALCULATE ( [BP Saldo], dContaBP[classe] = "AC" )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Balanço Patrimonial
+		lineageTag: a04885de-6e39-4c84-9f81-3b90f0b2f757
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'BP Ativo Não Circulante' =
+			
+			CALCULATE ( [BP Saldo], dContaBP[classe] = "ANC" )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Balanço Patrimonial
+		lineageTag: 59b7ac77-f33f-46c9-a170-862e4c693d85
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'BP Passivo Circulante' =
+			
+			CALCULATE ( [BP Saldo], dContaBP[classe] = "PC" )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Balanço Patrimonial
+		lineageTag: 0013f7ae-36f0-4299-91c9-744c6ee8cf11
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'BP Passivo Não Circulante' =
+			
+			CALCULATE ( [BP Saldo], dContaBP[classe] = "PNC" )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Balanço Patrimonial
+		lineageTag: b4e16fa9-450e-4bd8-8dc6-9b41842a6cd4
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	/// PL mais o resultado do exercício ainda não apurado (contas 3 a 9).
+	measure 'BP Patrimônio Líquido' =
+			
+			CALCULATE ( [BP Saldo], dContaBP[classe] IN { "PL", "RES" } )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Balanço Patrimonial
+		lineageTag: b89fd0c3-9b3d-4905-9376-b08c657ed187
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'BP Estoques' =
+			
+			CALCULATE ( [BP Saldo], dContaBP[eh_estoque] = 1 )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Balanço Patrimonial
+		lineageTag: f8036ec8-ceb4-4a41-a0c8-c814439c7448
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'BP Disponível' =
+			
+			CALCULATE ( [BP Saldo], dContaBP[eh_disponivel] = 1 )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Balanço Patrimonial
+		lineageTag: 16d82b64-d30c-4b56-a273-53b20e143ac5
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'IF Tem Filtro de Período' =
+			
+			ISFILTERED ( aCalendario[Ano] ) || ISFILTERED ( aCalendario[Data] )
+		displayFolder: Indicadores Financeiros
+		lineageTag: f48e2e74-fb3c-4784-b3d5-01e3e98710af
+
+	/// Último ano com realizado. Usado quando nenhum ano está filtrado.
+	measure 'IF Ano Padrão' =
+			
+			YEAR ( CALCULATE ( MAX ( fRealizado[DATA] ), REMOVEFILTERS () ) )
+		formatString: 0
+		displayFolder: Indicadores Financeiros
+		lineageTag: e2abeea7-384e-44ce-92b4-4052ae5aefaa
+
+	measure 'IF Receita Bruta' =
+			
+			VAR _Ano = [IF Ano Padrão]
+			RETURN
+			    IF ( [IF Tem Filtro de Período],
+			        CALCULATE ( [002 DRE Realizado], dEstDRE[GRUPO_DRE] = "(=) RECEITA OPERACIONAL BRUTA" ),
+			        CALCULATE ( [002 DRE Realizado], dEstDRE[GRUPO_DRE] = "(=) RECEITA OPERACIONAL BRUTA", aCalendario[Ano] = _Ano ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Indicadores Financeiros
+		lineageTag: 70d1eac5-e8a5-4e24-89fa-2cc134d462c5
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	/// Linha (=) RECEITA OPERACIONAL LIQUIDA da DRE. Sem ano filtrado, usa o último ano com realizado.
+	measure 'IF Receita Líquida' =
+			
+			VAR _Ano = [IF Ano Padrão]
+			RETURN
+			    IF ( [IF Tem Filtro de Período],
+			        CALCULATE ( [002 DRE Realizado], dEstDRE[GRUPO_DRE] = "(=) RECEITA OPERACIONAL LIQUIDA" ),
+			        CALCULATE ( [002 DRE Realizado], dEstDRE[GRUPO_DRE] = "(=) RECEITA OPERACIONAL LIQUIDA", aCalendario[Ano] = _Ano ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Indicadores Financeiros
+		lineageTag: 22678826-84b4-455a-bc68-c6bfcc12e472
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'IF Lucro Bruto' =
+			
+			VAR _Ano = [IF Ano Padrão]
+			RETURN
+			    IF ( [IF Tem Filtro de Período],
+			        CALCULATE ( [002 DRE Realizado], dEstDRE[GRUPO_DRE] = "(=) RESULTADO OPERACIONAL BRUTO" ),
+			        CALCULATE ( [002 DRE Realizado], dEstDRE[GRUPO_DRE] = "(=) RESULTADO OPERACIONAL BRUTO", aCalendario[Ano] = _Ano ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Indicadores Financeiros
+		lineageTag: 5bf81079-cf2d-48e3-be2b-f86fa468dd6e
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'IF Despesas Operacionais' =
+			
+			VAR _Ano = [IF Ano Padrão]
+			RETURN
+			    IF ( [IF Tem Filtro de Período],
+			        CALCULATE ( [002 DRE Realizado], dEstDRE[GRUPO_DRE] = "(-) DESPESAS OPERACIONAIS" ),
+			        CALCULATE ( [002 DRE Realizado], dEstDRE[GRUPO_DRE] = "(-) DESPESAS OPERACIONAIS", aCalendario[Ano] = _Ano ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Indicadores Financeiros
+		lineageTag: c686c562-1d13-440e-baee-6cc2faac6dc6
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'IF Resultado Operacional' =
+			
+			VAR _Ano = [IF Ano Padrão]
+			RETURN
+			    IF ( [IF Tem Filtro de Período],
+			        CALCULATE ( [002 DRE Realizado], dEstDRE[GRUPO_DRE] = "(=) RESULTADO OPERACIONAL LÍQUIDO" ),
+			        CALCULATE ( [002 DRE Realizado], dEstDRE[GRUPO_DRE] = "(=) RESULTADO OPERACIONAL LÍQUIDO", aCalendario[Ano] = _Ano ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Indicadores Financeiros
+		lineageTag: 9b228297-8c61-4d93-8034-9626c70399f5
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'IF Resultado Financeiro' =
+			
+			VAR _Ano = [IF Ano Padrão]
+			RETURN
+			    IF ( [IF Tem Filtro de Período],
+			        CALCULATE ( [002 DRE Realizado], dEstDRE[GRUPO_DRE] = "(+/-) RECEITAS FINANCEIRAS" ),
+			        CALCULATE ( [002 DRE Realizado], dEstDRE[GRUPO_DRE] = "(+/-) RECEITAS FINANCEIRAS", aCalendario[Ano] = _Ano ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Indicadores Financeiros
+		lineageTag: 648e750a-a41c-4b79-9617-dce2d611263d
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'IF Lucro Líquido' =
+			
+			VAR _Ano = [IF Ano Padrão]
+			RETURN
+			    IF ( [IF Tem Filtro de Período],
+			        CALCULATE ( [002 DRE Realizado], dEstDRE[GRUPO_DRE] = "(=) LUCRO OU PREJUIZO DO EXERCICIO" ),
+			        CALCULATE ( [002 DRE Realizado], dEstDRE[GRUPO_DRE] = "(=) LUCRO OU PREJUIZO DO EXERCICIO", aCalendario[Ano] = _Ano ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Indicadores Financeiros
+		lineageTag: d033d02b-a1d5-4573-97dc-c521f1494f84
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'IF Margem Bruta %' =
+			
+			DIVIDE ( [IF Lucro Bruto], [IF Receita Líquida] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Indicadores Financeiros
+		lineageTag: 353f7ae7-d13b-4020-9ebe-839194caaa97
+
+	measure 'IF Margem Operacional %' =
+			
+			DIVIDE ( [IF Resultado Operacional], [IF Receita Líquida] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Indicadores Financeiros
+		lineageTag: d16d42bb-133c-48ce-837d-cbf5a1ec2211
+
+	measure 'IF Margem Líquida %' =
+			
+			DIVIDE ( [IF Lucro Líquido], [IF Receita Líquida] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Indicadores Financeiros
+		lineageTag: 3cd66352-22ba-42cf-a792-9693c5642a52
+
+	measure 'IF Despesas Operacionais / Receita %' =
+			
+			DIVIDE ( - [IF Despesas Operacionais], [IF Receita Líquida] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Indicadores Financeiros
+		lineageTag: 380d626a-01ad-4e02-9df7-5a30bfd447c6
+
+	/// Ativo circulante ÷ passivo circulante.
+	measure 'IF Liquidez Corrente' =
+			
+			DIVIDE ( [BP Ativo Circulante], [BP Passivo Circulante] )
+		formatString: 0.00
+		displayFolder: Indicadores Financeiros
+		lineageTag: 1edffd70-d643-436d-8064-b8d0b6387b8f
+
+	/// (Ativo circulante − estoques) ÷ passivo circulante.
+	measure 'IF Liquidez Seca' =
+			
+			DIVIDE ( [BP Ativo Circulante] - [BP Estoques], [BP Passivo Circulante] )
+		formatString: 0.00
+		displayFolder: Indicadores Financeiros
+		lineageTag: 812f09c6-6ab0-4966-83fd-8188753ce0ad
+
+	/// Disponível (caixa, bancos, aplicações) ÷ passivo circulante.
+	measure 'IF Liquidez Imediata' =
+			
+			DIVIDE ( [BP Disponível], [BP Passivo Circulante] )
+		formatString: 0.00
+		displayFolder: Indicadores Financeiros
+		lineageTag: e2830bcb-a29c-4c53-9c4c-d1a3e892de71
+
+	measure 'IF Endividamento Geral %' =
+			
+			DIVIDE ( [BP Passivo Circulante] + [BP Passivo Não Circulante], [BP Ativo Total] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Indicadores Financeiros
+		lineageTag: f8f65243-10b6-45af-bb4b-a703fabd279c
+
+	measure 'IF Composição do Endividamento %' =
+			
+			DIVIDE ( [BP Passivo Circulante], [BP Passivo Circulante] + [BP Passivo Não Circulante] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Indicadores Financeiros
+		lineageTag: a6a1cf25-c68c-478e-a818-93e96a70bfd7
+
+	measure 'IF Capital de Terceiros / PL' =
+			
+			DIVIDE ( [BP Passivo Circulante] + [BP Passivo Não Circulante], [BP Patrimônio Líquido] )
+		formatString: 0.00
+		displayFolder: Indicadores Financeiros
+		lineageTag: d41f97d0-0df5-4d0d-9906-92f2690a1c0d
+
+	measure 'IF Capital Circulante Líquido' =
+			
+			[BP Ativo Circulante] - [BP Passivo Circulante]
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Indicadores Financeiros
+		lineageTag: 061c7a1e-3516-4e6f-b314-a4074ed8e2d5
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	/// Lucro líquido do período ÷ patrimônio líquido no fim do período.
+	measure 'IF ROE %' =
+			
+			VAR _Ano = [IF Ano Padrão]
+			VAR _Fim = IF ( [IF Tem Filtro de Período], MAX ( aCalendario[Data] ), DATE ( _Ano, 12, 31 ) )
+			VAR _DataBP =
+			    CALCULATE ( MAX ( fSaldosContabeis[data_ref] ),
+			        REMOVEFILTERS ( aCalendario ), REMOVEFILTERS ( dContaBP ),
+			        fSaldosContabeis[data_ref] <= _Fim )
+			VAR _Base =
+			    CALCULATE ( SUM ( fSaldosContabeis[saldo_bp] ),
+			        REMOVEFILTERS ( aCalendario ),
+			        fSaldosContabeis[data_ref] = _DataBP,
+			        dContaBP[classe] IN { "PL", "RES" } )
+			RETURN
+			    DIVIDE ( [IF Lucro Líquido], _Base )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Indicadores Financeiros
+		lineageTag: fc15c171-2cee-49a1-b6fb-af4648f75e2e
+
+	/// Lucro líquido do período ÷ ativo total no fim do período.
+	measure 'IF ROA %' =
+			
+			VAR _Ano = [IF Ano Padrão]
+			VAR _Fim = IF ( [IF Tem Filtro de Período], MAX ( aCalendario[Data] ), DATE ( _Ano, 12, 31 ) )
+			VAR _DataBP =
+			    CALCULATE ( MAX ( fSaldosContabeis[data_ref] ),
+			        REMOVEFILTERS ( aCalendario ), REMOVEFILTERS ( dContaBP ),
+			        fSaldosContabeis[data_ref] <= _Fim )
+			VAR _Base =
+			    CALCULATE ( SUM ( fSaldosContabeis[saldo_bp] ),
+			        REMOVEFILTERS ( aCalendario ),
+			        fSaldosContabeis[data_ref] = _DataBP,
+			        dContaBP[lado] = "ATIVO" )
+			RETURN
+			    DIVIDE ( [IF Lucro Líquido], _Base )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Indicadores Financeiros
+		lineageTag: 14503c6f-dc4b-4500-bab2-b505bd1679c5
+
+	/// Carteira a receber menos carteira a pagar, posição atual dos títulos.
+	measure 'IF Saldo CR menos CP' =
+			
+			[CR Carteira] - [CP Carteira]
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Indicadores Financeiros
+		lineageTag: fa4616b6-220d-4eb0-8426-8eca9474825f
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	/// Despesas operacionais da DRE com sinal positivo, sem regra de período.
+	measure 'CC Despesas Base' =
+			
+			- CALCULATE (
+			    SUM ( fRealizado[VALOR] ) + SUM ( fAjustesGerenciais[VALOR] ) + SUM ( fRlzFinDeprecAmortEstorno[VALOR] ),
+			    dPlanoContas[GRUPO_DRE] = "(-) DESPESAS OPERACIONAIS" )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Despesas por Centro de Custo
+		lineageTag: 5a5204b0-0d3f-4291-a214-c898694b1a85
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	/// Despesas operacionais do período. Sem ano filtrado, usa o último ano com realizado.
+	measure 'CC Despesas' =
+			
+			VAR _Ano = [IF Ano Padrão]
+			RETURN
+			    IF ( [IF Tem Filtro de Período],
+			        [CC Despesas Base],
+			        CALCULATE ( [CC Despesas Base], aCalendario[Ano] = _Ano ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Despesas por Centro de Custo
+		lineageTag: 145e1be5-0da3-4b00-b8ae-da6e393b8766
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'CC Despesas Ano Anterior' =
+			
+			VAR _Ano = [IF Ano Padrão]
+			RETURN
+			    IF ( [IF Tem Filtro de Período],
+			        CALCULATE ( [CC Despesas Base], REMOVEFILTERS ( aCalendario ), DATEADD ( aCalendario[Data], -1, YEAR ) ),
+			        CALCULATE ( [CC Despesas Base], aCalendario[Ano] = _Ano - 1 ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Despesas por Centro de Custo
+		lineageTag: fa66c819-88e7-42e0-8278-0c0d30298884
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'CC Variação vs Ano Anterior %' =
+			
+			DIVIDE ( [CC Despesas] - [CC Despesas Ano Anterior], [CC Despesas Ano Anterior] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Despesas por Centro de Custo
+		lineageTag: 29777378-5a99-43c3-9a52-38bbfd27acc4
+
+	measure 'CC % da Receita Líquida' =
+			
+			DIVIDE ( [CC Despesas], [IF Receita Líquida] )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Despesas por Centro de Custo
+		lineageTag: e4ec8a6b-fcce-40db-99e9-d92123fa7075
+
+	measure 'CC % do Total' =
+			
+			DIVIDE ( [CC Despesas], CALCULATE ( [CC Despesas], ALLSELECTED ( dCentroCusto ), ALLSELECTED ( dPlanoContas ) ) )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Despesas por Centro de Custo
+		lineageTag: 2e5decef-f6e1-46ca-8955-efa4ed2c6e69
+
+	measure 'CC Qtd Meses' =
+			
+			VAR _Ano = [IF Ano Padrão]
+			RETURN
+			    IF ( [IF Tem Filtro de Período],
+			        CALCULATE ( DISTINCTCOUNT ( fRealizado[DATA] ) ),
+			        CALCULATE ( DISTINCTCOUNT ( fRealizado[DATA] ), aCalendario[Ano] = _Ano ) )
+		formatString: 0
+		displayFolder: Despesas por Centro de Custo
+		lineageTag: 2e34af42-4c22-42d3-9fac-91c06c6d334b
+
+	measure 'CC Média Mensal' =
+			
+			DIVIDE ( [CC Despesas], [CC Qtd Meses] )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Despesas por Centro de Custo
+		lineageTag: 7a51eeab-c19d-4765-81b3-2e4f6a08806a
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'CC Maior Centro de Custo' =
+			
+			VAR _Top = TOPN ( 1, VALUES ( dCentroCusto[CENTRO_CUSTO] ), [CC Despesas], DESC )
+			RETURN
+			    CONCATENATEX ( _Top, dCentroCusto[CENTRO_CUSTO], ", " )
+		displayFolder: Despesas por Centro de Custo
+		lineageTag: 4f045e0e-fd76-47bd-865f-705ac5630030
+
+	measure 'CC Qtd Centros de Custo' =
+			
+			COUNTROWS ( FILTER ( VALUES ( dCentroCusto[CENTRO_CUSTO] ), [CC Despesas] > 0 ) )
+		formatString: 0
+		displayFolder: Despesas por Centro de Custo
+		lineageTag: fb3e3a5b-9c8a-4d46-aa94-4c616dabd2c8
+
+	measure 'CC Período Texto' =
+			
+			IF ( [IF Tem Filtro de Período],
+			    "Período filtrado",
+			    "Ano " & [IF Ano Padrão] & " (use o filtro Período para mudar)" )
+		displayFolder: Despesas por Centro de Custo
+		lineageTag: d016297d-efc7-4cb3-a233-4b8b7c1357ea
+
+	/// Verdadeiro quando existe o saldo de 31/12 do ano anterior à data-base. Sem ele a DFC fica em branco (ex.: 2021).
+	measure 'DFC Tem Base' =
+			
+			VAR _Ref = DATE ( YEAR ( [BP Data-base] ) - 1, 12, 31 )
+			RETURN
+			    NOT ISEMPTY (
+			        CALCULATETABLE ( fSaldosContabeis, REMOVEFILTERS ( aCalendario ), REMOVEFILTERS ( dContaBP ), fSaldosContabeis[data_ref] = _Ref )
+			    )
+		displayFolder: DFC
+		lineageTag: 50226144-4ad6-4860-a0b3-039f7bb2eb9f
+
+	measure 'DFC Período Texto' =
+			
+			VAR _Db = [BP Data-base]
+			RETURN
+			    IF ( NOT ISBLANK ( _Db ), "De 01/01/" & YEAR ( _Db ) & " a " & FORMAT ( _Db, "dd/MM/yyyy" ) )
+		displayFolder: DFC
+		lineageTag: f7e581ac-a209-4a62-a4ac-d7e138c0571c
+
+	/// Resultado contábil de 1º de janeiro até a data-base: soma da fRealizado[VALOR] (lançamentos do banco, sem ajustes gerenciais e sem os estornos 9.9.9.9).
+	measure 'DFC Resultado do Período' =
+			
+			VAR _Db = [BP Data-base]
+			VAR _Ini = DATE ( YEAR ( _Db ), 1, 1 )
+			RETURN
+			    IF ( [DFC Tem Base],
+			        CALCULATE ( SUM ( fRealizado[VALOR] ), REMOVEFILTERS ( aCalendario ), aCalendario[Data] >= _Ini, aCalendario[Data] <= _Db ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: DFC
+		lineageTag: 5273d632-d700-4fc9-8f35-fd4ee9715f47
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	/// Efeito no caixa da variação dos saldos (31/12 do ano anterior → data-base): ativo que cresce consome caixa (sinal −); passivo ou PL que cresce gera caixa (sinal +).
+	measure 'DFC Efeito Caixa' =
+			
+			VAR _Passivo = CALCULATE ( [BP Variação], KEEPFILTERS ( dContaBP[lado] <> "ATIVO" ) )
+			VAR _Ativo = CALCULATE ( [BP Variação], KEEPFILTERS ( dContaBP[lado] = "ATIVO" ) )
+			RETURN
+			    IF ( [DFC Tem Base], _Passivo - _Ativo )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: DFC
+		lineageTag: 7264a342-2a8e-46b6-b0cb-9035481aac04
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	/// Valor de UMA linha de dEstDFC, conforme o TIPO da linha.
+	measure 'DFC Valor Linha' =
+			
+			VAR _Codigo = SELECTEDVALUE ( dEstDFC[CODIGO] )
+			VAR _Tipo = SELECTEDVALUE ( dEstDFC[TIPO] )
+			VAR _Contas = CALCULATE ( [DFC Efeito Caixa], KEEPFILTERS ( dContaBP[DFC Código] = _Codigo ) )
+			RETURN
+			    SWITCH ( _Tipo,
+			        "RESULTADO", [DFC Resultado do Período],
+			        "CONTAS", _Contas,
+			        "PL", _Contas - [DFC Resultado do Período]
+			    )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: DFC
+		lineageTag: 4f50a364-a321-4c88-a491-12f9df27f352
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	/// Valor da DFC no contexto: numa linha é a própria linha; numa atividade é a soma das suas linhas; no total é a variação líquida do caixa.
+	measure 'DFC Valor' =
+			
+			SUMX ( VALUES ( dEstDFC[CODIGO] ), [DFC Valor Linha] )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: DFC
+		lineageTag: 3c630985-3ed5-4aa6-a5b9-caa7579ed261
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'DFC Atividades Operacionais' =
+			
+			CALCULATE ( [DFC Valor], dEstDFC[ORDEM_GRUPO] = 1 )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: DFC
+		lineageTag: c99a9e74-7e2c-4075-bfa6-2789699c55fc
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'DFC Atividades de Investimento' =
+			
+			CALCULATE ( [DFC Valor], dEstDFC[ORDEM_GRUPO] = 2 )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: DFC
+		lineageTag: b1c2a028-c26d-485e-ac23-d93d2def431f
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'DFC Atividades de Financiamento' =
+			
+			CALCULATE ( [DFC Valor], dEstDFC[ORDEM_GRUPO] = 3 )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: DFC
+		lineageTag: 8513b1ea-a57d-4a90-a9c6-09e49123157b
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	/// Saldo de caixa e equivalentes (contas com eh_disponivel = 1) em 31/12 do ano anterior.
+	measure 'DFC Caixa Início' =
+			
+			IF ( [DFC Tem Base], CALCULATE ( [BP Saldo Fim do Ano Anterior], dContaBP[eh_disponivel] = 1 ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: DFC
+		lineageTag: ac7820d2-0f20-4684-aa79-7f391307ca0e
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	/// Saldo de caixa e equivalentes na data-base.
+	measure 'DFC Caixa Fim' =
+			
+			CALCULATE ( [BP Saldo], dContaBP[eh_disponivel] = 1 )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: DFC
+		lineageTag: 6a5be674-78cf-4420-93fe-155d7f2f27ce
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'DFC Variação de Caixa' =
+			
+			IF ( [DFC Tem Base], [DFC Caixa Fim] - [DFC Caixa Início] )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: DFC
+		lineageTag: e6962b45-86e3-46e7-ad3b-55d68daf6ef6
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	/// Conferência: deve ser zero. Soma das três atividades menos a variação do caixa no balanço.
+	measure 'DFC Diferença' =
+			
+			IF ( [DFC Tem Base], CALCULATE ( [DFC Valor], REMOVEFILTERS ( dEstDFC ) ) - [DFC Variação de Caixa] )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: DFC
+		lineageTag: 69364762-3e4d-4541-a271-dd3f41ebfcd1
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	/// Tema escolhido na tela (segmentação oculta de cada página, trocada pelo botão ☀/☾). Sem seleção = Escuro.
+	measure 'Tema Selecionado' =
+			
+			SELECTEDVALUE ( dTema[Tema], "Escuro" )
+		displayFolder: Tema
+		lineageTag: 353bdf4b-aba8-4e5c-b98f-fd716f2fb073
+
+	/// Cor das letras que ficam direto sobre o fundo: azul Scania (#041E42) no tema claro, branco no escuro. Usada na formatação condicional (fx) dos visuais.
+	measure 'Tema Cor Texto' =
+			
+			IF ( [Tema Selecionado] = "Claro", "#041E42", "#FFFFFF" )
+		displayFolder: Tema
+		lineageTag: 7022d356-b39b-4803-a908-a375ba99bfba
+
+	/// Fundo dos pop-ups (moldura e tabela): branco no tema claro, azul-marinho no escuro.
+	measure 'Tema Cor Painel' =
+			
+			IF ( [Tema Selecionado] = "Claro", "#FFFFFF", "#0B1A4A" )
+		displayFolder: Tema
+		lineageTag: 9c962938-5b1d-4318-91ac-b5d62261bebc
+
+	/// Fundo das células das listas no tema claro. Em branco no escuro, para valer a cor original (linhas azuis alternadas).
+	measure 'Tema Cor Célula' =
+			
+			IF ( [Tema Selecionado] = "Claro", "#FFFFFF" )
+		displayFolder: Tema
+		lineageTag: dddcd9b9-e848-4856-90fd-6cab03e61e4e
+
+	/// Letra das células das listas no tema claro (azul Scania). Em branco no escuro, para valer a cor original (branca).
+	measure 'Tema Cor Texto Célula' =
+			
+			IF ( [Tema Selecionado] = "Claro", "#041E42" )
+		displayFolder: Tema
+		lineageTag: b090157e-f3a6-40eb-9cec-221b68caf0fc
+
+	/// Cor dos links "ver títulos ›" dos cartões: azul médio no claro, azul-claro no escuro.
+	measure 'Tema Cor Link' =
+			
+			IF ( [Tema Selecionado] = "Claro", "#1F5FA8", "#9FC5FF" )
+		displayFolder: Tema
+		lineageTag: 447f2ec4-dab2-4dd6-bbec-487abea7cf34
+
+	partition _Medidas-e0807ed9-830e-46df-b71f-9de294b53a18 = m
+		mode: import
+		queryGroup: Medidas
+		source =
+				let
+				    Fonte = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [#"Coluna 1" = _t]),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(Fonte,{{"Coluna 1", type text}}),
+				    #"Colunas Removidas" = Table.RemoveColumns(#"Tipo Alterado",{"Coluna 1"})
+				in
+				    #"Colunas Removidas"
+
+	annotation PBI_ResultType = Table
+

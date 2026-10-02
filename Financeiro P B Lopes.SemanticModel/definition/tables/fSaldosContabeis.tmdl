@@ -1,0 +1,61 @@
+/// Saldo de cada conta analítica no último dia de cada mês (sdo_ctbl do Datasul). saldo_bp: Ativo positivo, Passivo/PL positivo.
+table fSaldosContabeis
+	lineageTag: 2763aae7-0a7f-4537-aaba-d0b0e981f7f8
+
+	column data_ref
+		dataType: dateTime
+		formatString: dd/MM/yyyy
+		lineageTag: 6eeaee50-8cd2-4eb4-8584-9ee828ec7e90
+		summarizeBy: none
+		sourceColumn: data_ref
+
+		annotation SummarizationSetBy = Automatic
+
+	column cod_estab
+		dataType: string
+		lineageTag: 2f948f4d-0a8d-4941-9558-8910d37262b7
+		summarizeBy: none
+		sourceColumn: cod_estab
+
+		annotation SummarizationSetBy = Automatic
+
+	column cod_cta_ctbl
+		dataType: string
+		lineageTag: e7e88904-fadc-4005-9a0c-ef18faa3896d
+		summarizeBy: none
+		sourceColumn: cod_cta_ctbl
+
+		annotation SummarizationSetBy = Automatic
+
+	column saldo
+		dataType: double
+		lineageTag: 617cf6e8-a43a-412e-ba4d-37088b0a1225
+		summarizeBy: sum
+		sourceColumn: saldo
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column saldo_bp
+		dataType: double
+		lineageTag: 09c10edf-0ed7-4aad-ae89-08ffa023b161
+		summarizeBy: sum
+		sourceColumn: saldo_bp
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition fSaldosContabeis = m
+		mode: import
+		source =
+				let
+				    Fonte = Value.NativeQuery(PostgreSQL.Database("192.168.0.234", "pblopes_dts"), "WITH par AS (#(lf)    -- plano de contas, finalidade econômica (moeda) e cenário mais usados no sdo_ctbl#(lf)    SELECT#(lf)        (SELECT cod_plano_cta_ctbl FROM public.sdo_ctbl GROUP BY 1 ORDER BY COUNT(*) DESC LIMIT 1) AS plano,#(lf)        (SELECT cod_finalid_econ   FROM public.sdo_ctbl GROUP BY 1 ORDER BY COUNT(*) DESC LIMIT 1) AS fin,#(lf)        (SELECT cod_cenar_ctbl     FROM public.sdo_ctbl GROUP BY 1 ORDER BY COUNT(*) DESC LIMIT 1) AS cen#(lf)),#(lf)base AS (#(lf)    -- só contas analíticas (sem filhas na estrutura do plano)#(lf)    SELECT s.cod_estab, TRIM(s.cod_cta_ctbl) AS cod_cta_ctbl, s.dat_sdo_ctbl, s.val_sdo_ctbl_fim,#(lf)           LEAD(s.dat_sdo_ctbl) OVER (#(lf)               PARTITION BY s.cod_empresa, s.cod_estab, s.cod_cta_ctbl, s.cod_plano_ccusto, s.cod_ccusto,#(lf)                            s.cod_unid_negoc, s.cod_proj_financ#(lf)               ORDER BY s.dat_sdo_ctbl) AS prox_data#(lf)    FROM public.sdo_ctbl s#(lf)    JOIN par p ON s.cod_plano_cta_ctbl = p.plano AND s.cod_finalid_econ = p.fin AND s.cod_cenar_ctbl = p.cen#(lf)    WHERE NOT EXISTS (SELECT 1 FROM public.estrut_cta_ctbl e#(lf)                      WHERE e.cod_plano_cta_ctbl = s.cod_plano_cta_ctbl#(lf)                        AND TRIM(e.cod_cta_ctbl_pai) = TRIM(s.cod_cta_ctbl))#(lf)),#(lf)meses AS (#(lf)    SELECT (g.d + INTERVAL '1 month' - INTERVAL '1 day')::date AS data_ref#(lf)    FROM generate_series(DATE '2021-12-01', date_trunc('month', CURRENT_DATE)::date, INTERVAL '1 month') AS g(d)#(lf))#(lf)SELECT m.data_ref,#(lf)       b.cod_estab,#(lf)       b.cod_cta_ctbl,#(lf)       SUM(b.val_sdo_ctbl_fim) AS saldo,#(lf)       SUM(CASE WHEN LEFT(b.cod_cta_ctbl, 1) = '1' THEN b.val_sdo_ctbl_fim ELSE -b.val_sdo_ctbl_fim END) AS saldo_bp#(lf)FROM meses m#(lf)JOIN base b ON b.dat_sdo_ctbl <= m.data_ref AND (b.prox_data IS NULL OR b.prox_data > m.data_ref)#(lf)GROUP BY 1, 2, 3#(lf)HAVING SUM(b.val_sdo_ctbl_fim) <> 0")
+				in
+				    Fonte
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

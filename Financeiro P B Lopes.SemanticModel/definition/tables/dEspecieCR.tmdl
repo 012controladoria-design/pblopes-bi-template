@@ -1,0 +1,61 @@
+table dEspecieCR
+	lineageTag: 81621c75-f346-427f-98af-8f2dcf099af5
+
+	column especie
+		lineageTag: 8fba24f0-bd5d-4205-8e49-669f0455854b
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [especie]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Descrição
+		lineageTag: 96242d1a-0e0a-4fe4-80f0-24e30fad2699
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Descrição]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Tipo Carteira'
+		lineageTag: 0d777832-4fca-46a1-b81c-af198282a04b
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Tipo Carteira]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dEspecieCR = calculated
+		mode: import
+		source =
+				
+				DATATABLE (
+				    "especie", STRING,
+				    "Descrição", STRING,
+				    "Tipo Carteira", STRING,
+				    {
+				        { "NV", "Nota de veículo",            "Veículos" },
+				        { "DP", "Duplicata",                  "Peças e serviços" },
+				        { "NF", "Nota fiscal",                "Peças e serviços" },
+				        { "NS", "Nota de serviço",            "Peças e serviços" },
+				        { "PS", "a confirmar",                "Peças e serviços" },
+				        { "NM", "a confirmar",                "Peças e serviços" },
+				        { "NE", "a confirmar",                "Peças e serviços" },
+				        { "DT", "a confirmar",                "Peças e serviços" },
+				        { "DR", "a confirmar",                "Peças e serviços" },
+				        { "OC", "a confirmar",                "Peças e serviços" },
+				        { "JS", "Aviso de débito (juros)",    "Peças e serviços" },
+				        { "JD", "a confirmar",                "Peças e serviços" },
+				        { "JJ", "a confirmar",                "Peças e serviços" },
+				        { "DD", "a confirmar",                "Peças e serviços" },
+				        { "CP", "a confirmar",                "Peças e serviços" },
+				        { "RJ", "a confirmar",                "Peças e serviços" },
+				        { "CC", "Cartão de crédito",          "Cartão" },
+				        { "CD", "Cartão de débito",           "Cartão" },
+				        { "AD", "Adiantamento de cliente",    "Antecipação" },
+				        { "DV", "Adiantamento / devolução",   "Antecipação" }
+				    }
+				)
+
+	annotation PBI_Id = 544080da961d4f7cbc53bbda74807c6b
+

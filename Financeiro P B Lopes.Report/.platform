@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "Financeiro P B Lopes"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "ede52e09-c724-4dd2-a7a0-2234aba25319"
+  }
+}

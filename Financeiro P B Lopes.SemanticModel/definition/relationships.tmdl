@@ -1,0 +1,111 @@
+relationship a173e6c3-e148-45d6-8108-ee16005c0744
+	fromColumn: dPlanoContas.GRUPO_DRE
+	toColumn: dEstDRE.GRUPO_DRE
+
+relationship 3f1fddbb-3fa1-4b2a-9b89-c8ce4be60073
+	fromColumn: fAjustesGerenciais.'COD_CENTRO CUSTO'
+	toColumn: dCentroCusto.COD_CENTRO_CUSTO
+
+relationship 953ec043-cf72-4075-baed-145b6df4a8fb
+	fromColumn: fAjustesGerenciais.COD_CASA
+	toColumn: dCasa.COD_CASA
+
+relationship fd7b74e5-1eff-468a-827b-ccdeb49bdcd2
+	fromColumn: fAjustesGerenciais.DATA
+	toColumn: aCalendario.Data
+
+relationship 48aae0e6-5384-4dfa-885a-9a439349cb3f
+	fromColumn: fRealizado.COD_CASA
+	toColumn: dCasa.COD_CASA
+
+relationship 10f32a9d-4a3c-4ccc-aae5-9fcc47fa3cff
+	fromColumn: fRealizado.COD_CENTRO_CUSTO
+	toColumn: dCentroCusto.COD_CENTRO_CUSTO
+
+relationship 2c4e9f08-8405-41c9-96e0-53d71d7aaa6c
+	fromColumn: fRealizado.CONTA_CONTABIL
+	toColumn: dPlanoContas.CONTA_CONTABIL
+
+relationship 4ebe970a-9fc5-46a9-8d04-7df88ef366fd
+	fromColumn: fRealizado.DATA
+	toColumn: aCalendario.Data
+
+relationship 5631e1d4-6c30-4caa-8e94-616b4810bf98
+	fromColumn: fRlzFinDeprecAmortEstorno.CONTA_CONTABIL
+	toColumn: dPlanoContas.CONTA_CONTABIL
+
+relationship bb2fa136-9e4e-4946-8233-bb6f333ca947
+	fromColumn: fRlzFinDeprecAmortEstorno.DATA
+	toColumn: aCalendario.Data
+
+relationship 5b8fe6cd-56aa-43e7-b117-e3a4cdf26404
+	fromColumn: fRlzFinDeprecAmortEstorno.COD_CENTRO_CUSTO
+	toColumn: dCentroCusto.COD_CENTRO_CUSTO
+
+relationship 4de9dbf5-0af1-476d-a4a1-4c99acd71ea3
+	fromColumn: fRlzFinDeprecAmortEstorno.COD_CASA
+	toColumn: dCasa.COD_CASA
+
+relationship 8546c62c-236a-48a3-a35f-e3bc514e6e62
+	fromColumn: fAjustesGerenciais.CONTA_CONTABIL
+	toColumn: dPlanoContas.CONTA_CONTABIL
+
+relationship AutoDetected_ca934610-2cc3-4f10-af1b-a76f88c02473
+	fromColumn: pItem_lancto_cont.num_lote_ctbl
+	toColumn: pLote_contabil.num_lote_ctbl
+
+relationship AutoDetected_ff2119f9-d020-4bac-be17-afa22c0985d4
+	fromColumn: fTitulosReceber.cod_cliente
+	toColumn: pEmitente.cod_cliente
+
+relationship 139fa3cc-d495-771e-c1fd-87bf4b2fa7d7
+	fromColumn: fTitulosReceber.cod_portador
+	toColumn: pPortador.cod_portador
+
+relationship 4d237aaa-c5fd-d82b-eb87-0d9612fdc8d4
+	fromColumn: fTitulosReceber.cod_estab
+	toColumn: dCasa.COD_CASA
+
+relationship a6028358-5da7-7be4-5401-cb046391ca4b
+	fromColumn: fTitulosReceber.data_liquidacao
+	toColumn: dCalendario.Data
+
+relationship 7e93baf3-00fc-362c-d376-563259f5cde6
+	fromColumn: fTitulosReceber.especie
+	toColumn: dEspecieCR.especie
+
+relationship 75c8c2bc-6346-4929-8a35-2467219e8adf
+	fromColumn: fTitulosPagar.cod_estab
+	toColumn: dCasa.COD_CASA
+
+relationship 23638809-8c32-4607-a8c5-0cceb6ca4f40
+	fromColumn: fTitulosPagar.cod_fornecedor
+	toColumn: pFornecedor.cod_fornecedor
+
+relationship e7a5361a-fb39-4adb-a990-3b793d72d0dc
+	fromColumn: fLancamentosContabeis.CONTA_CONTABIL
+	toColumn: dPlanoContas.CONTA_CONTABIL
+
+relationship d9e36385-4851-43af-ae55-d55a35e9364a
+	fromColumn: fLancamentosContabeis.cod_estab
+	toColumn: dCasa.COD_CASA
+
+relationship b5ac67b3-c27e-4fb2-af09-82e0b09c76d7
+	fromColumn: fLancamentosContabeis.cod_ccusto
+	toColumn: dCentroCusto.COD_CENTRO_CUSTO
+
+relationship e693e7b9-2d53-4896-a5a4-2ea394084db2
+	fromColumn: fLancamentosContabeis.data_lancamento
+	toColumn: aCalendario.Data
+
+relationship 81a13f09-2206-481e-84e5-b6e2c48ced8e
+	fromColumn: fSaldosContabeis.cod_cta_ctbl
+	toColumn: dContaBP.cod_cta_ctbl
+
+relationship 8f6b5faa-b06b-4788-9fc6-4ad67b8f8f5e
+	fromColumn: fSaldosContabeis.cod_estab
+	toColumn: dCasa.COD_CASA
+
+relationship 33f8d12c-8f9f-4ec2-967e-2b7f11dd87b8
+	fromColumn: fSaldosContabeis.data_ref
+	toColumn: aCalendario.Data

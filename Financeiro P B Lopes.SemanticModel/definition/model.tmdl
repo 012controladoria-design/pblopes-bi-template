@@ -1,0 +1,71 @@
+model Model
+	culture: pt-BR
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: pt-BR
+	dataAccessOptions
+		fastCombine
+		legacyRedirects
+		returnErrorValuesAsNull
+
+queryGroup Medidas
+
+	annotation PBI_QueryGroupOrder = 6
+
+queryGroup 'Consultas Auxiliares'
+
+	annotation PBI_QueryGroupOrder = 5
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_QueryOrder = ["RealizadoBanco","aCalendario","dCasa","dCentroCusto","dEstDRE","dPlanoContas","fAjustesGerenciais","fRealizado","_Medidas","fRlzFinDeprecAmortEstorno","pCcusto","pCond_Pagto","pConta_Corrente","pCta_contabil","pEstrut_contabil","pEstrut_fat","pDocum_est","pItem_doc_est","pItem_lancto_cont","pLote_contabil","pMovto_estoque","pPortador","pSdo_contabil","pSaldo_fluxocx","fTitulosReceber","pTit_apb","pEmitente","fTitulosPagar","pFornecedor","fLancamentosContabeis","fSaldosContabeis","dContaBP"]
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table dEstDRE
+ref table dCasa
+ref table dCentroCusto
+ref table dPlanoContas
+ref table _Medidas
+ref table aCalendario
+ref table fAjustesGerenciais
+ref table fRealizado
+ref table fRlzFinDeprecAmortEstorno
+ref table pCcusto
+ref table pCond_Pagto
+ref table pConta_Corrente
+ref table pCta_contabil
+ref table pEstrut_contabil
+ref table pEstrut_fat
+ref table pDocum_est
+ref table pItem_doc_est
+ref table pItem_lancto_cont
+ref table pLote_contabil
+ref table pMovto_estoque
+ref table pPortador
+ref table pSdo_contabil
+ref table pSaldo_fluxocx
+ref table fTitulosReceber
+ref table pTit_apb
+ref table pEmitente
+ref table dCalendario
+ref table dEspecieCR
+ref table fTitulosPagar
+ref table pFornecedor
+ref table fLancamentosContabeis
+ref table fSaldosContabeis
+ref table dContaBP
+ref table dEstDFC
+ref table dTema
+
+ref role Londrina
+ref role Maringá
+ref role 'Campo Grande'
+ref role 'Salto Grande'
+ref role 'Regente Feijó'
+ref role Dourados
+ref role 'Gestão CWS'
+ref role Ladário
+ref role Geral
+
+ref cultureInfo pt-BR
+

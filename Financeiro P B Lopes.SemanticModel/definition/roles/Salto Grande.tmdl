@@ -1,0 +1,7 @@
+role 'Salto Grande'
+	modelPermission: read
+
+	tablePermission dCasa = [COD_CASA] == "105"
+
+	annotation PBI_Id = 682256bb2e3e4fb6832fd2c5a3cd50f6
+

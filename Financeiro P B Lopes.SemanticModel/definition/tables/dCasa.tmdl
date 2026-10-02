@@ -1,0 +1,41 @@
+table dCasa
+	lineageTag: 4b0a65ec-71ef-47ab-bbd3-a45739efe018
+
+	column COD_CASA
+		dataType: string
+		lineageTag: a0de05bb-5a35-4ec8-9666-0ffbdb3b4543
+		summarizeBy: none
+		sourceColumn: COD_CASA
+
+		annotation SummarizationSetBy = Automatic
+
+	column DESCRICAO_CASA
+		dataType: string
+		lineageTag: 7739444b-cf30-455b-bde8-26186123ff98
+		summarizeBy: none
+		sourceColumn: DESCRICAO_CASA
+
+		annotation SummarizationSetBy = Automatic
+
+	column CASA
+		dataType: string
+		lineageTag: b7904fe6-617a-4af9-a796-d00b65041e59
+		summarizeBy: none
+		sourceColumn: CASA
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dCasa-85edb559-03a3-4760-88fa-5ca80552334d = m
+		mode: import
+		source =
+				let
+				    Fonte = Excel.Workbook(File.Contents("\\192.168.0.8\Sys1\Home\BiPowerBI\PB Lopes\Resultado Gerencial\Tabelas_DRE.xlsx"), null, true),
+				    dCasa_Table = Fonte{[Item="dCasa",Kind="Table"]}[Data],
+				    #"Tipo Alterado" = Table.TransformColumnTypes(dCasa_Table,{{"COD_CASA", type text}, {"DESCRICAO_CASA", type text}, {"CASA", type text}})
+				in
+				    #"Tipo Alterado"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navegação
+

@@ -1,0 +1,37 @@
+expression RealizadoBanco =
+		let
+		    // movimento mensal das contas de resultado direto do Datasul (substitui os balancetes em Excel)
+		    Fonte = Value.NativeQuery(PostgreSQL.Database("192.168.0.234", "pblopes_dts"), "SELECT#(lf)    TRIM(i.cod_estab)                              AS cod_estab,#(lf)    TRIM(i.cod_ccusto)                             AS cod_ccusto,#(lf)    TRIM(i.cod_cta_ctbl)                           AS cod_cta_ctbl,#(lf)    MAX(c.des_tit_ctbl)                            AS des_cta_ctbl,#(lf)    date_trunc('month', i.dat_lancto_ctbl)::date   AS data,#(lf)    SUM(CASE WHEN TRIM(i.ind_natur_lancto_ctbl) = 'CR' THEN i.val_lancto_ctbl ELSE -i.val_lancto_ctbl END) AS valor_cr_menos_db#(lf)FROM public.item_lancto_ctbl i#(lf)LEFT JOIN public.cta_ctbl c ON c.cod_plano_cta_ctbl = i.cod_plano_cta_ctbl AND c.cod_cta_ctbl = i.cod_cta_ctbl#(lf)WHERE i.dat_lancto_ctbl >= DATE '2021-01-01'#(lf)  AND i.dat_lancto_ctbl <  date_trunc('month', CURRENT_DATE) + INTERVAL '1 month'   -- até o mês atual#(lf)  AND LEFT(TRIM(i.cod_cta_ctbl), 1) IN ('3', '4', '5', '8')                          -- só contas de resultado#(lf)  AND CAST(i.log_lancto_apurac_restdo AS int) = 0                                     -- tira a apuração de resultado#(lf)  AND i.cod_cenar_ctbl = (SELECT cod_cenar_ctbl FROM public.item_lancto_ctbl          -- um cenário só (o mais usado)#(lf)                          WHERE dat_lancto_ctbl >= DATE '2021-01-01'#(lf)                          GROUP BY 1 ORDER BY COUNT(*) DESC LIMIT 1)#(lf)GROUP BY 1, 2, 3, 5"),
+		    // chave só com dígitos (igual à fLancamentosContabeis) para achar a conta em dPlanoContas
+		    Digitos = (t as nullable text) as nullable text => if t = null then null else Text.Select(Text.BeforeDelimiter(Text.Trim(t), " "), {"0".."9"}),
+		    Plano = Table.Buffer(Table.Distinct(Table.AddColumn(Table.SelectColumns(dPlanoContas, {"CONTA_CONTABIL", "TIPO"}), "CHAVE", each Digitos([CONTA_CONTABIL]), type text), {"CHAVE"})),
+		    ComChave = Table.AddColumn(Fonte, "CHAVE", each Digitos([cod_cta_ctbl]), type text),
+		    Mesclado = Table.NestedJoin(ComChave, {"CHAVE"}, Plano, {"CHAVE"}, "Plano", JoinKind.LeftOuter),
+		    Expandido = Table.ExpandTableColumn(Mesclado, "Plano", {"CONTA_CONTABIL", "TIPO"}),
+		    // conta que não está em dPlanoContas fica com código e nome do Datasul (aparece sem grupo na DRE)
+		    Conta = Table.AddColumn(Expandido, "CONTA", each if [CONTA_CONTABIL] <> null then [CONTA_CONTABIL] else [cod_cta_ctbl] & "- " & Text.Trim([des_cta_ctbl] ?? ""), type text),
+		    // mesmo sinal do balancete: despesa (TIPO "-") positiva = débito - crédito; receita = crédito - débito
+		    // a coluna VALOR da fRealizado inverte a despesa depois, então VALOR = crédito - débito para todas
+		    Total = Table.AddColumn(Conta, "TOTAL", each if [TIPO] = "-" then - [valor_cr_menos_db] else [valor_cr_menos_db], type number),
+		    // lançamento sem centro de custo segue a regra antiga das ContasSemCentroCusto
+		    CentroCusto = Table.AddColumn(Total, "COD_CENTRO_CUSTO", each
+		        let ch = [CHAVE] ?? "" in
+		        if [cod_ccusto] <> null and [cod_ccusto] <> "" then [cod_ccusto]
+		        else if Text.StartsWith(ch, "802") then "20300"
+		        else if Text.StartsWith(ch, "803") then "20303"
+		        else if Text.StartsWith(ch, "805") then "20306"
+		        else "10200", type text),
+		    Selecionadas = Table.SelectColumns(CentroCusto, {"cod_estab", "COD_CENTRO_CUSTO", "CONTA", "data", "TOTAL"}),
+		    Renomeadas = Table.RenameColumns(Selecionadas, {{"cod_estab", "COD_CASA"}, {"CONTA", "CONTA_CONTABIL"}, {"data", "DATA"}}),
+		    SemZero = Table.SelectRows(Renomeadas, each [TOTAL] <> null and [TOTAL] <> 0),
+		    Tipos = Table.TransformColumnTypes(SemZero, {{"COD_CASA", type text}, {"COD_CENTRO_CUSTO", type text}, {"CONTA_CONTABIL", type text}, {"DATA", type date}, {"TOTAL", type number}}),
+		    Reordenadas = Table.ReorderColumns(Tipos, {"COD_CASA", "COD_CENTRO_CUSTO", "CONTA_CONTABIL", "DATA", "TOTAL"})
+		in
+		    Reordenadas
+	lineageTag: fb5bfa08-05b1-46de-bfef-11fad1c159c5
+	queryGroup: 'Consultas Auxiliares'
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,7 @@
+role Ladário
+	modelPermission: read
+
+	tablePermission dCasa = [COD_CASA] == "111"
+
+	annotation PBI_Id = 93bbf37ff7be4956a7ef825690d282e2
+

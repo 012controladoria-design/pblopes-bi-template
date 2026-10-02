@@ -1,0 +1,7 @@
+role Dourados
+	modelPermission: read
+
+	tablePermission dCasa = [COD_CASA] == "107" || [COD_CASA] == "117"
+
+	annotation PBI_Id = 6523d06fc24842398b1b5c4bff3fe564
+

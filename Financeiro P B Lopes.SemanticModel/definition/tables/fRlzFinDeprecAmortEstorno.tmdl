@@ -1,0 +1,73 @@
+table fRlzFinDeprecAmortEstorno
+	lineageTag: d4b62d64-349f-44c7-85e6-2fc09c901e19
+
+	column TOTAL
+		dataType: double
+		lineageTag: c43c9d64-a1ed-4b31-8aaf-73dc2ddc63e5
+		summarizeBy: sum
+		sourceColumn: TOTAL
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column COD_CASA
+		dataType: string
+		lineageTag: 6fccbdb2-c59e-413d-9944-781f9659d9c7
+		summarizeBy: none
+		sourceColumn: COD_CASA
+
+		annotation SummarizationSetBy = Automatic
+
+	column COD_CENTRO_CUSTO
+		dataType: string
+		lineageTag: 274238c0-8ba1-4428-90d3-c97d0a3c4347
+		summarizeBy: none
+		sourceColumn: COD_CENTRO_CUSTO
+
+		annotation SummarizationSetBy = Automatic
+
+	column DATA
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 8c4399ec-1e7c-4a3c-9587-9e34f5c75e0e
+		summarizeBy: none
+		sourceColumn: DATA
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column CONTA_CONTABIL
+		dataType: string
+		lineageTag: 39084489-d831-466b-965b-008532bbfaf4
+		summarizeBy: none
+		sourceColumn: CONTA_CONTABIL
+
+		annotation SummarizationSetBy = Automatic
+
+	column VALOR = IF(RELATED(dPlanoContas[TIPO]) = "-", fRlzFinDeprecAmortEstorno[TOTAL] * -1, fRlzFinDeprecAmortEstorno[TOTAL])
+		lineageTag: 7c7f269d-2f2e-4182-87ef-7b1dace15a26
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition fRlzFinDeprecAmortEstorno-866e39a0-19ce-48e3-ac16-c4d14b3b93fc = m
+		mode: import
+		source =
+				let
+				    Fonte = RealizadoBanco,
+				    #"Colunas Renomeadas" = Table.RenameColumns(Fonte,{{"CONTA_CONTABIL", "CONTA"}}),
+				    #"Linhas Filtradas" = Table.SelectRows(#"Colunas Renomeadas", each ([CONTA] = "3.1.2.1.00.01- JUROS AUFERIDOS" or [CONTA] = "3.1.2.1.00.02- DESCONTOS OBTIDOS" or [CONTA] = "3.1.2.1.00.03- RECEITAS DE APLICAÇÕES FINANCEIRAS" or [CONTA] = "3.1.2.1.00.06- JUROS AUFERIDOS - RECEITA BRUTA AVP" or [CONTA] = "3.1.4.1.00.03- VARIACAO MONETARIA ATIVA" or [CONTA] = "5.1.1.2.00.01- DEPRECIACOES" or [CONTA] = "5.1.1.2.00.05- AMORTIZAÇÃO" or [CONTA] = "5.1.2.2.00.02- DEPRECIAÇÃO" or [CONTA] = "5.1.2.2.00.05- AMORTIZAÇÃO" or [CONTA] = "5.1.3.1.00.01- JUROS PAGOS OU INCORRIDOS" or [CONTA] = "5.1.3.1.00.02- DESCONTOS CONCEDIDOS" or [CONTA] = "5.1.3.1.00.03- COMISS.E DESPS.BANCARIAS" or [CONTA] = "5.1.3.1.00.04- I.0.F." or [CONTA] = "5.1.3.1.00.06- DESPESAS COM COBRANCA" or [CONTA] = "5.1.3.1.00.07- MULTAS FINANCEIRAS" or [CONTA] = "5.1.3.1.00.09- ENCARGOS S/ ARRENDAMENTOS" or [CONTA] = "5.1.5.1.00.02- VARIACAO MONET.PASSIVA")),
+				    #"Coluna Condicional Adicionada" = Table.AddColumn(#"Linhas Filtradas", "CONTA_CONTABIL", each if [CONTA] = "5.1.1.2.00.01- DEPRECIACOES" then "9.9.9.9.99.03- ESTORNO DEPRECIACOES / AMORTIZACOES DESPESAS" else if [CONTA] = "5.1.1.2.00.05- AMORTIZAÇÃO" then "9.9.9.9.99.03- ESTORNO DEPRECIACOES / AMORTIZACOES DESPESAS" else if [CONTA] = "5.1.2.2.00.02- DEPRECIAÇÃO" then "9.9.9.9.99.03- ESTORNO DEPRECIACOES / AMORTIZACOES DESPESAS" else if [CONTA] = "5.1.2.2.00.05- AMORTIZAÇÃO" then "9.9.9.9.99.03- ESTORNO DEPRECIACOES / AMORTIZACOES DESPESAS" else if Text.StartsWith([CONTA], "3.1") then "9.9.9.9.99.02- ESTORNO RECEITAS FINANCEIRAS" else if Text.StartsWith([CONTA], "5.1.3") then "9.9.9.9.99.01- ESTORNO DESPESAS FINANCEIRAS" else if Text.StartsWith([CONTA], "5.1.5") then "9.9.9.9.99.01- ESTORNO DESPESAS FINANCEIRAS" else [CONTA]),
+				    #"Colunas Removidas" = Table.RemoveColumns(#"Coluna Condicional Adicionada",{"CONTA"}),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(#"Colunas Removidas",{{"CONTA_CONTABIL", type text}})
+				in
+				    #"Tipo Alterado"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navegação
+

@@ -1,0 +1,204 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/2.1.0/schema.json",
+  "displayName": "Duplicata de Contas a Receber · Antecipações De Clientes",
+  "name": "Bookmark47c8c8d165ba1dd91217",
+  "options": {
+    "applyOnlyToTargetVisuals": true,
+    "targetVisualNames": [
+      "bd14a56e221c44f2ec77",
+      "e59745affc13544c223e",
+      "249f96c0a9a6eebd26b2",
+      "bb2d14bc5521c3786ed9",
+      "f61c086337e1153ae28b",
+      "92bfa17c0c3177497aec",
+      "156ffcbdd532b078d540",
+      "a7ad10c595d62fa2bb93",
+      "e86c72eeacf291fbc853",
+      "738d66f8e7c308f477e2",
+      "cce3ac54c8c748e93d81",
+      "0b8f90f599fb45c40821",
+      "f09a2d983360feed643f",
+      "f55dd37a0e3081ad9254",
+      "f9c49ad5a62e115fa629",
+      "0e4001e85f39b81f5a6e",
+      "27a7ad379bfed169fcdc",
+      "8a405525edbccf37cdc7",
+      "aa3ac046316acf935d99",
+      "ddcd7c53910a5153e867",
+      "36cf85a13dc3bfd57b56",
+      "377b9bdc09b7a84eac21",
+      "b5bffdac155582220538",
+      "ee2fe762b6d0dce134a7"
+    ],
+    "suppressData": true
+  },
+  "explorationState": {
+    "version": "1.3",
+    "activeSection": "f1074cb53282901e0c71",
+    "sections": {
+      "f1074cb53282901e0c71": {
+        "visualContainers": {
+          "e59745affc13544c223e": {
+            "singleVisual": {
+              "visualType": "actionButton",
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "249f96c0a9a6eebd26b2": {
+            "singleVisual": {
+              "visualType": "actionButton",
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "bb2d14bc5521c3786ed9": {
+            "singleVisual": {
+              "visualType": "textbox",
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "f61c086337e1153ae28b": {
+            "singleVisual": {
+              "visualType": "actionButton",
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "92bfa17c0c3177497aec": {
+            "singleVisual": {
+              "visualType": "tableEx",
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "a7ad10c595d62fa2bb93": {
+            "singleVisual": {
+              "visualType": "actionButton",
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "e86c72eeacf291fbc853": {
+            "singleVisual": {
+              "visualType": "actionButton",
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "738d66f8e7c308f477e2": {
+            "singleVisual": {
+              "visualType": "textbox",
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "cce3ac54c8c748e93d81": {
+            "singleVisual": {
+              "visualType": "actionButton",
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "0b8f90f599fb45c40821": {
+            "singleVisual": {
+              "visualType": "tableEx",
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "f55dd37a0e3081ad9254": {
+            "singleVisual": {
+              "visualType": "actionButton",
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "f9c49ad5a62e115fa629": {
+            "singleVisual": {
+              "visualType": "actionButton",
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "0e4001e85f39b81f5a6e": {
+            "singleVisual": {
+              "visualType": "textbox",
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "27a7ad379bfed169fcdc": {
+            "singleVisual": {
+              "visualType": "actionButton",
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "8a405525edbccf37cdc7": {
+            "singleVisual": {
+              "visualType": "tableEx",
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "ddcd7c53910a5153e867": {
+            "singleVisual": {
+              "visualType": "actionButton"
+            }
+          },
+          "36cf85a13dc3bfd57b56": {
+            "singleVisual": {
+              "visualType": "actionButton"
+            }
+          },
+          "377b9bdc09b7a84eac21": {
+            "singleVisual": {
+              "visualType": "textbox"
+            }
+          },
+          "b5bffdac155582220538": {
+            "singleVisual": {
+              "visualType": "actionButton"
+            }
+          },
+          "ee2fe762b6d0dce134a7": {
+            "singleVisual": {
+              "visualType": "tableEx"
+            }
+          }
+        },
+        "visualContainerGroups": {
+          "bd14a56e221c44f2ec77": {
+            "isHidden": true
+          },
+          "156ffcbdd532b078d540": {
+            "isHidden": true
+          },
+          "f09a2d983360feed643f": {
+            "isHidden": true
+          },
+          "aa3ac046316acf935d99": {
+            "isHidden": false
+          }
+        }
+      }
+    }
+  }
+}

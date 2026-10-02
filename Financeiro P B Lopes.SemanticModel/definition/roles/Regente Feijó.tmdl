@@ -1,0 +1,7 @@
+role 'Regente Feijó'
+	modelPermission: read
+
+	tablePermission dCasa = [COD_CASA] == "106" || [COD_CASA] == "108" || [COD_CASA] == "110" || [COD_CASA] == "115"
+
+	annotation PBI_Id = b4ef98dd8cd94e6997b173c37ec491db
+

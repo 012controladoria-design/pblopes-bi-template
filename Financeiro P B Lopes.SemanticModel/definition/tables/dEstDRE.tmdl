@@ -1,0 +1,44 @@
+table dEstDRE
+	lineageTag: 47853e96-179b-4feb-b6e6-6ca546728410
+
+	column ORDEM
+		dataType: int64
+		formatString: 0
+		lineageTag: c32d9d13-bb27-49d2-bc02-18545089d4f2
+		summarizeBy: none
+		sourceColumn: ORDEM
+
+		annotation SummarizationSetBy = Automatic
+
+	column SUBTOTAL
+		dataType: int64
+		formatString: 0
+		lineageTag: eca158e8-d773-4a70-a9fc-bfad15556613
+		summarizeBy: none
+		sourceColumn: SUBTOTAL
+
+		annotation SummarizationSetBy = Automatic
+
+	column GRUPO_DRE
+		dataType: string
+		lineageTag: ffbd4b8e-2227-4fdc-a150-218ac516055f
+		summarizeBy: none
+		sourceColumn: GRUPO_DRE
+		sortByColumn: ORDEM
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dEstDRE-996d3d41-f31e-4cd9-8a46-e63790ffce74 = m
+		mode: import
+		source =
+				let
+				    Fonte = Excel.Workbook(File.Contents("\\192.168.0.8\Sys1\Home\BiPowerBI\PB Lopes\Resultado Gerencial\Tabelas_DRE.xlsx"), null, true),
+				    dEstDRE_Table = Fonte{[Item="dEstDRE",Kind="Table"]}[Data],
+				    #"Tipo Alterado" = Table.TransformColumnTypes(dEstDRE_Table,{{"ORDEM", Int64.Type}, {"SUBTOTAL", Int64.Type}, {"GRUPO_DRE", type text}})
+				in
+				    #"Tipo Alterado"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navegação
+

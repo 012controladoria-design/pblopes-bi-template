@@ -1,0 +1,80 @@
+table dCalendario
+	lineageTag: f740508e-4382-4196-bb10-b0702554c85e
+
+	column Data
+		formatString: General Date
+		lineageTag: daadc823-294c-4381-a8fc-644708b5ed8c
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Data]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Ano
+		formatString: 0
+		lineageTag: efbb06ec-e70e-463a-9b5d-98699cb4b863
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Ano]
+
+		annotation SummarizationSetBy = Automatic
+
+	column MesNum
+		formatString: 0
+		lineageTag: 23a3a08f-b836-4350-ab57-74331497a8ad
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [MesNum]
+
+		annotation SummarizationSetBy = Automatic
+
+	column AnoMes
+		formatString: 0
+		lineageTag: bc1ea732-6bf9-483d-9d3f-a129a29aeda4
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [AnoMes]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Mês
+		lineageTag: 4e7dad01-9af0-4b0e-85fa-e251092c89e0
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Mês]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Mês/Ano
+		lineageTag: 5c0f7609-affb-493a-908d-a11c5a127dfe
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Mês/Ano]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Semana = dCalendario[Data] - WEEKDAY ( dCalendario[Data], 2 ) + 1
+		formatString: General Date
+		lineageTag: d514d798-7052-49ef-8129-2ceba18c94ae
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dCalendario = calculated
+		mode: import
+		source =
+				
+				VAR _Base =
+				    ADDCOLUMNS (
+				        SELECTCOLUMNS ( CALENDAR ( DATE ( 2022, 1, 1 ), DATE ( YEAR ( TODAY () ) + 1, 12, 31 ) ), "Data", [Date] ),
+				        "Ano", YEAR ( [Data] ),
+				        "MesNum", MONTH ( [Data] ),
+				        "AnoMes", YEAR ( [Data] ) * 100 + MONTH ( [Data] ),
+				        "Mês", SWITCH ( MONTH ( [Data] ), 1, "jan", 2, "fev", 3, "mar", 4, "abr", 5, "mai", 6, "jun",
+				                                          7, "jul", 8, "ago", 9, "set", 10, "out", 11, "nov", 12, "dez" )
+				    )
+				RETURN
+				    ADDCOLUMNS ( _Base, "Mês/Ano", [Mês] & "/" & RIGHT ( FORMAT ( [Ano], "0" ), 2 ) )
+
+	annotation PBI_Id = aaa62e8c9ed143f1b0b4f919e75c3fa2
+

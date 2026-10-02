@@ -1,0 +1,362 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 5967.148517878126,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 1329.703758575155,
+            "y": 551.9083303810107
+          },
+          "nodeIndex": "dCentroCusto",
+          "nodeLineageTag": "eb514332-ea03-4df6-9fd5-e933d6bcf763",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 27
+        },
+        {
+          "location": {
+            "x": 0,
+            "y": 387.3001060860565
+          },
+          "nodeIndex": "dEstDRE",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 28
+        },
+        {
+          "location": {
+            "x": 0,
+            "y": 18.75
+          },
+          "nodeIndex": "dPlanoContas",
+          "size": {
+            "height": 272,
+            "width": 234
+          },
+          "zIndex": 35
+        },
+        {
+          "location": {
+            "x": 1316.5499694032012,
+            "y": 265.991167187349
+          },
+          "nodeIndex": "dCasa",
+          "nodeLineageTag": "4b0a65ec-71ef-47ab-bbd3-a45739efe018",
+          "size": {
+            "height": 171.672131147541,
+            "width": 234
+          },
+          "zIndex": 29
+        },
+        {
+          "location": {
+            "x": 342.3809430255403,
+            "y": 224.64390962671905
+          },
+          "nodeIndex": "fRealizado",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 30
+        },
+        {
+          "location": {
+            "x": 343.4104125736737,
+            "y": 798.0584243744435
+          },
+          "nodeIndex": "fAjustesGerenciais",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 32
+        },
+        {
+          "location": {
+            "x": 337.21198428290774,
+            "y": 507.7480353634577
+          },
+          "nodeIndex": "fRlzFinDeprecAmortEstorno",
+          "size": {
+            "height": 224,
+            "width": 234
+          },
+          "zIndex": 33
+        },
+        {
+          "location": {
+            "x": 1707.6731080420593,
+            "y": 18.75000000000003
+          },
+          "nodeIndex": "_Medidas",
+          "size": {
+            "height": 104,
+            "width": 234
+          },
+          "zIndex": 1
+        },
+        {
+          "location": {
+            "x": 3127.6731080420595,
+            "y": 358.40421218722173
+          },
+          "nodeIndex": "pCcusto",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 8
+        },
+        {
+          "location": {
+            "x": 3411.6731080420595,
+            "y": 358.40421218722173
+          },
+          "nodeIndex": "pCond_Pagto",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 9
+        },
+        {
+          "location": {
+            "x": 3695.6731080420595,
+            "y": 358.40421218722173
+          },
+          "nodeIndex": "pConta_Corrente",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 10
+        },
+        {
+          "location": {
+            "x": 3979.6731080420595,
+            "y": 358.40421218722173
+          },
+          "nodeIndex": "pCta_contabil",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 11
+        },
+        {
+          "location": {
+            "x": 4263.6731080420595,
+            "y": 358.40421218722173
+          },
+          "nodeIndex": "pDocum_est",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 12
+        },
+        {
+          "location": {
+            "x": 4547.6731080420595,
+            "y": 358.40421218722173
+          },
+          "nodeIndex": "pEstrut_contabil",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 13
+        },
+        {
+          "location": {
+            "x": 4831.6731080420595,
+            "y": 358.40421218722173
+          },
+          "nodeIndex": "pEstrut_fat",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 14
+        },
+        {
+          "location": {
+            "x": 5115.6731080420595,
+            "y": 358.40421218722173
+          },
+          "nodeIndex": "pItem_doc_est",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 15
+        },
+        {
+          "location": {
+            "x": 2893.6731080420595,
+            "y": 308.40421218722173
+          },
+          "nodeIndex": "pItem_lancto_cont",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 16
+        },
+        {
+          "location": {
+            "x": 2609.6731080420595,
+            "y": 308.40421218722173
+          },
+          "nodeIndex": "pLote_contabil",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 17
+        },
+        {
+          "location": {
+            "x": 5399.6731080420595,
+            "y": 358.40421218722173
+          },
+          "nodeIndex": "pMovto_estoque",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 18
+        },
+        {
+          "location": {
+            "x": 6257.443599845338,
+            "y": 0
+          },
+          "nodeIndex": "pPortador",
+          "nodeLineageTag": "d500d160-701d-4cc1-962d-bde682249cf0",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 19
+        },
+        {
+          "location": {
+            "x": 5967.6731080420595,
+            "y": 358.40421218722173
+          },
+          "nodeIndex": "pSdo_contabil",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 20
+        },
+        {
+          "location": {
+            "x": 6251.6731080420595,
+            "y": 358.40421218722173
+          },
+          "nodeIndex": "pSaldo_fluxocx",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 21
+        },
+        {
+          "location": {
+            "x": 6819.6731080420595,
+            "y": 358.40421218722173
+          },
+          "nodeIndex": "pTit_apb",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 22
+        },
+        {
+          "location": {
+            "x": 7149.574747386322,
+            "y": 34.42880235115615
+          },
+          "nodeIndex": "pEmitente",
+          "nodeLineageTag": "f405ec99-8680-4657-9f51-99c288d5b39b",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 23
+        },
+        {
+          "location": {
+            "x": 1307.4489884977284,
+            "y": 18.75
+          },
+          "nodeIndex": "aCalendario",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 24
+        },
+        {
+          "location": {
+            "x": 7433.574747386322,
+            "y": 399.02921218722173
+          },
+          "nodeIndex": "dCalendario",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 25
+        },
+        {
+          "location": {
+            "x": 6535.6731080420595,
+            "y": 358.40421218722173
+          },
+          "nodeIndex": "fTitulosReceber",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 26
+        },
+        {
+          "location": {
+            "x": 7717.574747386322,
+            "y": 399.02921218722173
+          },
+          "nodeIndex": "dEspecieCR",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 36
+        }
+      ],
+      "name": "Todas as tabelas",
+      "zoomValue": 61,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "Todas as tabelas",
+  "defaultDiagram": "Todas as tabelas"
+}

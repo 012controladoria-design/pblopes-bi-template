@@ -1,0 +1,17 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "f09a2d983360feed643f",
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 100000,
+    "height": 720,
+    "width": 1280,
+    "tabOrder": 100000
+  },
+  "visualGroup": {
+    "displayName": "Pop-up vencidos",
+    "groupMode": "ScaleMode"
+  },
+  "isHidden": true
+}

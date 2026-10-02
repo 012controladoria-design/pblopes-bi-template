@@ -1,0 +1,7 @@
+role 'Campo Grande'
+	modelPermission: read
+
+	tablePermission dCasa = [COD_CASA] == "104" || [COD_CASA] == "111" || [COD_CASA] == "116"
+
+	annotation PBI_Id = f41ff94ac97e4fdaa9b8b14bfb4ad541
+
