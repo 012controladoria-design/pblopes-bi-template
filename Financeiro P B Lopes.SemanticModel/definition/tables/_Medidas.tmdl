@@ -1064,6 +1064,34 @@ table _Medidas
 		displayFolder: Tema
 		lineageTag: 7022d356-b39b-4803-a908-a375ba99bfba
 
+	/// Fundo dos pop-ups (moldura e tabela): branco no tema claro, azul-marinho no escuro.
+	measure 'Tema Cor Painel' =
+			
+			IF ( [Tema Selecionado] = "Claro", "#FFFFFF", "#0B1A4A" )
+		displayFolder: Tema
+		lineageTag: 9c962938-5b1d-4318-91ac-b5d62261bebc
+
+	/// Fundo das células das listas no tema claro. Em branco no escuro, para valer a cor original (linhas azuis alternadas).
+	measure 'Tema Cor Célula' =
+			
+			IF ( [Tema Selecionado] = "Claro", "#FFFFFF" )
+		displayFolder: Tema
+		lineageTag: dddcd9b9-e848-4856-90fd-6cab03e61e4e
+
+	/// Letra das células das listas no tema claro (azul Scania). Em branco no escuro, para valer a cor original (branca).
+	measure 'Tema Cor Texto Célula' =
+			
+			IF ( [Tema Selecionado] = "Claro", "#041E42" )
+		displayFolder: Tema
+		lineageTag: b090157e-f3a6-40eb-9cec-221b68caf0fc
+
+	/// Cor dos links "ver títulos ›" dos cartões: azul médio no claro, azul-claro no escuro.
+	measure 'Tema Cor Link' =
+			
+			IF ( [Tema Selecionado] = "Claro", "#1F5FA8", "#9FC5FF" )
+		displayFolder: Tema
+		lineageTag: 447f2ec4-dab2-4dd6-bbec-487abea7cf34
+
 	partition _Medidas-e0807ed9-830e-46df-b71f-9de294b53a18 = m
 		mode: import
 		queryGroup: Medidas

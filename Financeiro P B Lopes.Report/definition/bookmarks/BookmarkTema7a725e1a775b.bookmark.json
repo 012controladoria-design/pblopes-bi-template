@@ -9,9 +9,11 @@
       "temabad2ead81c3407fb",
       "tema80883d80ba6b6d25",
       "temaa7ce7445c8591e54",
+      "tema61cbc4b5e7da23f2",
       "temaae2d2fd0e3807a11",
       "e2d2a94a264701811e09",
       "d844e7444509891d0d01",
+      "3de94936b589a83b0170",
       "tema1becc1115530c757"
     ]
   },
@@ -34,6 +36,11 @@
           "d844e7444509891d0d01": {
             "singleVisual": {
               "visualType": "textbox"
+            }
+          },
+          "3de94936b589a83b0170": {
+            "singleVisual": {
+              "visualType": "pivotTable"
             }
           },
           "tema1fa1557ac2bd372f": {
@@ -63,6 +70,14 @@
           "temaa7ce7445c8591e54": {
             "singleVisual": {
               "visualType": "textbox",
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "tema61cbc4b5e7da23f2": {
+            "singleVisual": {
+              "visualType": "pivotTable",
               "display": {
                 "mode": "hidden"
               }

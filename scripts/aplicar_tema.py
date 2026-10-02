@@ -8,14 +8,18 @@ uma rodada anterior criou. Rode na raiz do repositório:
 
 O que faz em cada tela visível (menos a "Página 2", vazia):
   1. Cria, ocultos, o fundo claro (imagem da página inteira), a logo colorida
-     por cima da logo branca e uma cópia azul de cada título (caixa de texto).
+     por cima da logo branca, uma cópia azul de cada título (caixa de texto) e
+     uma cópia com letras azuis de cada matriz de fundo transparente.
   2. Cria uma segmentação oculta em dTema[Tema], começando em "Escuro".
   3. Cria o botão ☀ (vai para o claro) e o botão ☾ (volta para o escuro).
   4. Cria dois indicadores por tela que trocam o que aparece e a seleção da
      segmentação oculta.
   5. Troca as letras brancas que ficam direto sobre o fundo pela medida
-     [Tema Cor Texto] (fx). Matrizes com fundo transparente ganham um painel
-     azul Scania, para as letras brancas continuarem legíveis nos dois temas.
+     [Tema Cor Texto] (fx) e os links "ver …" por [Tema Cor Link].
+  6. Listas com células coloridas (pop-ups, DFC, despesas) ficam com células
+     brancas e letras azuis no tema claro, por formatação condicional.
+  7. Pop-ups: moldura e lista seguem [Tema Cor Painel]; o título ganha uma
+     faixa azul Scania, porque caixa de texto não aceita cor por fórmula.
 """
 import copy
 import glob
@@ -33,6 +37,9 @@ BM_SCHEMA = 'https://developer.microsoft.com/json-schemas/fabric/item/report/def
 FUNDO_CLARO = 'Fundo_Tema_Claro7310452896314507.jpg'
 LOGO_COLORIDA = 'PBLopes_Scania_colorido6903853022629551.png'
 AZUL_SCANIA = '#041E42'
+AZUL_PAINEL = '#0B1A4A'          # fundo original dos pop-ups
+LINK_ORIGINAL = '#9FC5FF'        # cor original dos links "ver …" dos cartões
+CINZA_LINHA = '#9AA7B8'          # linhas de grade na cópia clara das matrizes
 PREFIXO = 'tema'                 # nome dos visuais criados por este script
 PREFIXO_BM = 'BookmarkTema'      # nome dos indicadores criados por este script
 GRUPO_BM = 'BookmarkGroupTemaClaroEscuro'
@@ -52,8 +59,12 @@ def cor(h):
     return {'solid': {'color': L(f"'{h}'")}}
 
 
-FX_TEXTO = {'solid': {'color': {'expr': {'Measure': {'Expression': {'SourceRef': {'Entity': '_Medidas'}},
-                                                     'Property': 'Tema Cor Texto'}}}}}
+def fx(medida):
+    return {'solid': {'color': {'expr': {'Measure': {'Expression': {'SourceRef': {'Entity': '_Medidas'}},
+                                                     'Property': medida}}}}}
+
+
+FX_TEXTO = fx('Tema Cor Texto')
 
 
 def nome(*partes, n=16):
@@ -68,25 +79,83 @@ def load(p):
 def save(p, d):
     """Grava mantendo a quebra de linha do arquivo original (o report.json usa CRLF)."""
     os.makedirs(os.path.dirname(p), exist_ok=True)
+    if os.path.exists(p) and load(p) == d:      # nada mudou: não regrava
+        return
     crlf = os.path.exists(p) and b'\r\n' in open(p, 'rb').read()
     texto = json.dumps(d, ensure_ascii=False, indent=2)
     with open(p, 'wb') as f:
         f.write((texto.replace('\n', '\r\n') if crlf else texto).encode('utf-8'))
 
 
+def literal(c):
+    if not isinstance(c, dict) or 'solid' not in c:
+        return None
+    return c['solid'].get('color', {}).get('expr', {}).get('Literal', {}).get('Value', '').strip("'").upper()
+
+
 def eh_branco(c):
     if not isinstance(c, dict) or 'solid' not in c:
         return False
-    e = c['solid'].get('color', {}).get('expr', {})
-    if e.get('ThemeDataColor') == {'ColorId': 0, 'Percent': 0}:
+    if c['solid'].get('color', {}).get('expr', {}).get('ThemeDataColor') == {'ColorId': 0, 'Percent': 0}:
         return True
-    v = e.get('Literal', {}).get('Value', '')
-    return v.lower() in ("'#fff'", "'#ffffff'")
+    return literal(c) in ('#FFF', '#FFFFFF')
 
 
 def fundo_ligado(vis):
     bg = vis.get('visualContainerObjects', {}).get('background', [{}])[0].get('properties', {})
     return bool(bg) and bg.get('show') != L('false')
+
+
+def tira_painel_antigo(vis):
+    """A 1ª versão do tema pôs um painel azul nas matrizes transparentes; aqui ele sai."""
+    vco = vis.get('visualContainerObjects', {})
+    bg = vco.get('background', [{}])[0].get('properties', {})
+    if literal(bg.get('color')) == AZUL_SCANIA and bg.get('transparency') == L('10D'):
+        del vco['background']
+
+
+def matriz_transparente(vis):
+    if vis['visualType'] not in TABELAS or fundo_ligado(vis):
+        return False
+    return any(not any(k.startswith('back') for k in e.get('properties', {}))
+               and any(eh_branco(e.get('properties', {}).get(k)) for k in FONTE)
+               for o in ('values', 'columnHeaders', 'rowHeaders') for e in vis.get('objects', {}).get(o, []))
+
+
+def lista_com_celulas_escuras(vis):
+    if vis['visualType'] != 'tableEx':
+        return False
+    for e in vis.get('objects', {}).get('values', []):
+        b = e.get('properties', {}).get('backColorPrimary')
+        if b and not eh_branco(b) and literal(b) not in (None, ''):
+            return True
+    return False
+
+
+def celulas_tema(vis):
+    """Formatação condicional por célula: no claro, fundo branco e letra azul; no escuro vale o original."""
+    vals = vis.setdefault('objects', {}).setdefault('values', [])
+    vals[:] = [e for e in vals if not (e.get('selector', {}).get('data') and 'Tema Cor' in json.dumps(e))]
+    for papel in vis.get('query', {}).get('queryState', {}).values():
+        for p in papel.get('projections', []):
+            vals.append({'properties': {'backColor': fx('Tema Cor Célula'), 'fontColor': fx('Tema Cor Texto Célula')},
+                         'selector': {'data': [{'dataViewWildcard': {'matchingOption': 1}}], 'metadata': p['queryRef']}})
+
+
+def recolorir_claro(o):
+    """Na cópia clara de uma matriz: letra branca vira azul Scania, linha branca vira cinza."""
+    if isinstance(o, dict):
+        for k, v in o.items():
+            if eh_branco(v):
+                if k in FONTE:
+                    o[k] = cor(AZUL_SCANIA)
+                elif any(s in k.lower() for s in ('outline', 'grid', 'border')):
+                    o[k] = cor(CINZA_LINHA)
+            else:
+                recolorir_claro(v)
+    elif isinstance(o, list):
+        for v in o:
+            recolorir_claro(v)
 
 
 def filtro_tema(valor):
@@ -159,13 +228,10 @@ def limpar_rodada_anterior(pid):
         os.rmdir(pasta)
 
 
-def aplicar_fx(vis, painel):
+def aplicar_fx(vis):
     """Troca letras brancas por [Tema Cor Texto]. Devolve quantas propriedades mudou."""
     n = 0
     vco = vis.setdefault('visualContainerObjects', {})
-    if painel:
-        vco['background'] = [{'properties': {'show': L('true'), 'color': cor(AZUL_SCANIA), 'transparency': L('10D')}}]
-        return 0
     transparente = not fundo_ligado(vis)
     for e in vco.get('title', []):
         p = e.setdefault('properties', {})
@@ -187,6 +253,38 @@ def aplicar_fx(vis, painel):
                     p[k] = copy.deepcopy(FX_TEXTO)
                     n += 1
     return n
+
+
+def links_tema(vis):
+    n = 0
+    for e in vis.get('objects', {}).get('text', []):
+        p = e.get('properties', {})
+        if literal(p.get('fontColor')) == LINK_ORIGINAL:
+            p['fontColor'] = fx('Tema Cor Link')
+            n += 1
+    return n
+
+
+def popup_tema(vis):
+    """Moldura e lista do pop-up seguem o tema; o título ganha faixa azul Scania."""
+    t = vis['visualType']
+    vco = vis.setdefault('visualContainerObjects', {})
+    bg = vco.get('background', [{}])[0].get('properties', {})
+    if t == 'textbox':
+        if bg and literal(bg.get('color')) == AZUL_PAINEL:
+            bg['color'] = cor(AZUL_SCANIA)
+        return
+    painel = bg and (literal(bg.get('color')) == AZUL_PAINEL or bg.get('color') == fx('Tema Cor Painel'))
+    if t == 'tableEx':
+        if painel:
+            bg['color'] = fx('Tema Cor Painel')
+        celulas_tema(vis)
+    elif t == 'actionButton' and painel:
+        bg['color'] = fx('Tema Cor Painel')
+        for e in vis.get('objects', {}).get('fill', []):
+            p = e.get('properties', {})
+            if literal(p.get('fillColor')) == AZUL_PAINEL:
+                p['fillColor'] = fx('Tema Cor Painel')
 
 
 def main():
@@ -235,31 +333,33 @@ def main():
             return False
 
         normais = [(f, v) for f, v in vs.values() if 'visual' in v and not em_popup(v)]
+        popups = [(f, v) for f, v in vs.values() if 'visual' in v and em_popup(v)]
         logos = [(f, v) for f, v in normais if v['visual']['visualType'] == 'image']
         titulos = [(f, v) for f, v in normais if v['visual']['visualType'] == 'textbox']
         visiveis = [v for f, v in normais if not oculto(v)]
 
-        # 1. fx nas letras e painel nas matrizes transparentes
+        # 1. letras, links, listas e matrizes
         mudou = 0
+        matrizes = []
         for f, v in normais:
             vis = v['visual']
             t = vis['visualType']
-            if t in TIPOS_SEM_FX:
-                continue
-            painel = False
-            if t in TABELAS and not fundo_ligado(vis):
-                letras = [p for o in ('values', 'columnHeaders', 'rowHeaders') for e in vis.get('objects', {}).get(o, [])
-                          for p in [e.get('properties', {})] if not any(k.startswith('back') for k in p)
-                          and any(eh_branco(p.get(k)) for k in FONTE)]
-                painel = bool(letras)
-            mudou += aplicar_fx(vis, painel)
             if v['position'].get('z', 0) <= 0:
                 v['position']['z'] = 1
+            if t == 'actionButton':
+                mudou += links_tema(vis)
+            elif t not in TIPOS_SEM_FX:
+                tira_painel_antigo(vis)
+                if matriz_transparente(vis):
+                    matrizes.append((f, v))        # ganha uma cópia de letras azuis (passo 3)
+                else:
+                    mudou += aplicar_fx(vis)
+                    if lista_com_celulas_escuras(vis):
+                        celulas_tema(vis)
             save(f, v)
-        for f, v in logos + titulos:
-            if v['position'].get('z', 0) <= 0:
-                v['position']['z'] = 1
-                save(f, v)
+        for f, v in popups:
+            popup_tema(v['visual'])
+            save(f, v)
 
         novos = []
         # 2. fundo claro
@@ -274,26 +374,30 @@ def main():
                                                             'title': [{'properties': {'show': L('false')}}]},
                                  'drillFilterOtherVisuals': True},
                       'isHidden': True})
-        # 3. logos coloridas e títulos azuis
-        pares_logo, pares_titulo = [], []
+        # 3. cópias claras: logos coloridas, títulos azuis e matrizes de letras azuis
+        pares = []
         for f, v in logos:
             c = copy.deepcopy(v)
             c['name'] = nome(pid, 'logo', v['name'])
             c['visual']['objects']['general'][0]['properties']['imageUrl']['expr']['ResourcePackageItem']['ItemName'] = LOGO_COLORIDA
-            c['isHidden'] = True
-            c.pop('parentGroupName', None)
-            novos.append(c)
-            pares_logo.append((v['name'], c['name']))
+            pares.append((v, c))
         for f, v in titulos:
             c = copy.deepcopy(v)
             c['name'] = nome(pid, 'titulo', v['name'])
             for par in c['visual']['objects']['general'][0]['properties'].get('paragraphs', []):
                 for run in par.get('textRuns', []):
                     run.setdefault('textStyle', {})['color'] = AZUL_SCANIA
+            pares.append((v, c))
+        for f, v in matrizes:
+            c = copy.deepcopy(v)
+            c['name'] = nome(pid, 'matriz', v['name'])
+            recolorir_claro(c['visual'].get('objects', {}))
+            recolorir_claro(c['visual'].get('visualContainerObjects', {}).get('title', []))
+            pares.append((v, c))
+        for v, c in pares:
             c['isHidden'] = True
             c.pop('parentGroupName', None)
             novos.append(c)
-            pares_titulo.append((v['name'], c['name']))
         # 4. segmentação oculta do tema
         n_seg = nome(pid, 'segmentacao')
         novos.append({'$schema': VC_SCHEMA, 'name': n_seg,
@@ -314,11 +418,11 @@ def main():
         bm_escuro = PREFIXO_BM + hashlib.sha1(f'{pid}|escuro'.encode()).hexdigest()[:12]
         x, y, encolher = lugar_do_botao(visiveis, [v for f, v in titulos])
         if encolher:      # sem espaço livre: o título (e a cópia azul) fica mais estreito
-            for f, v in titulos[:1]:
-                v['position']['width'] -= encolher
-                save(f, v)
-            for c in novos:
-                if c['name'] == nome(pid, 'titulo', titulos[0][1]['name']):
+            orig = titulos[0][1]
+            orig['position']['width'] -= encolher
+            save(titulos[0][0], orig)
+            for v, c in pares:
+                if v is orig:
                     c['position']['width'] -= encolher
         pos = {'x': x, 'y': y, 'z': 30000, 'height': 30, 'width': 40, 'tabOrder': 30000}
         n_bc = nome(pid, 'botao-claro')
@@ -332,9 +436,9 @@ def main():
 
         # 6. indicadores
         tipos = {c['name']: c['visual']['visualType'] for c in novos}
-        tipos.update({v['name']: v['visual']['visualType'] for f, v in logos + titulos})
-        so_claro = [n_fundo, n_be] + [b for a, b in pares_logo] + [b for a, b in pares_titulo]
-        so_escuro = [n_bc] + [a for a, b in pares_logo] + [a for a, b in pares_titulo]
+        tipos.update({v['name']: v['visual']['visualType'] for v, c in pares})
+        so_claro = [n_fundo, n_be] + [c['name'] for v, c in pares]
+        so_escuro = [n_bc] + [v['name'] for v, c in pares]
 
         def estado(tema, visiveis_tema, ocultos_tema):
             vc = {}
@@ -359,13 +463,14 @@ def main():
                                      'sections': {pid: {'visualContainers': estado(tema, vis_t, ocu_t)}}},
             })
             filhos.append(bm)
-        resumo.append((page['displayName'], mudou, len(logos), len(titulos), (x, y), bool(encolher)))
+        resumo.append((page['displayName'], mudou, len(logos), len(titulos), len(matrizes), len(popups), (x, y),
+                       bool(encolher)))
 
     meta['items'].append({'name': GRUPO_BM, 'displayName': 'Tema claro / escuro', 'children': filhos})
     save(f'{BOOKMARKS_DIR}/bookmarks.json', meta)
     for r in resumo:
-        print('%-32s fx=%3d logos=%d títulos=%d botão=%s%s' % (r[0], r[1], r[2], r[3], r[4],
-                                                               ' (título encolhido)' if r[5] else ''))
+        print('%-32s fx=%3d logos=%d títulos=%d matrizes=%d visuais de pop-up=%d botão=%s%s' % (
+            r[0], r[1], r[2], r[3], r[4], r[5], r[6], ' (título encolhido)' if r[7] else ''))
 
 
 if __name__ == '__main__':

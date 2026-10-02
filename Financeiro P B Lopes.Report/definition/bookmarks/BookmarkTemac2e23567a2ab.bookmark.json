@@ -9,9 +9,11 @@
       "temaf0db24a985e33c4b",
       "tema5039f6efb5cdafcc",
       "tema52d09a07592267df",
+      "tema95fda3538bf48481",
       "tema364e32ac0b85abef",
       "bfab14cf05d8fb59d41f",
       "0873f0d00d15ca05143d",
+      "7814540b3db05b7f1bc1",
       "tema42ed7fab7d91c904"
     ]
   },
@@ -41,6 +43,11 @@
               "visualType": "textbox"
             }
           },
+          "tema95fda3538bf48481": {
+            "singleVisual": {
+              "visualType": "pivotTable"
+            }
+          },
           "tema364e32ac0b85abef": {
             "singleVisual": {
               "visualType": "actionButton",
@@ -60,6 +67,14 @@
           "0873f0d00d15ca05143d": {
             "singleVisual": {
               "visualType": "textbox",
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "7814540b3db05b7f1bc1": {
+            "singleVisual": {
+              "visualType": "pivotTable",
               "display": {
                 "mode": "hidden"
               }
