@@ -126,6 +126,39 @@ table dContaBP
 
 		annotation SummarizationSetBy = Automatic
 
+	/// Em qual linha da DFC a conta entra (código de dEstDFC). Regra por classe do balanço e por palavras no nome da conta (nível 3, nível 4 e descrição).
+	column 'DFC Código' =
+			VAR _Txt = UPPER ( dContaBP[nivel3] & " | " & dContaBP[nivel4] & " | " & dContaBP[descricao] )
+			VAR _Classe = dContaBP[classe]
+			RETURN
+			    SWITCH ( TRUE (),
+			        dContaBP[eh_disponivel] = 1, "CAIXA",
+			        _Classe IN { "PL", "RES" }, "FIN-PATRIMONIO-LIQUIDO",
+			        _Classe = "ANC"
+			            && ( CONTAINSSTRING ( _Txt, "DEPREC" ) || CONTAINSSTRING ( _Txt, "AMORTIZ" ) || CONTAINSSTRING ( _Txt, "EXAUST" ) ), "OP-DEPRECIACAO",
+			        _Classe = "AC" && dContaBP[eh_estoque] = 1, "OP-ESTOQUES",
+			        _Classe = "AC"
+			            && ( CONTAINSSTRING ( _Txt, "CLIENTE" ) || CONTAINSSTRING ( _Txt, "DUPLICATA" ) || CONTAINSSTRING ( _Txt, "A RECEBER" ) ), "OP-CLIENTES",
+			        _Classe = "AC", "OP-OUTROS-ATIVOS",
+			        _Classe = "ANC"
+			            && ( CONTAINSSTRING ( _Txt, "REALIZ" ) || CONTAINSSTRING ( _Txt, "LONGO PRAZO" ) ), "OP-OUTROS-ATIVOS",
+			        _Classe = "ANC", "INV-ATIVO-NAO-CIRCULANTE",
+			        CONTAINSSTRING ( _Txt, "EMPREST" ) || CONTAINSSTRING ( _Txt, "EMPRÉST" ) || CONTAINSSTRING ( _Txt, "FINANCIAM" )
+			            || CONTAINSSTRING ( _Txt, "ARRENDAM" ) || CONTAINSSTRING ( _Txt, "LEASING" ) || CONTAINSSTRING ( _Txt, "DEBENTURE" )
+			            || CONTAINSSTRING ( _Txt, "MUTUO" ) || CONTAINSSTRING ( _Txt, "MÚTUO" ), "FIN-EMPRESTIMOS",
+			        CONTAINSSTRING ( _Txt, "FORNEC" ), "OP-FORNECEDORES",
+			        CONTAINSSTRING ( _Txt, "TRABALH" ) || CONTAINSSTRING ( _Txt, "SALARI" ) || CONTAINSSTRING ( _Txt, "SALÁRI" )
+			            || CONTAINSSTRING ( _Txt, "FERIAS" ) || CONTAINSSTRING ( _Txt, "FÉRIAS" ) || CONTAINSSTRING ( _Txt, "TRIBUT" )
+			            || CONTAINSSTRING ( _Txt, "IMPOST" ) || CONTAINSSTRING ( _Txt, "FISCA" ) || CONTAINSSTRING ( _Txt, "SOCIAIS" )
+			            || CONTAINSSTRING ( _Txt, "PREVID" ), "OP-OBRIGACOES",
+			        "OP-OUTROS-PASSIVOS"
+			    )
+		dataType: string
+		lineageTag: f6221eab-b039-41f3-a04c-1fa6940e4675
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
 	partition dContaBP = m
 		mode: import
 		source =

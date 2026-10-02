@@ -910,6 +910,146 @@ table _Medidas
 		displayFolder: Despesas por Centro de Custo
 		lineageTag: d016297d-efc7-4cb3-a233-4b8b7c1357ea
 
+	/// Verdadeiro quando existe o saldo de 31/12 do ano anterior à data-base. Sem ele a DFC fica em branco (ex.: 2021).
+	measure 'DFC Tem Base' =
+			
+			VAR _Ref = DATE ( YEAR ( [BP Data-base] ) - 1, 12, 31 )
+			RETURN
+			    NOT ISEMPTY (
+			        CALCULATETABLE ( fSaldosContabeis, REMOVEFILTERS ( aCalendario ), REMOVEFILTERS ( dContaBP ), fSaldosContabeis[data_ref] = _Ref )
+			    )
+		displayFolder: DFC
+		lineageTag: 50226144-4ad6-4860-a0b3-039f7bb2eb9f
+
+	measure 'DFC Período Texto' =
+			
+			VAR _Db = [BP Data-base]
+			RETURN
+			    IF ( NOT ISBLANK ( _Db ), "De 01/01/" & YEAR ( _Db ) & " a " & FORMAT ( _Db, "dd/MM/yyyy" ) )
+		displayFolder: DFC
+		lineageTag: f7e581ac-a209-4a62-a4ac-d7e138c0571c
+
+	/// Resultado contábil de 1º de janeiro até a data-base: soma da fRealizado[VALOR] (lançamentos do banco, sem ajustes gerenciais e sem os estornos 9.9.9.9).
+	measure 'DFC Resultado do Período' =
+			
+			VAR _Db = [BP Data-base]
+			VAR _Ini = DATE ( YEAR ( _Db ), 1, 1 )
+			RETURN
+			    IF ( [DFC Tem Base],
+			        CALCULATE ( SUM ( fRealizado[VALOR] ), REMOVEFILTERS ( aCalendario ), aCalendario[Data] >= _Ini, aCalendario[Data] <= _Db ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: DFC
+		lineageTag: 5273d632-d700-4fc9-8f35-fd4ee9715f47
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	/// Efeito no caixa da variação dos saldos (31/12 do ano anterior → data-base): ativo que cresce consome caixa (sinal −); passivo ou PL que cresce gera caixa (sinal +).
+	measure 'DFC Efeito Caixa' =
+			
+			VAR _Passivo = CALCULATE ( [BP Variação], KEEPFILTERS ( dContaBP[lado] <> "ATIVO" ) )
+			VAR _Ativo = CALCULATE ( [BP Variação], KEEPFILTERS ( dContaBP[lado] = "ATIVO" ) )
+			RETURN
+			    IF ( [DFC Tem Base], _Passivo - _Ativo )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: DFC
+		lineageTag: 7264a342-2a8e-46b6-b0cb-9035481aac04
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	/// Valor de UMA linha de dEstDFC, conforme o TIPO da linha.
+	measure 'DFC Valor Linha' =
+			
+			VAR _Codigo = SELECTEDVALUE ( dEstDFC[CODIGO] )
+			VAR _Tipo = SELECTEDVALUE ( dEstDFC[TIPO] )
+			VAR _Contas = CALCULATE ( [DFC Efeito Caixa], KEEPFILTERS ( dContaBP[DFC Código] = _Codigo ) )
+			RETURN
+			    SWITCH ( _Tipo,
+			        "RESULTADO", [DFC Resultado do Período],
+			        "CONTAS", _Contas,
+			        "PL", _Contas - [DFC Resultado do Período]
+			    )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: DFC
+		lineageTag: 4f50a364-a321-4c88-a491-12f9df27f352
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	/// Valor da DFC no contexto: numa linha é a própria linha; numa atividade é a soma das suas linhas; no total é a variação líquida do caixa.
+	measure 'DFC Valor' =
+			
+			SUMX ( VALUES ( dEstDFC[CODIGO] ), [DFC Valor Linha] )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: DFC
+		lineageTag: 3c630985-3ed5-4aa6-a5b9-caa7579ed261
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'DFC Atividades Operacionais' =
+			
+			CALCULATE ( [DFC Valor], dEstDFC[ORDEM_GRUPO] = 1 )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: DFC
+		lineageTag: c99a9e74-7e2c-4075-bfa6-2789699c55fc
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'DFC Atividades de Investimento' =
+			
+			CALCULATE ( [DFC Valor], dEstDFC[ORDEM_GRUPO] = 2 )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: DFC
+		lineageTag: b1c2a028-c26d-485e-ac23-d93d2def431f
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'DFC Atividades de Financiamento' =
+			
+			CALCULATE ( [DFC Valor], dEstDFC[ORDEM_GRUPO] = 3 )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: DFC
+		lineageTag: 8513b1ea-a57d-4a90-a9c6-09e49123157b
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	/// Saldo de caixa e equivalentes (contas com eh_disponivel = 1) em 31/12 do ano anterior.
+	measure 'DFC Caixa Início' =
+			
+			IF ( [DFC Tem Base], CALCULATE ( [BP Saldo Fim do Ano Anterior], dContaBP[eh_disponivel] = 1 ) )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: DFC
+		lineageTag: ac7820d2-0f20-4684-aa79-7f391307ca0e
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	/// Saldo de caixa e equivalentes na data-base.
+	measure 'DFC Caixa Fim' =
+			
+			CALCULATE ( [BP Saldo], dContaBP[eh_disponivel] = 1 )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: DFC
+		lineageTag: 6a5be674-78cf-4420-93fe-155d7f2f27ce
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	measure 'DFC Variação de Caixa' =
+			
+			IF ( [DFC Tem Base], [DFC Caixa Fim] - [DFC Caixa Início] )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: DFC
+		lineageTag: e6962b45-86e3-46e7-ad3b-55d68daf6ef6
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	/// Conferência: deve ser zero. Soma das três atividades menos a variação do caixa no balanço.
+	measure 'DFC Diferença' =
+			
+			IF ( [DFC Tem Base], CALCULATE ( [DFC Valor], REMOVEFILTERS ( dEstDFC ) ) - [DFC Variação de Caixa] )
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: DFC
+		lineageTag: 69364762-3e4d-4541-a271-dd3f41ebfcd1
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
 	partition _Medidas-e0807ed9-830e-46df-b71f-9de294b53a18 = m
 		mode: import
 		queryGroup: Medidas

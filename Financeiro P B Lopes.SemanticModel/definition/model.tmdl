@@ -54,6 +54,7 @@ ref table pFornecedor
 ref table fLancamentosContabeis
 ref table fSaldosContabeis
 ref table dContaBP
+ref table dEstDFC
 
 ref role Londrina
 ref role Maringá

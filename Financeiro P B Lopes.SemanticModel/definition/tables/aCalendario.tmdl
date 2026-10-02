@@ -68,6 +68,23 @@ table aCalendario
 
 		annotation SummarizationSetBy = Automatic
 
+	column AnoMes = YEAR ( aCalendario[Data] ) * 100 + MONTH ( aCalendario[Data] )
+		dataType: int64
+		formatString: 0
+		lineageTag: 0ab13c4c-2cd0-48c2-bf3d-26d8eac857e8
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Mês e ano abreviados (ex.: out/26), para eixos de gráfico que atravessam anos.
+	column 'Mês/Ano' = FORMAT ( aCalendario[Data], "MMM/yy", "pt-BR" )
+		dataType: string
+		lineageTag: 231e9dad-e7e3-4d7f-8fab-fe66f652e64f
+		summarizeBy: none
+		sortByColumn: AnoMes
+
+		annotation SummarizationSetBy = Automatic
+
 	partition aCalendario-fab4429c-1a3b-42a5-8af0-860848bfde89 = m
 		mode: import
 		source =
