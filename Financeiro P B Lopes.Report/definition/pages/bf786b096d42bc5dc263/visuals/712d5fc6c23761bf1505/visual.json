@@ -151,18 +151,18 @@
         "levels": [
           {
             "queryRefs": [
-              "dEstDRE.GRUPO_DRE"
+              "dContaBP.lado"
             ],
-            "isCollapsed": true,
+            "isCollapsed": false,
             "identityKeys": [
               {
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "dEstDRE"
+                      "Entity": "dContaBP"
                     }
                   },
-                  "Property": "GRUPO_DRE"
+                  "Property": "lado"
                 }
               }
             ],
@@ -170,7 +170,7 @@
           },
           {
             "queryRefs": [
-              "dPlanoContas.GRUPO"
+              "dContaBP.grupo_bp"
             ],
             "isCollapsed": true,
             "identityKeys": [
@@ -178,10 +178,10 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "dPlanoContas"
+                      "Entity": "dContaBP"
                     }
                   },
-                  "Property": "GRUPO"
+                  "Property": "grupo_bp"
                 }
               }
             ],
@@ -189,7 +189,7 @@
           },
           {
             "queryRefs": [
-              "dPlanoContas.SUB_GRUPO"
+              "dContaBP.subgrupo"
             ],
             "isCollapsed": true,
             "identityKeys": [
@@ -197,10 +197,10 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "dPlanoContas"
+                      "Entity": "dContaBP"
                     }
                   },
-                  "Property": "SUB_GRUPO"
+                  "Property": "subgrupo"
                 }
               }
             ],
@@ -208,7 +208,7 @@
           },
           {
             "queryRefs": [
-              "dPlanoContas.CONTA_CONTABIL"
+              "dContaBP.conta"
             ],
             "isCollapsed": true,
             "identityKeys": [
@@ -216,206 +216,17 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "dPlanoContas"
+                      "Entity": "dContaBP"
                     }
                   },
-                  "Property": "CONTA_CONTABIL"
+                  "Property": "conta"
                 }
               }
             ],
             "isPinned": true
           }
         ],
-        "root": {
-          "children": [
-            {
-              "identityValues": [
-                {
-                  "Literal": {
-                    "Value": "'(+) RECEITA COM VENDAS'"
-                  }
-                }
-              ],
-              "children": [
-                {
-                  "identityValues": [
-                    {
-                      "Literal": {
-                        "Value": "'VENDAS DE MERCAD.E SERVICOS'"
-                      }
-                    }
-                  ],
-                  "isToggled": true,
-                  "children": [
-                    {
-                      "identityValues": [
-                        {
-                          "Literal": {
-                            "Value": "'VENDAS DE MERCADORIAS'"
-                          }
-                        }
-                      ],
-                      "isToggled": true
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "identityValues": [
-                {
-                  "Literal": {
-                    "Value": "'(-) CUSTOS DAS VENDAS E SERVICOS'"
-                  }
-                }
-              ],
-              "children": [
-                {
-                  "identityValues": [
-                    {
-                      "Literal": {
-                        "Value": "'CUSTOS DAS VENDAS E SERVICOS'"
-                      }
-                    }
-                  ],
-                  "isToggled": true,
-                  "children": [
-                    {
-                      "identityValues": [
-                        {
-                          "Literal": {
-                            "Value": "'CUSTOS VDAS.MERCADORIAS'"
-                          }
-                        }
-                      ],
-                      "isToggled": true
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "identityValues": [
-                {
-                  "Literal": {
-                    "Value": "'(+) ESTORNO DEPREC / AMORT CUSTO'"
-                  }
-                }
-              ],
-              "children": [
-                {
-                  "identityValues": [
-                    {
-                      "Literal": {
-                        "Value": "'ESTORNO DEPREC / AMORT CUSTO'"
-                      }
-                    }
-                  ],
-                  "isToggled": true,
-                  "children": [
-                    {
-                      "identityValues": [
-                        {
-                          "Literal": {
-                            "Value": "'ESTORNO DEPREC / AMORT CUSTO'"
-                          }
-                        }
-                      ],
-                      "isToggled": true
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "identityValues": [
-                {
-                  "Literal": {
-                    "Value": "'(+) ESTORNO DESPESAS / RECEITAS FINANCEIRAS'"
-                  }
-                }
-              ],
-              "children": [
-                {
-                  "identityValues": [
-                    {
-                      "Literal": {
-                        "Value": "'ESTORNO DESPESAS FINANCEIRAS'"
-                      }
-                    }
-                  ],
-                  "isToggled": true,
-                  "children": [
-                    {
-                      "identityValues": [
-                        {
-                          "Literal": {
-                            "Value": "'ESTORNO DESPESAS FINANCEIRAS'"
-                          }
-                        }
-                      ],
-                      "isToggled": true
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "identityValues": [
-                {
-                  "Literal": {
-                    "Value": "'(-) IMPOSTOS SOBRE AS VENDAS'"
-                  }
-                }
-              ],
-              "children": [
-                {
-                  "identityValues": [
-                    {
-                      "Literal": {
-                        "Value": "'IMPOSTOS SOBRE AS VENDAS'"
-                      }
-                    }
-                  ],
-                  "isToggled": true
-                }
-              ]
-            },
-            {
-              "identityValues": [
-                {
-                  "Literal": {
-                    "Value": "'(+/-) RECEITAS FINANCEIRAS'"
-                  }
-                }
-              ],
-              "children": [
-                {
-                  "identityValues": [
-                    {
-                      "Literal": {
-                        "Value": "'RECEITAS FINANCEIRAS LIQUIDAS'"
-                      }
-                    }
-                  ],
-                  "isToggled": true,
-                  "children": [
-                    {
-                      "identityValues": [
-                        {
-                          "Literal": {
-                            "Value": "'DESPESAS FINANCEIRAS'"
-                          }
-                        }
-                      ],
-                      "isToggled": true
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
+        "root": {}
       }
     ],
     "objects": {
