@@ -369,7 +369,11 @@ def main():
                       'visual': {'visualType': 'image',
                                  'objects': {'general': [{'properties': {'imageUrl': {'expr': {'ResourcePackageItem': {
                                      'PackageName': 'RegisteredResources', 'PackageType': 1, 'ItemName': FUNDO_CLARO}}}}}]},
+                                 # margem interna zero: com a margem padrão (5 px) a imagem fica menor que a
+                                 # página e o fundo escuro aparece nas bordas
                                  'visualContainerObjects': {'general': [{'properties': {'keepLayerOrder': L('true')}}],
+                                                            'padding': [{'properties': {'top': L('0D'), 'bottom': L('0D'),
+                                                                                        'left': L('0D'), 'right': L('0D')}}],
                                                             'visualHeader': [{'properties': {'show': L('false')}}],
                                                             'title': [{'properties': {'show': L('false')}}]},
                                  'drillFilterOtherVisuals': True},
